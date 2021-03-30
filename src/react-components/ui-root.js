@@ -83,6 +83,7 @@ import { SafariMicModal } from "./room/SafariMicModal";
 import { RoomSignInModalContainer } from "./auth/RoomSignInModalContainer";
 import { SignInStep } from "./auth/SignInModal";
 import { LeaveReason, LeaveRoomModal } from "./room/LeaveRoomModal";
+import { AudioRecorderModal } from "./room/AudioRecorderModal";
 import { RoomSidebar } from "./room/RoomSidebar";
 import { RoomSettingsSidebarContainer } from "./room/RoomSettingsSidebarContainer";
 import { AutoExitWarningModal, AutoExitReason } from "./room/AutoExitWarningModal";
@@ -1540,6 +1541,16 @@ class UIRoot extends Component {
                           hubChannel={this.props.hubChannel}
                           mediaSearchStore={this.props.mediaSearchStore}
                           showNonHistoriedDialog={this.showNonHistoriedDialog}
+                        />
+                        <ToolbarButton
+                        icon={<LeaveIcon />}
+                        label={<FormattedMessage id="toolbar.test" defaultMessage="Audio Recording" />}
+                        preset="red"
+                        onClick={() => {
+                          this.showNonHistoriedDialog(AudioRecorderModal, {
+                            destinationUrl: "/"
+                          });
+                        }}
                         />
                         {this.props.hubChannel.can("spawn_emoji") && <ReactionPopoverContainer />}
                       </>
