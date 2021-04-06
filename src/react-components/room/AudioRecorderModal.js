@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useIntl, defineMessages, FormattedMessage } from "react-intl";
 import PropTypes from "prop-types";
 import { Modal } from "../modal/Modal";
@@ -7,6 +7,8 @@ import { Button } from "../input/Button";
 import { TextInputField } from "../input/TextInputField";
 import { Column } from "../layout/Column";
 import { useAudioRecorder } from "./useAudioRecorder";
+
+import ducky from "../../assets/models/DuckyMesh.glb";
 
 const audioRecordingMessages = defineMessages({
   submit: {
@@ -23,20 +25,17 @@ const audioRecordingMessages = defineMessages({
   }
 });
 
-export function AudioRecorderModal({ onClose }) {
+export function AudioRecorderModal({ scene, onClose }) {
+  const onSubmit = useCallback(
+    ({ file, url }) => {
+      scene.emit("add_media", (file && file.length > 0 && file[0]) || url || ducky);
+      onClose();
+    },
+    [scene, onClose]
+  );
+
   const intl = useIntl();
   const [record, audioSrc] = useAudioRecorder();
-
-  // const recordings = history.map((step, move) => {
-  //   const desc = move ?
-  //     'Go to move #' + move :
-  //     'Go to game start';
-  //   return (
-  //     <li key={move}>
-  //       <button onClick={() => this.jumpTo(move)}>{desc}</button>
-  //     </li>
-  //   );
-  // });
 
   return (
     <Modal
@@ -61,21 +60,20 @@ export function AudioRecorderModal({ onClose }) {
         // ref={displayNameInputRef}
         />
 
+        {/* TODO: Placeholder audio player */}
         <audio controls src={audioSrc}></audio>
 
         <Button as="a" preset="basic" onClick={record} rel="noopener noreferrer">
           {intl.formatMessage(audioRecordingMessages.startrecording)}
         </Button>
-        <Button as="a" preset="green" href="#" rel="noopener noreferrer"
-          onClick={() =>
-            console.log(audioElRef)
-          }
-        >
+        <Button type="submit" preset="accept">
           {intl.formatMessage(audioRecordingMessages.submit)}
         </Button>
-        {/* <Button as="a" preset="cancel" href={destinationUrl} rel="noopener noreferrer">
-          {intl.formatMessage(confirmationMessages[reason])}
-        </Button> */}
+        {/* 
+        <Button type="submit" preset="accept">
+          <FormattedMessage id="object-url-modal.create-object-button" defaultMessage="Create Object" />
+        </Button>
+         */}
       </Column>
     </Modal >
   );

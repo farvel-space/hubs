@@ -1548,7 +1548,8 @@ class UIRoot extends Component {
                         preset="red"
                         onClick={() => {
                           this.showNonHistoriedDialog(AudioRecorderModal, {
-                            destinationUrl: "/"
+                            // destinationUrl: "/"
+                            scene: this.props.scene
                           });
                         }}
                         />

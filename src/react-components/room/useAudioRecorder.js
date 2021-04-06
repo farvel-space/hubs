@@ -3,7 +3,7 @@ import { useEffect, useCallback, useRef, useState } from "react";
 export function useAudioRecorder() {
   let mediaRecorder;
   let recording = false;
-  const [audioSrc, setAudioSrc] = useState('#');
+  const [audioSrc, setAudioSrc] = useState('');
 
   useEffect(() => {
     if (navigator.mediaDevices.getUserMedia) {
@@ -12,12 +12,13 @@ export function useAudioRecorder() {
       let chunks = [];
 
       let onSuccess = function(stream) {
-        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm;codecs=opus" });
 
         mediaRecorder.onstop = function(e) {
           console.log("data available after MediaRecorder.stop() called.");
           
-          const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+          const mimeType = chunks[0].type;
+          const blob = new Blob(chunks, { 'type' : mimeType });
           chunks = [];
           const audioURL = window.URL.createObjectURL(blob);
           setAudioSrc(audioURL);
