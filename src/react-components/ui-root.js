@@ -70,6 +70,7 @@ import { ReactComponent as VRIcon } from "./icons/VR.svg";
 import { ReactComponent as LeaveIcon } from "./icons/Leave.svg";
 import { ReactComponent as EnterIcon } from "./icons/Enter.svg";
 import { ReactComponent as InviteIcon } from "./icons/Invite.svg";
+import { ReactComponent as AudioIcon } from "./icons/Audio.svg";
 import { PeopleSidebarContainer, userFromPresence } from "./room/PeopleSidebarContainer";
 import { ObjectListProvider } from "./room/useObjectList";
 import { ObjectsSidebarContainer } from "./room/ObjectsSidebarContainer";
@@ -1543,8 +1544,8 @@ class UIRoot extends Component {
                           showNonHistoriedDialog={this.showNonHistoriedDialog}
                         />
                         <ToolbarButton
-                        icon={<LeaveIcon />}
-                        label={<FormattedMessage id="toolbar.test" defaultMessage="Audio Recording" />}
+                        icon={<AudioIcon />}
+                        label={<FormattedMessage id="toolbar.voice-recording" defaultMessage="Record" />}
                         preset="red"
                         onClick={() => {
                           this.showNonHistoriedDialog(AudioRecorderModal, {

@@ -4,11 +4,12 @@ import PropTypes from "prop-types";
 import { Modal } from "../modal/Modal";
 import { CloseButton } from "../input/CloseButton";
 import { Button } from "../input/Button";
-import { TextInputField } from "../input/TextInputField";
+// import { TextInputField } from "../input/TextInputField";
 import { Column } from "../layout/Column";
 import { useAudioRecorder } from "./useAudioRecorder";
+import { AudioRecorderPlayer } from "./AudioRecorderPlayer";
+import { useForm } from "react-hook-form";
 
-import ducky from "../../assets/models/DuckyMesh.glb";
 
 const audioRecordingMessages = defineMessages({
   submit: {
@@ -17,35 +18,57 @@ const audioRecordingMessages = defineMessages({
   },
   description: {
     id: "audio-recording-modal.recording.description",
-    defaultMessage: "Hier sollte eine kurze Erklärung stehen."
+    defaultMessage: "Record und upload a voice message for others to hear. After recording you will be able to hear your message before submitting and therefore uploading it. You can re-record your message, as much as you want."
   },
   startrecording: {
     id: "audio-recording-modal.recording.start",
     defaultMessage: "Record"
+  },
+  stoprecording: {
+    id: "audio-recording-modal.recording.stop",
+    defaultMessage: "Stop"
   }
 });
 
 export function AudioRecorderModal({ scene, onClose }) {
+  const intl = useIntl();
+  const [record, isRecording, audioSrc, audioFile] = useAudioRecorder();
+  const { handleSubmit } = useForm();
   const onSubmit = useCallback(
-    ({ file, url }) => {
-      scene.emit("add_media", (file && file.length > 0 && file[0]) || url || ducky);
+    () => {
+      console.log("#1", audioFile);
+      scene.emit("add_media", (audioFile.size > 0 && audioFile));
+      console.log("#2");
       onClose();
+      console.log("#3");
     },
-    [scene, onClose]
+    [scene, onClose, audioFile]
   );
 
-  const intl = useIntl();
-  const [record, audioSrc] = useAudioRecorder();
+  // Mute yourself 
+  // scene.emit("action_mute")
+
+
+
+  // const recordingBtn = () => {
+  //   if (isRecording || !isRecording && audioSrc == '') {
+  //     return intl.formatMessage(isRecording ? audioRecordingMessages.stoprecording : audioRecordingMessages.startrecording);
+  //   } else {
+  //     return intl.formatMessage(isRecording ? audioRecordingMessages.stoprecording : audioRecordingMessages.startrecording);
+  //   }
+  // };
 
   return (
     <Modal
-      title={<FormattedMessage id="audio-recording-modal.title" defaultMessage="Submit Audio Recording" />}
+      title={<FormattedMessage id="audio-recording-modal.title" defaultMessage="Submit Voice Message" />}
       beforeTitle={<CloseButton onClick={onClose} />}
     >
-      <Column padding center centerMd="both" grow>
+      {/* <Column padding center centerMd="both" grow>d */}
+      <Column as="form" padding center onSubmit={handleSubmit(onSubmit)}>
         <p>{intl.formatMessage(audioRecordingMessages.description)}</p>
 
         {/* Adapted from AvatarSettingsContent.js */}
+        {/*  
         <TextInputField
           label={<FormattedMessage id="audio-recording-modal.recording-name" defaultMessage="Name of recording" />}
           // pattern={displayNamePattern}
@@ -59,29 +82,21 @@ export function AudioRecorderModal({ scene, onClose }) {
           }
         // ref={displayNameInputRef}
         />
+        */}
 
-        {/* TODO: Placeholder audio player */}
-        <audio controls src={audioSrc}></audio>
-
-        <Button as="a" preset="basic" onClick={record} rel="noopener noreferrer">
-          {intl.formatMessage(audioRecordingMessages.startrecording)}
+        <AudioRecorderPlayer isRecording={isRecording} audioSrc={audioSrc}></AudioRecorderPlayer>
+        <Button preset={isRecording ? 'red' : 'basic'} onClick={() => {scene.emit("action_mute"); record();}} rel="noopener noreferrer">
+          {intl.formatMessage(isRecording ? audioRecordingMessages.stoprecording : audioRecordingMessages.startrecording)}
         </Button>
         <Button type="submit" preset="accept">
           {intl.formatMessage(audioRecordingMessages.submit)}
         </Button>
-        {/* 
-        <Button type="submit" preset="accept">
-          <FormattedMessage id="object-url-modal.create-object-button" defaultMessage="Create Object" />
-        </Button>
-         */}
       </Column>
     </Modal >
   );
 }
 
 AudioRecorderModal.propTypes = {
-  // reason: PropTypes.string,
-  // destinationUrl: PropTypes.string,
   onClose: PropTypes.func,
-  onRecordBtn: PropTypes.func,
+  scene: PropTypes.object.isRequired,
 };

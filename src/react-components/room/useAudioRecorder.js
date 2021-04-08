@@ -1,69 +1,51 @@
-import { useEffect, useCallback, useRef, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
+import vmsg from "vmsg";
+import vmsgWasmFile from "../../vendor/vmsg.wasm";
+
+/**
+ * This web audio recorder uses:
+ * @author Kagami / https://github.com/Kagami/vmsg : vmsg is a small library for creating voice messages.
+ * LAME Project / https://lame.sourceforge.io/ : LAME is a high quality MPEG Audio Layer III (MP3) encoder licensed under the LGPL. 
+ */
 
 export function useAudioRecorder() {
-  let mediaRecorder;
-  let recording = false;
+  const recorderRef = useRef();
+  const [isRecording, setIsRecording] = useState(false);
   const [audioSrc, setAudioSrc] = useState('');
+  const [audioFile, setAudioFile] = useState();
 
-  useEffect(() => {
-    if (navigator.mediaDevices.getUserMedia) {
-      console.log('getUserMedia supported.');
-      const constraints = { audio: true };
-      let chunks = [];
-
-      let onSuccess = function(stream) {
-        mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm;codecs=opus" });
-
-        mediaRecorder.onstop = function(e) {
-          console.log("data available after MediaRecorder.stop() called.");
-          
-          const mimeType = chunks[0].type;
-          const blob = new Blob(chunks, { 'type' : mimeType });
-          chunks = [];
-          const audioURL = window.URL.createObjectURL(blob);
-          setAudioSrc(audioURL);
-          console.log("recorder stopped");
-          console.log("audioURL: ", audioURL);
-
-          // return () => {
-          //   audio.pause();
-          //   audio.currentTime = 0;
-          //   clearTimeout(soundTimeoutRef.current);
-          // };
-        };
-    
-        mediaRecorder.ondataavailable = function(e) {
-          chunks.push(e.data);
-        };
-      };
-
-      let onError = function(err) {
-        console.log('The following error occured: ' + err);
-      };
-    
-      navigator.mediaDevices.getUserMedia(constraints).then(onSuccess, onError);
-    } else {
-      console.log('getUserMedia not supported on your browser!');
-    }
-    
-  }, []);
+  useEffect(
+    () => {
+      recorderRef.current = new vmsg.Recorder({
+        wasmURL: vmsgWasmFile
+      });
+    },[]
+  );
 
   const record = useCallback(
-    () => {
-      if (!recording) {
-        mediaRecorder.start();
-        console.log(mediaRecorder.state);
-        console.log("recorder started");
-        recording = true;
+    async () => {
+      const recorder = recorderRef.current;
+      if (!isRecording) {
+        console.log(isRecording);
+        try {
+          await recorder.initAudio();
+          await recorder.initWorker();
+          recorder.startRecording();
+          console.log("recorder started");
+          setIsRecording(true);
+        } catch (e) {
+          console.error(e);
+          // this.setState({ isLoading: false });
+        }
       } else {
-        mediaRecorder.stop();
-        console.log(mediaRecorder.state);
+        const blob = await recorder.stopRecording();
+        setAudioSrc(URL.createObjectURL(blob));
+        setAudioFile(new File([blob], "audioMessage.mp3", { type: "audio/mpeg" }));
         console.log("recorder stopped");
-        recording = false;
+        setIsRecording(false);
       }
-      
     },
-    []
+    [isRecording, setIsRecording, recorderRef]
   );
-  return [record, audioSrc];
+  return [record, isRecording, audioSrc, audioFile];
 }
