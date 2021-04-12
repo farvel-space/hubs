@@ -1540,11 +1540,11 @@ class UIRoot extends Component {
                         <ToolbarButton
                         icon={<AudioIcon />}
                         label={<FormattedMessage id="toolbar.voice-recording" defaultMessage="Record" />}
-                        preset="red"
+                        preset="cancel"
                         onClick={() => {
                           this.showNonHistoriedDialog(AudioRecorderModal, {
-                            // destinationUrl: "/"
-                            scene: this.props.scene
+                            scene: this.props.scene,
+                            store: this.props.store,
                           });
                         }}
                         />

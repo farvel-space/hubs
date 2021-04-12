@@ -7,30 +7,29 @@ import styles from "./AudioRecorderPlayer.scss";
 const audioRecordingMessages = defineMessages({
   placeholderMessage: {
     id: "audio-recording-modal.placeholder.message",
-    defaultMessage: "Not recording",
+    defaultMessage: "Not recording"
   },
   placeholderRecording: {
     id: "audio-recording-modal.placeholder.recording",
-    defaultMessage: "Recording",
+    defaultMessage: "Recording"
   },
   audioElementNotSupported: {
     id: "audio-recording-modal.audioElement.notSupported",
-    defaultMessage: "Your browser does not support the audio element.",
-  },
+    defaultMessage: "Your browser does not support the audio element."
+  }
 });
 
 export const AudioRecorderPlayer = memo(
-  forwardRef(({ isRecording, audioSrc, ...rest }, ref) => {
+  forwardRef(({ isRecording, audioSrc }, ref) => {
     const intl = useIntl();
 
-    if (isRecording || !isRecording && audioSrc == '') {
+    if (isRecording || (!isRecording && audioSrc == "")) {
       return (
         <div ref={ref} className={classNames(styles.placeholder)}>
-          <p>{ isRecording ?
-                intl.formatMessage(audioRecordingMessages.placeholderRecording) 
-                :
-                intl.formatMessage(audioRecordingMessages.placeholderMessage)
-              }
+          <p>
+            {isRecording
+              ? intl.formatMessage(audioRecordingMessages.placeholderRecording)
+              : intl.formatMessage(audioRecordingMessages.placeholderMessage)}
           </p>
         </div>
       );
@@ -41,11 +40,10 @@ export const AudioRecorderPlayer = memo(
         </audio>
       );
     }
-
   })
 );
 
 AudioRecorderPlayer.propTypes = {
   isRecording: PropTypes.bool,
-  audioSrc: PropTypes.string,
+  audioSrc: PropTypes.string
 };
