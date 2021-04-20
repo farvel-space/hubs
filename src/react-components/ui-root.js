@@ -1538,15 +1538,15 @@ class UIRoot extends Component {
                           showNonHistoriedDialog={this.showNonHistoriedDialog}
                         />
                         <ToolbarButton
-                        icon={<AudioIcon />}
-                        label={<FormattedMessage id="toolbar.voice-recording" defaultMessage="Record" />}
-                        preset="cancel"
-                        onClick={() => {
-                          this.showNonHistoriedDialog(AudioRecorderModal, {
-                            scene: this.props.scene,
-                            store: this.props.store,
-                          });
-                        }}
+                          icon={<AudioIcon />}
+                          label={<FormattedMessage id="toolbar.voice-recording" defaultMessage="Record" />}
+                          preset="cancel"
+                          onClick={() => {
+                            this.showNonHistoriedDialog(AudioRecorderModal, {
+                              scene: this.props.scene,
+                              store: this.props.store
+                            });
+                          }}
                         />
                         {this.props.hubChannel.can("spawn_emoji") && <ReactionPopoverContainer />}
                       </>
