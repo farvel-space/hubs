@@ -1537,17 +1537,19 @@ class UIRoot extends Component {
                           mediaSearchStore={this.props.mediaSearchStore}
                           showNonHistoriedDialog={this.showNonHistoriedDialog}
                         />
-                        <ToolbarButton
-                          icon={<AudioIcon />}
-                          label={<FormattedMessage id="toolbar.voice-recording" defaultMessage="Record" />}
-                          preset="cancel"
-                          onClick={() => {
-                            this.showNonHistoriedDialog(AudioRecorderModal, {
-                              scene: this.props.scene,
-                              store: this.props.store
-                            });
-                          }}
-                        />
+                        {this.props.hubChannel.can("spawn_and_move_media") && (
+                          <ToolbarButton
+                            icon={<AudioIcon />}
+                            label={<FormattedMessage id="toolbar.voice-recording" defaultMessage="Record" />}
+                            preset="cancel"
+                            onClick={() => {
+                              this.showNonHistoriedDialog(AudioRecorderModal, {
+                                scene: this.props.scene,
+                                store: this.props.store
+                              });
+                            }}
+                          />
+                        )}
                         {this.props.hubChannel.can("spawn_emoji") && <ReactionPopoverContainer />}
                       </>
                     )}

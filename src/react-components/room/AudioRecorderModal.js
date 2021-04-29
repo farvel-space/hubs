@@ -17,7 +17,7 @@ const audioRecordingMessages = defineMessages({
   description: {
     id: "audio-recording-modal.recording.description",
     defaultMessage:
-      "Record und upload a voice message for others to hear. The environment is muted and others are not be able to hear you, while you have this dialog opened. After recording you will be able to hear your message before submitting and therefore uploading it. You can re-record your message, as much as you want."
+      "Record und upload a voice message for others to hear. The environment is muted and others are not be able to hear you, while you have this dialog opened. After recording you will be able to hear your message before submitting and therefore uploading it. You can re-record your message, as often as you want."
   },
   startrecording: {
     id: "audio-recording-modal.recording.start",
