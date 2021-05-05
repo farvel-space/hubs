@@ -1530,13 +1530,17 @@ class UIRoot extends Component {
                           scene={this.props.scene}
                           microphoneEnabled={this.mediaDevicesManager.isMicShared}
                         />
-                        <SharePopoverContainer scene={this.props.scene} hubChannel={this.props.hubChannel} />
-                        <PlacePopoverContainer
-                          scene={this.props.scene}
-                          hubChannel={this.props.hubChannel}
-                          mediaSearchStore={this.props.mediaSearchStore}
-                          showNonHistoriedDialog={this.showNonHistoriedDialog}
-                        />
+                        {isModerator && (
+                          <SharePopoverContainer scene={this.props.scene} hubChannel={this.props.hubChannel} />
+                        )}
+                        {isModerator && (
+                          <PlacePopoverContainer
+                            scene={this.props.scene}
+                            hubChannel={this.props.hubChannel}
+                            mediaSearchStore={this.props.mediaSearchStore}
+                            showNonHistoriedDialog={this.showNonHistoriedDialog}
+                          />
+                        )}
                         {this.props.hubChannel.can("spawn_and_move_media") && (
                           <ToolbarButton
                             icon={<AudioIcon />}
