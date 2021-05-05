@@ -58,7 +58,7 @@ PlayerMenuItems.propTypes = {
   deselectObject: PropTypes.func.isRequired
 };
 
-function ObjectMenuItems({ hubChannel, scene, activeObject, deselectObject, onGoToObject }) {
+function ObjectMenuItems({ hubChannel, isAdmin, scene, activeObject, deselectObject, onGoToObject }) {
   const { canPin, isPinned, togglePinned } = usePinObject(hubChannel, scene, activeObject);
   const { canRemoveObject, removeObject } = useRemoveObject(hubChannel, scene, activeObject);
   const { canGoTo, goToSelectedObject } = useGoToSelectedObject(scene, activeObject);
@@ -66,16 +66,18 @@ function ObjectMenuItems({ hubChannel, scene, activeObject, deselectObject, onGo
 
   return (
     <>
-      <ObjectMenuButton disabled={!canPin} onClick={togglePinned}>
-        <PinIcon />
-        <span>
-          {isPinned ? (
-            <FormattedMessage id="object-menu.unpin-object-button" defaultMessage="Unpin" />
-          ) : (
-            <FormattedMessage id="object-menu.pin-object-button" defaultMessage="Pin" />
-          )}
-        </span>
-      </ObjectMenuButton>
+      {isAdmin() && (
+        <ObjectMenuButton disabled={!canPin} onClick={togglePinned}>
+          <PinIcon />
+          <span>
+            {isPinned ? (
+              <FormattedMessage id="object-menu.unpin-object-button" defaultMessage="Unpin" />
+            ) : (
+              <FormattedMessage id="object-menu.pin-object-button" defaultMessage="Pin" />
+            )}
+          </span>
+        </ObjectMenuButton>
+      )}
       {url && (
         <ObjectMenuButton as="a" href={url} target="_blank" rel="noopener noreferrer">
           <LinkIcon />
@@ -97,31 +99,34 @@ function ObjectMenuItems({ hubChannel, scene, activeObject, deselectObject, onGo
           <FormattedMessage id="object-menu.view-object-button" defaultMessage="View" />
         </span>
       </ObjectMenuButton>
-      <ObjectMenuButton
-        disabled={!canRemoveObject}
-        onClick={() => {
-          removeObject();
-          deselectObject();
-        }}
-      >
-        <DeleteIcon />
-        <span>
-          <FormattedMessage id="object-menu.delete-object-button" defaultMessage="Delete" />
-        </span>
-      </ObjectMenuButton>
+      {isAdmin() && (
+        <ObjectMenuButton
+          disabled={!canRemoveObject}
+          onClick={() => {
+            removeObject();
+            deselectObject();
+          }}
+        >
+          <DeleteIcon />
+          <span>
+            <FormattedMessage id="object-menu.delete-object-button" defaultMessage="Delete" />
+          </span>
+        </ObjectMenuButton>
+      )}
     </>
   );
 }
 
 ObjectMenuItems.propTypes = {
   hubChannel: PropTypes.object.isRequired,
+  isAdmin: PropTypes.func.isRequired,
   scene: PropTypes.object.isRequired,
   activeObject: PropTypes.object.isRequired,
   deselectObject: PropTypes.func.isRequired,
   onGoToObject: PropTypes.func.isRequired
 };
 
-export function ObjectMenuContainer({ hubChannel, scene, onOpenProfile, onGoToObject }) {
+export function ObjectMenuContainer({ hubChannel, isAdmin, scene, onOpenProfile, onGoToObject }) {
   const {
     objects,
     activeObject,
@@ -142,6 +147,7 @@ export function ObjectMenuContainer({ hubChannel, scene, onOpenProfile, onGoToOb
     menuItems = (
       <ObjectMenuItems
         hubChannel={hubChannel}
+        isAdmin={isAdmin}
         scene={scene}
         activeObject={activeObject}
         deselectObject={deselectObject}
@@ -169,6 +175,7 @@ export function ObjectMenuContainer({ hubChannel, scene, onOpenProfile, onGoToOb
 
 ObjectMenuContainer.propTypes = {
   hubChannel: PropTypes.object.isRequired,
+  isAdmin: PropTypes.func.isRequired,
   scene: PropTypes.object.isRequired,
   onOpenProfile: PropTypes.func.isRequired,
   onGoToObject: PropTypes.func.isRequired

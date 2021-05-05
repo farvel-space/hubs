@@ -1359,6 +1359,7 @@ class UIRoot extends Component {
                     {this.props.activeObject && (
                       <ObjectMenuContainer
                         hubChannel={this.props.hubChannel}
+                        isAdmin={configs.isAdmin}
                         scene={this.props.scene}
                         onOpenProfile={() => this.setSidebar("profile")}
                         onGoToObject={() => {
