@@ -2,7 +2,8 @@
 import configs from "../utils/configs";
 import GIFWorker from "../workers/gifparsing.worker.js";
 import errorImageSrc from "!!url-loader!../assets/images/media-error.png";
-import audioIcon from "../assets/images/audio.png";
+// import audioIcon from "../assets/images/audio.png";
+import farvelAudioIcon from "../assets/images/farvelAudioIcon.png";
 import { paths } from "../systems/userinput/paths";
 import HLS from "hls.js";
 import { MediaPlayer } from "dashjs";
@@ -38,7 +39,8 @@ const TYPE_IMG_PNG = { type: "image/png" };
 const parseGIF = promisifyWorker(new GIFWorker());
 
 const isIOS = AFRAME.utils.device.isIOS();
-const audioIconTexture = new THREE.TextureLoader().load(audioIcon);
+// const audioIconTexture = new THREE.TextureLoader().load(audioIcon);
+const audioIconTexture = new THREE.TextureLoader().load(farvelAudioIcon);
 
 export const VOLUME_LABELS = [];
 for (let i = 0; i <= 20; i++) {
@@ -661,7 +663,6 @@ AFRAME.registerComponent("media-video", {
 
     if (!this.mesh || projection !== oldData.projection) {
       const material = new THREE.MeshBasicMaterial();
-
       let geometry;
 
       if (projection === "360-equirectangular") {
@@ -678,6 +679,8 @@ AFRAME.registerComponent("media-video", {
     }
 
     if (!texture.isVideoTexture) {
+      // ########################################################################################
+      this.mesh.material.transparent = true;
       this.mesh.material.map = audioIconTexture;
     } else {
       this.mesh.material.map = texture;
