@@ -36,11 +36,11 @@ function InvitePopoverContent({ url, shortUrl, code, embed, inviteRequired, fetc
               </>
             }
           />
-          <CopyableTextInputField
+          {/* <CopyableTextInputField
             label={<FormattedMessage id="invite-popover.embed-code" defaultMessage="Embed Code" />}
             value={embed}
             buttonPreset="accent5"
-          />
+          /> */}
         </>
       )}
     </Column>
