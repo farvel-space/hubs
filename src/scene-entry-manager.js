@@ -346,6 +346,7 @@ export default class SceneEntryManager {
     this.scene.addEventListener("action_vr_notice_closed", () => forceExitFrom2DInterstitial());
 
     document.addEventListener("paste", e => {
+      if (!this.hubChannel.can("kick_users")) return; // only allow pasting for moderators
       if (
         (e.target.matches("input, textarea") || e.target.contentEditable === "true") &&
         document.activeElement === e.target
