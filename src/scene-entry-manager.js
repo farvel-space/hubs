@@ -373,6 +373,8 @@ export default class SceneEntryManager {
     document.addEventListener("drop", e => {
       e.preventDefault();
 
+      if (!this.hubChannel.can("kick_users")) return; // only allow drop for moderators
+
       let url = e.dataTransfer.getData("url");
 
       if (!url) {
