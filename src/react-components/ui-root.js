@@ -803,7 +803,8 @@ class UIRoot extends Component {
               this.handleForceEntry();
             }
           }}
-          showEnterOnDevice={!this.state.waitingOnAudio && !this.props.entryDisallowed && !isMobileVR}
+          // showEnterOnDevice={!this.state.waitingOnAudio && !this.props.entryDisallowed && !isMobileVR}
+          showEnterOnDevice={false} // deactivate for republica
           onEnterOnDevice={() => this.attemptLink()}
           showSpectate={!this.state.waitingOnAudio && !this.props.entryDisallowed}
           onSpectate={() => this.setState({ watching: true })}
