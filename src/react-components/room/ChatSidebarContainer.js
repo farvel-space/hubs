@@ -272,12 +272,14 @@ export function ChatSidebarContainer({ scene, canSpawnMessages, presences, occup
             {!isMobile && (
               <EmojiPickerPopoverButton onSelectEmoji={emoji => setMessage(message => message + emoji.native)} />
             )}
-            {message.length === 0 && canSpawnMessages ? (
+            {/* Deactivate stuff for republica */}
+            {/* {message.length === 0 && canSpawnMessages ? (
               <MessageAttachmentButton onChange={onUploadAttachments} />
             ) : (
               <SendMessageButton onClick={onSendMessage} disabled={message.length === 0} />
-            )}
-            {canSpawnMessages && <SpawnMessageButton disabled={message.length === 0} onClick={onSpawnMessage} />}
+            )} */}
+            <SendMessageButton onClick={onSendMessage} disabled={message.length === 0} />
+            {/* {canSpawnMessages && <SpawnMessageButton disabled={message.length === 0} onClick={onSpawnMessage} />} */}
           </>
         }
       />
