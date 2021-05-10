@@ -37,6 +37,7 @@ export default class SceneEntryManager {
     this._entered = false;
     this.performConditionalSignIn = () => {};
     this.history = history;
+    this._disableSignInOnPinAction = true; // Disable for republica
   }
 
   init = () => {
