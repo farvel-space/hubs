@@ -68,12 +68,12 @@ export function AudioRecorderModal({ scene, store, onClose }) {
       <Column as="form" padding center onSubmit={handleSubmit(onSubmit)}>
         <p>{intl.formatMessage(audioRecordingMessages.description)}</p>
         <AudioRecorderPlayer isRecording={isRecording} audioSrc={audioSrc} />
-        <Button preset={isRecording ? "cancel" : "basic"} onClick={record} rel="noopener noreferrer">
+        <Button preset={isRecording ? "cancel" : "primary"} onClick={record} rel="noopener noreferrer">
           {intl.formatMessage(
             isRecording ? audioRecordingMessages.stoprecording : audioRecordingMessages.startrecording
           )}
         </Button>
-        <Button type="submit" preset="accept">
+        <Button type="submit" preset="accept" disabled={!audioFile || isRecording}>
           {intl.formatMessage(audioRecordingMessages.submit)}
         </Button>
       </Column>
