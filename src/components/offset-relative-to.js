@@ -60,6 +60,10 @@ AFRAME.registerComponent("offset-relative-to", {
         target.getWorldQuaternion(obj.quaternion);
       }
 
+      // just for republica
+      obj.rotation.x = 0;
+      obj.rotation.z = 0;
+
       // See doc/image_orientations.gif
       switch (this.data.orientation) {
         case 8:
