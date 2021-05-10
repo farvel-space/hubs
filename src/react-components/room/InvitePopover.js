@@ -23,7 +23,8 @@ function InvitePopoverContent({ url, shortUrl, code, embed, inviteRequired, fetc
             value={url}
             buttonPreset="accent3"
           />
-          <CopyableTextInputField
+          {/* Both disabled for republica */}
+          {/* <CopyableTextInputField
             label={<FormattedMessage id="invite-popover.room-code" defaultMessage="Room Code" />}
             value={code}
             buttonPreset="accent4"
@@ -35,7 +36,7 @@ function InvitePopoverContent({ url, shortUrl, code, embed, inviteRequired, fetc
                 </a>
               </>
             }
-          />
+          /> */}
           {/* <CopyableTextInputField
             label={<FormattedMessage id="invite-popover.embed-code" defaultMessage="Embed Code" />}
             value={embed}
