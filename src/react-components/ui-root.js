@@ -1185,7 +1185,8 @@ class UIRoot extends Component {
               icon: LeaveIcon,
               onClick: () => {
                 this.showNonHistoriedDialog(LeaveRoomModal, {
-                  destinationUrl: "/",
+                  //destinationUrl: "/",
+                  destinationUrl: "https://farvel.space/republica",
                   reason: LeaveReason.leaveRoom
                 });
               }
@@ -1590,7 +1591,8 @@ class UIRoot extends Component {
                         preset="cancel"
                         onClick={() => {
                           this.showNonHistoriedDialog(LeaveRoomModal, {
-                            destinationUrl: "/",
+                            // destinationUrl: "/",
+                            destinationUrl: "https://farvel.space/republica", // for republica
                             reason: LeaveReason.leaveRoom
                           });
                         }}
