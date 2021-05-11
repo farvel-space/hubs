@@ -31,7 +31,7 @@ const audioRecordingMessages = defineMessages({
 
 export function AudioRecorderModal({ scene, store, onClose }) {
   const intl = useIntl();
-  const [record, isRecording, audioSrc, audioFile] = useAudioRecorder();
+  const [startRecording, stopRecording, isRecording, audioSrc, audioFile, timerDisplay] = useAudioRecorder();
   const { handleSubmit } = useForm();
 
   const audioSettings = (mute, gMediaV, gVoiceV) => {
@@ -68,7 +68,12 @@ export function AudioRecorderModal({ scene, store, onClose }) {
       <Column as="form" padding center onSubmit={handleSubmit(onSubmit)}>
         <p>{intl.formatMessage(audioRecordingMessages.description)}</p>
         <AudioRecorderPlayer isRecording={isRecording} audioSrc={audioSrc} />
-        <Button preset={isRecording ? "cancel" : "primary"} onClick={record} rel="noopener noreferrer">
+        <p>{timerDisplay}</p>
+        <Button
+          preset={isRecording ? "cancel" : "primary"}
+          onClick={isRecording ? stopRecording : startRecording}
+          rel="noopener noreferrer"
+        >
           {intl.formatMessage(
             isRecording ? audioRecordingMessages.stoprecording : audioRecordingMessages.startrecording
           )}
