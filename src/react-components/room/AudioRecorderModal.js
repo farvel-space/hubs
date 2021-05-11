@@ -8,6 +8,7 @@ import { Column } from "../layout/Column";
 import { useAudioRecorder } from "./useAudioRecorder";
 import { AudioRecorderPlayer } from "./AudioRecorderPlayer";
 import { useForm } from "react-hook-form";
+import configs from "../../utils/configs";
 
 const audioRecordingMessages = defineMessages({
   submit: {
@@ -60,6 +61,28 @@ export function AudioRecorderModal({ scene, store, onClose }) {
     };
   }, []);
 
+
+  const termsUrl = configs.link("terms_of_use", "https://github.com/mozilla/hubs/blob/master/TERMS.md");
+  const privacyUrl = configs.link("privacy_notice", "https://github.com/mozilla/hubs/blob/master/PRIVACY.md");
+
+  const toslink = useCallback(
+    chunks => (
+      <a rel="noopener noreferrer" target="_blank" href={termsUrl}>
+        {chunks}
+      </a>
+    ),
+    [termsUrl]
+  );
+
+  const privacylink = useCallback(
+    chunks => (
+      <a rel="noopener noreferrer" target="_blank" href={privacyUrl}>
+        {chunks}
+      </a>
+    ),
+    [privacyUrl]
+  );
+
   return (
     <Modal
       title={<FormattedMessage id="audio-recording-modal.title" defaultMessage="Submit Voice Message" />}
@@ -78,6 +101,18 @@ export function AudioRecorderModal({ scene, store, onClose }) {
             isRecording ? audioRecordingMessages.stoprecording : audioRecordingMessages.startrecording
           )}
         </Button>
+        <p>
+          <small>
+          <FormattedMessage
+              id="audio-recording-modal.tos-and-privacy"
+              defaultMessage="By submitting, you agree to the <toslink>terms of use</toslink> and <privacylink>privacy notice</privacylink>. All voice messages will only be stored for the purpose of this event and be deleted at the lastest on 15th of June 2021."
+              values={{
+                toslink,
+                privacylink
+              }}
+            />
+          </small>
+        </p>
         <Button type="submit" preset="accept" disabled={!audioFile || isRecording}>
           {intl.formatMessage(audioRecordingMessages.submit)}
         </Button>
