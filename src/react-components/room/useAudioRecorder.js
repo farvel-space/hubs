@@ -20,10 +20,10 @@ export function useAudioRecorder() {
     });
   }, []);
 
-  const record = useCallback(
+  const startRecording = useCallback(
     async () => {
-      const recorder = recorderRef.current;
       if (!isRecording) {
+        const recorder = recorderRef.current;
         try {
           await recorder.initAudio();
           await recorder.initWorker();
@@ -32,7 +32,15 @@ export function useAudioRecorder() {
         } catch (e) {
           console.error(e);
         }
-      } else {
+      }
+    },
+    [isRecording, setIsRecording, recorderRef]
+  );
+
+  const stopRecording = useCallback(
+    async () => {
+      if (isRecording) {
+        const recorder = recorderRef.current;
         const blob = await recorder.stopRecording();
         setAudioSrc(URL.createObjectURL(blob));
         setAudioFile(new File([blob], "audioMessage.mp3", { type: "audio/mpeg" }));
@@ -41,5 +49,5 @@ export function useAudioRecorder() {
     },
     [isRecording, setIsRecording, recorderRef]
   );
-  return [record, isRecording, audioSrc, audioFile];
+  return [startRecording, stopRecording, isRecording, audioSrc, audioFile];
 }
