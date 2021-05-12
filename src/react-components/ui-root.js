@@ -1512,7 +1512,7 @@ class UIRoot extends Component {
                         <ToolbarButton
                           icon={<EnterIcon />}
                           label={<FormattedMessage id="toolbar.join-room-button" defaultMessage="Join Room" />}
-                          preset="accept"
+                          preset="accent2"
                           onClick={() => this.setState({ watching: false })}
                         />
                         {/* disabling for republica */}
@@ -1549,7 +1549,7 @@ class UIRoot extends Component {
                           <ToolbarButton
                             icon={<AudioIcon />}
                             label={<FormattedMessage id="toolbar.voice-recording" defaultMessage="Record" />}
-                            preset="cancel"
+                            preset="accent2"
                             onClick={() => {
                               this.showNonHistoriedDialog(AudioRecorderModal, {
                                 scene: this.props.scene,
