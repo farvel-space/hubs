@@ -56,8 +56,15 @@ export function AudioRecorderModal({ scene, store, onClose }) {
     const tmpVoiceVolume = store.state.preferences.globalVoiceVolume;
     audioSettings(true, 0.0, 0.0);
 
+    // save used avatar and set it to "unavailable avatar"
+    const tmpUsedAvatar = store.state.profile.avatarId;
+    store.update({ profile: { avatarId: "77CjTjx" } }); // TODO: richtige AvatarID für Abwesenheit
+    scene.emit("avatar_updated");
+
     return () => {
       audioSettings(tmpMuted, tmpMediaVolume, tmpVoiceVolume);
+      store.update({ profile: { avatarId: tmpUsedAvatar } });
+      scene.emit("avatar_updated");
     };
   }, []);
 
