@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useIntl, defineMessages, FormattedMessage } from "react-intl";
 import PropTypes from "prop-types";
 import { Modal } from "../modal/Modal";
@@ -60,7 +60,6 @@ export function AudioRecorderModal({ scene, store, onClose }) {
       audioSettings(tmpMuted, tmpMediaVolume, tmpVoiceVolume);
     };
   }, []);
-
 
   const termsUrl = configs.link("terms_of_use", "https://github.com/mozilla/hubs/blob/master/TERMS.md");
   const privacyUrl = configs.link("privacy_notice", "https://github.com/mozilla/hubs/blob/master/PRIVACY.md");
