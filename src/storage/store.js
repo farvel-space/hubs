@@ -31,7 +31,9 @@ export const defaultMaterialQualitySetting = (function() {
     return qsDefault;
   }
 
-  return "high";
+  // republica change.
+  return "low";
+  // return "high";
 })();
 
 // Durable (via local-storage) schema-enforced state that is meant to be consumed via forward data flow.
