@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useIntl, defineMessages, FormattedMessage } from "react-intl";
 import PropTypes from "prop-types";
 import { Modal } from "../modal/Modal";
@@ -34,6 +34,8 @@ export function AudioRecorderModal({ scene, store, onClose }) {
   const intl = useIntl();
   const [startRecording, stopRecording, isRecording, audioSrc, audioFile, timerDisplay] = useAudioRecorder();
   const { handleSubmit } = useForm();
+  const isRecordingRef = useRef(isRecording);
+  isRecordingRef.current = isRecording;
 
   const audioSettings = (mute, gMediaV, gVoiceV) => {
     if (mute != scene.is("muted")) scene.emit("action_mute");
@@ -96,8 +98,7 @@ export function AudioRecorderModal({ scene, store, onClose }) {
     >
       <Column as="form" padding center onSubmit={handleSubmit(onSubmit)}>
         <p>{intl.formatMessage(audioRecordingMessages.description)}</p>
-        <AudioRecorderPlayer isRecording={isRecording} audioSrc={audioSrc} />
-        <p>{timerDisplay}</p>
+        <AudioRecorderPlayer isRecording={isRecording} audioSrc={audioSrc} timerDisplay={timerDisplay} />
         <Button
           preset={isRecording ? "cancel" : "primary"}
           onClick={isRecording ? stopRecording : startRecording}
@@ -109,9 +110,9 @@ export function AudioRecorderModal({ scene, store, onClose }) {
         </Button>
         <p>
           <small>
-          <FormattedMessage
+            <FormattedMessage
               id="audio-recording-modal.tos-and-privacy"
-              defaultMessage="By submitting, you agree to the <toslink>terms of use</toslink> and <privacylink>privacy notice</privacylink>. All voice messages will only be stored for the purpose of this event and be deleted at the lastest on 15th of June 2021."
+              defaultMessage="By submitting, you agree to the <toslink>terms of use</toslink> and <privacylink>privacy notice</privacylink>. All voice messages will be deleted no later than June 30, 2021."
               values={{
                 toslink,
                 privacylink

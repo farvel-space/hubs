@@ -20,7 +20,7 @@ const audioRecordingMessages = defineMessages({
 });
 
 export const AudioRecorderPlayer = memo(
-  forwardRef(({ isRecording, audioSrc }, ref) => {
+  forwardRef(({ isRecording, audioSrc, timerDisplay }, ref) => {
     const intl = useIntl();
 
     if (isRecording || (!isRecording && audioSrc == "")) {
@@ -30,6 +30,7 @@ export const AudioRecorderPlayer = memo(
             {isRecording
               ? intl.formatMessage(audioRecordingMessages.placeholderRecording)
               : intl.formatMessage(audioRecordingMessages.placeholderMessage)}
+            <span>{isRecording ? ", " + timerDisplay : ""}</span>
           </p>
         </div>
       );
@@ -45,5 +46,6 @@ export const AudioRecorderPlayer = memo(
 
 AudioRecorderPlayer.propTypes = {
   isRecording: PropTypes.bool,
-  audioSrc: PropTypes.string
+  audioSrc: PropTypes.string,
+  timerDisplay: PropTypes.string
 };
