@@ -503,7 +503,7 @@ class MediaBrowserContainer extends Component {
         entries.length > 0 ||
         !showEmptyStringOnNoResult ? (
           <>
-            {urlSource === "avatars" && (
+            {urlSource === "avatars" && this.props.hubChannel.can("kick_users") && ( // for republica
               <CreateTile
                 type="avatar"
                 onClick={this.onCreateAvatar}
