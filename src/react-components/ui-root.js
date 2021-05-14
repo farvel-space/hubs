@@ -1155,19 +1155,20 @@ class UIRoot extends Component {
               icon: InviteIcon,
               onClick: () => this.props.scene.emit("action_invite")
             },
-          // this.isFavorited()
-          //   ? {
-          //       id: "unfavorite-room",
-          //       label: <FormattedMessage id="more-menu.unfavorite-room" defaultMessage="Unfavorite Room" />,
-          //       icon: StarIcon,
-          //       onClick: () => this.toggleFavorited()
-          //     }
-          //   : {
-          //       id: "favorite-room",
-          //       label: <FormattedMessage id="more-menu.favorite-room" defaultMessage="Favorite Room" />,
-          //       icon: StarOutlineIcon,
-          //       onClick: () => this.toggleFavorited()
-          //     },
+          isModerator && // for republica
+            (this.isFavorited()
+              ? {
+                  id: "unfavorite-room",
+                  label: <FormattedMessage id="more-menu.unfavorite-room" defaultMessage="Unfavorite Room" />,
+                  icon: StarIcon,
+                  onClick: () => this.toggleFavorited()
+                }
+              : {
+                  id: "favorite-room",
+                  label: <FormattedMessage id="more-menu.favorite-room" defaultMessage="Favorite Room" />,
+                  icon: StarOutlineIcon,
+                  onClick: () => this.toggleFavorited()
+                }),
           isModerator &&
             entered && {
               id: "streamer-mode",
