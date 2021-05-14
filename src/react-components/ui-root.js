@@ -75,6 +75,7 @@ import { ObjectsSidebarContainer } from "./room/ObjectsSidebarContainer";
 import { ObjectMenuContainer } from "./room/ObjectMenuContainer";
 import { useCssBreakpoints } from "react-use-css-breakpoints";
 import { PlacePopoverContainer } from "./room/PlacePopoverContainer";
+import { FollowUsPopoverContainer } from "./room/FollowUsPopoverContainer";
 import { SharePopoverContainer } from "./room/SharePopoverContainer";
 import { VoiceButtonContainer } from "./room/VoiceButtonContainer";
 import { ReactionPopoverContainer } from "./room/ReactionPopoverContainer";
@@ -1494,11 +1495,21 @@ class UIRoot extends Component {
                 }
                 modal={this.state.dialog}
                 toolbarLeft={
-                  <InvitePopoverContainer
-                    hub={this.props.hub}
-                    hubChannel={this.props.hubChannel}
-                    scene={this.props.scene}
-                  />
+                  <>
+                    <InvitePopoverContainer
+                      hub={this.props.hub}
+                      hubChannel={this.props.hubChannel}
+                      scene={this.props.scene}
+                    />
+                    {/* Changes for Republica */}
+                    <FollowUsPopoverContainer />
+                    <ToolbarButton
+                      icon={<InviteIcon />}
+                      preset="basic"
+                      label={<FormattedMessage id="toolbar.feedback" defaultMessage="Feedback" />}
+                      onClick={() => (window.location.href = "mailto:hi@farvel.space")}
+                    />
+                  </>
                 }
                 toolbarCenter={
                   <>
@@ -1548,6 +1559,20 @@ class UIRoot extends Component {
                           label={<FormattedMessage id="toolbar.enter-vr-button" defaultMessage="Enter VR" />}
                           onClick={() => exit2DInterstitialAndEnterVR(true)}
                         />
+                      )}
+                    {/* Follow us + Feedback Icon for Republica (mobile) */}
+                    {entered &&
+                      isMobile && (
+                        <>
+                          <FollowUsPopoverContainer />
+                          <ToolbarButton
+                            className={styleUtils.hideLg}
+                            icon={<InviteIcon />}
+                            preset="basic"
+                            label={<FormattedMessage id="toolbar.feedback" defaultMessage="Feedback" />}
+                            onClick={() => (window.location.href = "mailto:hi@farvel.space")}
+                          />
+                        </>
                       )}
                   </>
                 }
