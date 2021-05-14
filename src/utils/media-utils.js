@@ -231,6 +231,13 @@ export const addMedia = (
     entity.addEventListener("media_resolved", ({ detail }) => {
       const objectType = objectTypeForOriginAndContentType(contentOrigin, detail.contentType, detail.src);
       scene.emit("object_spawned", { objectType });
+
+      // Pause audio when pasting
+      if (objectType == 12) {
+        setTimeout(() => {
+          entity.setAttribute("video-pause-state", { paused: true });
+        }, 100);
+      }
     });
   }
 
