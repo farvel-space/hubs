@@ -2,8 +2,9 @@ import { waitForDOMContentLoaded } from "./async-utils";
 import configs from "./configs";
 
 // Node these should be synchronized with the top of shared.scss
-const DEFAULT_ACTION_COLOR = "#FF3464";
-const DEFAULT_ACTION_COLOR_LIGHT = "#FF74A4";
+const DEFAULT_ACTION_COLOR = "#d5ad50"; // changing for republica
+const DEFAULT_ACTION_COLOR_LIGHT = "#e1c584"; // changing for republica
+
 
 const DEFAULT_COLORS = {
   "action-color": DEFAULT_ACTION_COLOR,
@@ -54,14 +55,14 @@ function activateTheme() {
       .querySelector("#rounded-text-action-button")
       .setAttribute(
         "text-button",
-        `textHoverColor: #fff; textColor: #fff; backgroundColor: ${actionColor}; backgroundHoverColor: ${actionHoverColor}`
+        `textHoverColor: #000; textColor: #000; backgroundColor: ${actionColor}; backgroundHoverColor: ${actionHoverColor}`
       );
 
     document
       .querySelector("#rounded-action-button")
       .setAttribute(
         "text-button",
-        `textHoverColor: #fff; textColor: #fff; backgroundColor: ${actionColor}; backgroundHoverColor: ${actionHoverColor}`
+        `textHoverColor: #000; textColor: #000; backgroundColor: ${actionColor}; backgroundHoverColor: ${actionHoverColor}`
       );
   }
 }
