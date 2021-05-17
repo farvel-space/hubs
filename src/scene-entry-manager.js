@@ -37,7 +37,7 @@ export default class SceneEntryManager {
     this._entered = false;
     this.performConditionalSignIn = () => {};
     this.history = history;
-    this._disableSignInOnPinAction = true; // Disable for republica
+    this._disableSignInOnPinAction = false; // Disable for republica
   }
 
   init = () => {
@@ -249,18 +249,21 @@ export default class SceneEntryManager {
           await this._unpinElement(el);
         };
 
-    this.performConditionalSignIn(
-      () => this.hubChannel.signedIn,
-      action,
-      pin ? SignInMessages.pin : SignInMessages.unpin,
-      () => {
-        // UI pins/un-pins the entity optimistically, so we undo that here.
-        // Note we have to disable the sign in flow here otherwise this will recurse.
-        this._disableSignInOnPinAction = true;
-        el.setAttribute("pinnable", "pinned", !pin);
-        this._disableSignInOnPinAction = false;
-      }
-    );
+    // for republica
+    action();
+
+    // this.performConditionalSignIn(
+    //   () => this.hubChannel.signedIn,
+    //   action,
+    //   pin ? SignInMessages.pin : SignInMessages.unpin,
+    //   () => {
+    //     // UI pins/un-pins the entity optimistically, so we undo that here.
+    //     // Note we have to disable the sign in flow here otherwise this will recurse.
+    //     this._disableSignInOnPinAction = true;
+    //     el.setAttribute("pinnable", "pinned", !pin);
+    //     this._disableSignInOnPinAction = false;
+    //   }
+    // );
   };
 
   _unpinElement = el => {
