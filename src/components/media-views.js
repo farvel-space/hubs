@@ -854,6 +854,15 @@ AFRAME.registerComponent("media-video", {
         videoEl.src = url;
         videoEl.onerror = failLoad;
 
+        // republica: dont use extra audio element
+        if (contentType.startsWith("audio/")) {
+          delete this.data.audioSrc;
+
+          // this does not work here
+          // this.data.distanceModel = "linear";
+          // this.data.maxDistance = 15;
+        }
+
         if (this.data.audioSrc) {
           // If there's an audio src, create an audio element to play it that we keep in sync
           // with the video while this component is active.
