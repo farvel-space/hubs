@@ -246,11 +246,16 @@ export default class SceneEntryManager {
     const action = pin
       ? () => this._pinElement(el)
       : async () => {
-          await this._unpinElement(el);
+          // for republica
+          if (this.hubChannel.can("kick_users")) {
+            await this._unpinElement(el);
+          }
         };
 
     // for republica
-    action();
+    if (this.hubChannel.signedIn) {
+      action();
+    }
 
     // this.performConditionalSignIn(
     //   () => this.hubChannel.signedIn,
