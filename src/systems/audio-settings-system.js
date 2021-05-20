@@ -29,10 +29,10 @@ export class AudioSettingsSystem {
       avatarRefDistance: 1,
       avatarMaxDistance: 10000,
       mediaVolume: 0.5,
-      mediaDistanceModel: "inverse",
+      mediaDistanceModel: "linear",
       mediaRolloffFactor: 1,
       mediaRefDistance: 1,
-      mediaMaxDistance: 10000,
+      mediaMaxDistance: 15,
       mediaConeInnerAngle: 360,
       mediaConeOuterAngle: 0,
       mediaConeOuterGain: 0
