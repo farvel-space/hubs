@@ -285,13 +285,24 @@ export default class SceneEntryManager {
     const offset = { x: 0, y: 0, z: -1.5 };
     const spawnMediaInfrontOfPlayer = (src, contentOrigin) => {
       if (!this.hubChannel.can("spawn_and_move_media")) return;
+
+      // republica
+      const mediaOptions = {
+        "videoPaused": true,
+        "loop": false,
+        "distanceModel": "linear",
+        "maxDistance": 15
+      };
+
       const { entity, orientation } = addMedia(
         src,
         "#interactable-media",
         contentOrigin,
         null,
         !(src instanceof MediaStream),
-        true
+        true,
+        null,
+        mediaOptions
       );
       orientation.then(or => {
         entity.setAttribute("offset-relative-to", {
