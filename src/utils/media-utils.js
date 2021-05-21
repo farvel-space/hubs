@@ -233,11 +233,11 @@ export const addMedia = (
       scene.emit("object_spawned", { objectType });
 
       // Pause audio when pasting
-      // if (objectType == 12) {
-      //   setTimeout(() => {
-      //     entity.setAttribute("video-pause-state", { paused: true });
-      //   }, 100);
-      // }
+      if (objectType == 12) {
+        setTimeout(() => {
+          entity.setAttribute("video-pause-state", { paused: true });
+        }, 100);
+      }
     });
   }
 

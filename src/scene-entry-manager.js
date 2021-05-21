@@ -293,8 +293,8 @@ export default class SceneEntryManager {
 
       // republica
       const mediaOptions = {
-        "videoPaused": true,
-        "loop": false,
+        //"videoPaused": true,
+        //"loop": false,
         "distanceModel": "linear",
         "maxDistance": 15
       };
