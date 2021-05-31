@@ -29,7 +29,8 @@ const audioRecordingMessages = defineMessages({
   }
 });
 
-export function AudioRecorderModal({ scene, store, onClose }) {
+export function AudioRecorderModal({ scene, onClose }) {
+  const store = window.APP.store;
   const intl = useIntl();
   const [startRecording, stopRecording, isRecording, audioSrc, audioFile, timerDisplay] = useAudioRecorder();
   const { handleSubmit } = useForm();
@@ -88,6 +89,5 @@ export function AudioRecorderModal({ scene, store, onClose }) {
 
 AudioRecorderModal.propTypes = {
   onClose: PropTypes.func,
-  scene: PropTypes.object.isRequired,
-  store: PropTypes.object.isRequired
+  scene: PropTypes.object.isRequired
 };

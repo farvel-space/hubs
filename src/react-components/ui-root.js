@@ -69,7 +69,6 @@ import { ReactComponent as VRIcon } from "./icons/VR.svg";
 import { ReactComponent as LeaveIcon } from "./icons/Leave.svg";
 import { ReactComponent as EnterIcon } from "./icons/Enter.svg";
 import { ReactComponent as InviteIcon } from "./icons/Invite.svg";
-import { ReactComponent as AudioIcon } from "./icons/Audio.svg";
 import { PeopleSidebarContainer, userFromPresence } from "./room/PeopleSidebarContainer";
 import { ObjectListProvider } from "./room/useObjectList";
 import { ObjectsSidebarContainer } from "./room/ObjectsSidebarContainer";
@@ -83,7 +82,6 @@ import { SafariMicModal } from "./room/SafariMicModal";
 import { RoomSignInModalContainer } from "./auth/RoomSignInModalContainer";
 import { SignInStep } from "./auth/SignInModal";
 import { LeaveReason, LeaveRoomModal } from "./room/LeaveRoomModal";
-import { AudioRecorderModal } from "./room/AudioRecorderModal";
 import { RoomSidebar } from "./room/RoomSidebar";
 import { RoomSettingsSidebarContainer } from "./room/RoomSettingsSidebarContainer";
 import { AutoExitWarningModal, AutoExitReason } from "./room/AutoExitWarningModal";
@@ -1537,19 +1535,6 @@ class UIRoot extends Component {
                           mediaSearchStore={this.props.mediaSearchStore}
                           showNonHistoriedDialog={this.showNonHistoriedDialog}
                         />
-                        {this.props.hubChannel.can("spawn_and_move_media") && (
-                          <ToolbarButton
-                            icon={<AudioIcon />}
-                            label={<FormattedMessage id="toolbar.voice-recording" defaultMessage="Record" />}
-                            preset="cancel"
-                            onClick={() => {
-                              this.showNonHistoriedDialog(AudioRecorderModal, {
-                                scene: this.props.scene,
-                                store: this.props.store
-                              });
-                            }}
-                          />
-                        )}
                         {this.props.hubChannel.can("spawn_emoji") && <ReactionPopoverContainer />}
                       </>
                     )}
