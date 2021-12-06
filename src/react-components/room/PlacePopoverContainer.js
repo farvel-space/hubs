@@ -9,8 +9,10 @@ import { ReactComponent as ObjectIcon } from "../icons/Object.svg";
 import { ReactComponent as AvatarIcon } from "../icons/Avatar.svg";
 import { ReactComponent as SceneIcon } from "../icons/Scene.svg";
 import { ReactComponent as UploadIcon } from "../icons/Upload.svg";
+import { ReactComponent as AudioIcon } from "../icons/Audio.svg";
 import { PlacePopoverButton } from "./PlacePopover";
 import { ObjectUrlModalContainer } from "./ObjectUrlModalContainer";
+import { AudioRecorderModal } from "./AudioRecorderModal";
 import configs from "../../utils/configs";
 import { FormattedMessage } from "react-intl";
 
@@ -83,6 +85,16 @@ export function PlacePopoverContainer({ scene, mediaSearchStore, showNonHistorie
               color: "accent3",
               label: <FormattedMessage id="place-popover.item-type.upload" defaultMessage="Upload" />,
               onSelect: () => showNonHistoriedDialog(ObjectUrlModalContainer, { scene })
+            },
+            {
+              id: "audiorecording",
+              icon: AudioIcon,
+              color: "accent3",
+              label: <FormattedMessage id="place-popover.item-type.audiorecording" defaultMessage="Record" />,
+              onSelect: () =>
+                showNonHistoriedDialog(AudioRecorderModal, {
+                  scene: scene
+                })
             }
           ];
         }
