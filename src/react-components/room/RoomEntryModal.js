@@ -57,7 +57,7 @@ export function RoomEntryModal({
             <Button preset="accent5" onClick={onEnterOnDevice}>
               <VRIcon />
               <span>
-                <FormattedMessage id="room-entry-modal.enter-on-device-button" defaultMessage="Enter On Device" />
+                <FormattedMessage id="room-entry-modal.enter-on-device-button" defaultMessage="Enter in VR" />
               </span>
             </Button>
           )}
