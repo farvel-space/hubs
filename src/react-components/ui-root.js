@@ -1581,20 +1581,21 @@ class UIRoot extends Component {
                           onClick={() => exit2DInterstitialAndEnterVR(true)}
                         />
                       )}
-                    {/* Follow us + Feedback Icon for Republica (mobile) */}
+                    {/* Follow us + Feedback Icon for Republica (mobile) -> now integrated into more menu?!
                     {entered &&
                       isMobile && (
                         <>
                           <FollowUsPopoverContainer />
                           <ToolbarButton
                             className={styleUtils.hideLg}
-                            icon={<InviteIcon />}
+                            icon={<MailIcon />}
                             preset="basic"
                             label={<FormattedMessage id="toolbar.feedback" defaultMessage="Feedback" />}
                             onClick={() => (window.location.href = "mailto:hi@farvel.space")}
                           />
                         </>
                       )}
+                      */}
                   </>
                 }
                 toolbarRight={
