@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import PropTypes from "prop-types";
 import { ReactComponent as FacebookIcon } from "../icons/SocialiconsFacebook.svg";
 import { ReactComponent as TwitterIcon } from "../icons/SocialiconsTwitter.svg";
 import { ReactComponent as InstagramIcon } from "../icons/SocialiconsInstagram.svg";
@@ -9,87 +10,111 @@ import { ReactComponent as InviteIcon } from "../icons/Invite.svg";
 
 import { FollowUsPopoverButton } from "./FollowUsPopover";
 import { FormattedMessage } from "react-intl";
+import { handleExitTo2DInterstitial } from "../../utils/vr-interstitial";
 
-export function FollowUsPopoverContainer() {
+export function FollowUsPopoverContainer({ scene }) {
   const [items, setItems] = useState([]);
+  const popoverApiRef = useRef();
 
-  useEffect(() => {
-    function updateItems() {
-      const nextItems = [
-        {
-          id: "instagram",
-          icon: InstagramIcon,
-          color: "accent2",
-          label: <FormattedMessage id="followus-popover.item-type.instagram" defaultMessage="Instagram" />,
-          onSelect: () => {
-            window.open("https://www.instagram.com/abschiedsraum.farvel", "_blank");
+  useEffect(
+    () => {
+      function updateItems() {
+        const nextItems = [
+          {
+            id: "instagram",
+            name: "Instagram",
+            icon: InstagramIcon,
+            color: "accent2",
+            label: <FormattedMessage id="followus-popover.item-type.instagram" defaultMessage="Instagram" />,
+            onSelect: () => {
+              window.open("https://www.instagram.com/abschiedsraum.farvel", "_blank");
+            }
+          },
+          {
+            id: "facebook",
+            name: "Facebook",
+            icon: FacebookIcon,
+            color: "accent2",
+            label: <FormattedMessage id="followus-popover.item-type.facebook" defaultMessage="Facebook" />,
+            onSelect: () => {
+              window.open("https://www.facebook.com/abschiedsraum.farvel", "_blank");
+            }
+          },
+          {
+            id: "linkedin",
+            name: "Linkedin",
+            icon: LinkedinIcon,
+            color: "accent2",
+            label: <FormattedMessage id="followus-popover.item-type.linkedin" defaultMessage="LinkedIn" />,
+            onSelect: () => {
+              window.open("https://www.linkedin.com/company/farvel-space", "_blank");
+            }
+          },
+          {
+            id: "twitter",
+            name: "Twitter",
+            icon: TwitterIcon,
+            color: "accent2",
+            label: <FormattedMessage id="followus-popover.item-type.twitter" defaultMessage="Twitter" />,
+            onSelect: () => {
+              window.open("hhttps://twitter.com/farvel_space", "_blank");
+            }
+          },
+          {
+            id: "youtube",
+            name: "Youtube",
+            icon: YoutubeIcon,
+            color: "accent2",
+            label: <FormattedMessage id="followus-popover.item-type.youtube" defaultMessage="YouTube" />,
+            onSelect: () => {
+              window.open("https://farvel.space", "_blank");
+            }
+          },
+          {
+            id: "website",
+            name: "Website",
+            icon: HomeIcon,
+            color: "accent2",
+            label: <FormattedMessage id="followus-popover.item-type.website" defaultMessage="Website" />,
+            onSelect: () => {
+              window.open("https://farvel.space", "_blank");
+            }
+          },
+          {
+            id: "newsletter",
+            name: "Newsletter",
+            icon: InviteIcon,
+            color: "accent2",
+            label: <FormattedMessage id="followus-popover.item-type.newsletter" defaultMessage="Newsletter" />,
+            onSelect: () => {
+              window.open("https://farvel.space/#newsletter", "_blank");
+            }
           }
-        },
-        {
-          id: "facebook",
-          icon: FacebookIcon,
-          color: "accent2",
-          label: <FormattedMessage id="followus-popover.item-type.facebook" defaultMessage="Facebook" />,
-          onSelect: () => {
-            window.open("https://www.facebook.com/abschiedsraum.farvel", "_blank");
-          }
-        },
-        {
-          id: "linkedin",
-          icon: LinkedinIcon,
-          color: "accent2",
-          label: <FormattedMessage id="followus-popover.item-type.linkedin" defaultMessage="LinkedIn" />,
-          onSelect: () => {
-            window.open("https://www.linkedin.com/company/farvel-space", "_blank");
-          }
-        },
-        {
-          id: "twitter",
-          icon: TwitterIcon,
-          color: "accent2",
-          label: <FormattedMessage id="followus-popover.item-type.twitter" defaultMessage="Twitter" />,
-          onSelect: () => {
-            window.open("hhttps://twitter.com/farvel_space", "_blank");
-          }
-        },
-        {
-          id: "youtube",
-          icon: YoutubeIcon,
-          color: "accent2",
-          label: <FormattedMessage id="followus-popover.item-type.youtube" defaultMessage="YouTube" />,
-          onSelect: () => {
-            window.open("https://farvel.space", "_blank");
-          }
-        },
-        {
-          id: "website",
-          icon: HomeIcon,
-          color: "accent2",
-          label: <FormattedMessage id="followus-popover.item-type.website" defaultMessage="Website" />,
-          onSelect: () => {
-            window.open("https://farvel.space", "_blank");
-          }
-        },
-        {
-          id: "newsletter",
-          icon: InviteIcon,
-          color: "accent2",
-          label: <FormattedMessage id="followus-popover.item-type.newsletter" defaultMessage="Newsletter" />,
-          onSelect: () => {
-            window.open("https://farvel.space/#newsletter", "_blank");
-          }
-        }
-      ];
+        ];
 
-      setItems(nextItems);
-    }
+        setItems(nextItems);
+      }
 
-    updateItems();
+      updateItems();
 
-    return () => {};
-  }, []);
+      function onFollowUsButtonClicked() {
+        handleExitTo2DInterstitial(true, () => {}).then(() => {
+          popoverApiRef.current.openPopover();
+        });
+      }
 
-  return <FollowUsPopoverButton items={items} />;
+      scene.addEventListener("action_followUs", onFollowUsButtonClicked);
+
+      return () => {
+        scene.removeEventListener("action_followUs", onFollowUsButtonClicked);
+      };
+    },
+    [scene, popoverApiRef]
+  );
+
+  return <FollowUsPopoverButton items={items} popoverApiRef={popoverApiRef} />;
 }
 
-FollowUsPopoverContainer.propTypes = {};
+FollowUsPopoverContainer.propTypes = {
+  scene: PropTypes.object.isRequired
+};

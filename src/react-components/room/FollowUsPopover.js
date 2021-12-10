@@ -11,7 +11,7 @@ const followUsPopoverTitle = defineMessage({
   defaultMessage: "Follow"
 });
 
-export function FollowUsPopoverButton({ items }) {
+export function FollowUsPopoverButton({ items, popoverApiRef }) {
   const intl = useIntl();
   const filteredItems = items.filter(item => !!item);
 
@@ -28,6 +28,7 @@ export function FollowUsPopoverButton({ items }) {
       content={props => <ButtonGridPopover items={filteredItems} {...props} />}
       placement="top"
       offsetDistance={28}
+      popoverApiRef={popoverApiRef}
     >
       {({ togglePopover, popoverVisible, triggerRef }) => (
         <ToolbarButton
@@ -44,5 +45,6 @@ export function FollowUsPopoverButton({ items }) {
 }
 
 FollowUsPopoverButton.propTypes = {
-  items: PropTypes.array.isRequired
+  items: PropTypes.array.isRequired,
+  popoverApiRef: PropTypes.object
 };
