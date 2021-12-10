@@ -929,7 +929,7 @@ class PreferencesScreen extends Component {
             max: 90,
             step: 5,
             digits: 0,
-            defaultNumber: 45
+            defaultNumber: 20
           },
           { key: "disableMovement", prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX, defaultBool: false },
           { key: "disableBackwardsMovement", prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX, defaultBool: false },
