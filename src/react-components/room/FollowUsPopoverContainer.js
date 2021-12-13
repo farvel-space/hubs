@@ -57,7 +57,7 @@ export function FollowUsPopoverContainer({ scene }) {
             color: "accent2",
             label: <FormattedMessage id="followus-popover.item-type.twitter" defaultMessage="Twitter" />,
             onSelect: () => {
-              window.open("hhttps://twitter.com/farvel_space", "_blank");
+              window.open("https://twitter.com/farvel_space", "_blank");
             }
           },
           {
@@ -67,7 +67,7 @@ export function FollowUsPopoverContainer({ scene }) {
             color: "accent2",
             label: <FormattedMessage id="followus-popover.item-type.youtube" defaultMessage="YouTube" />,
             onSelect: () => {
-              window.open("https://farvel.space", "_blank");
+              window.open("https://www.youtube.com/channel/UCzSHUPfA2ZHsGUCdpGOhNBw", "_blank");
             }
           },
           {
@@ -87,7 +87,7 @@ export function FollowUsPopoverContainer({ scene }) {
             color: "accent2",
             label: <FormattedMessage id="followus-popover.item-type.newsletter" defaultMessage="Newsletter" />,
             onSelect: () => {
-              window.open("https://farvel.space/#newsletter", "_blank");
+              window.open("https://farvel.space/newsletter", "_blank");
             }
           }
         ];
