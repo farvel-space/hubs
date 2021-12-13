@@ -4,7 +4,8 @@ import styles from "./InvitePopover.scss";
 import { CopyableTextInputField } from "../input/CopyableTextInputField";
 import { Popover } from "../popover/Popover";
 import { ToolbarButton } from "../input/ToolbarButton";
-import { ReactComponent as InviteIcon } from "../icons/Invite.svg";
+// import { ReactComponent as InviteIcon } from "../icons/Invite.svg";
+import { ReactComponent as InviteIcon } from "../icons/Reaction.svg"; // changed for farvel
 import { Column } from "../layout/Column";
 import { InviteLinkInputField } from "./InviteLinkInputField";
 import { FormattedMessage, defineMessage, useIntl } from "react-intl";
