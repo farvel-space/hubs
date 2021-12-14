@@ -69,6 +69,7 @@ import { ReactComponent as VRIcon } from "./icons/VR.svg";
 import { ReactComponent as LeaveIcon } from "./icons/Leave.svg";
 import { ReactComponent as EnterIcon } from "./icons/Enter.svg";
 import { ReactComponent as InviteIcon } from "./icons/Invite.svg";
+import { ReactComponent as GotoIcon } from "./icons/GoTo.svg";
 import { PeopleSidebarContainer, userFromPresence } from "./room/PeopleSidebarContainer";
 import { ObjectListProvider } from "./room/useObjectList";
 import { ObjectsSidebarContainer } from "./room/ObjectsSidebarContainer";
@@ -94,6 +95,7 @@ import { TipContainer, FullscreenTip } from "./room/TipContainer";
 import { SpectatingLabel } from "./room/SpectatingLabel";
 import { SignInMessages } from "./auth/SignInModal";
 import { TutorialControlsModal } from "./room/TutorialControlsModal";
+import { ControlsOverviewModal } from "./room/ControlsOverviewModal";
 
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
@@ -1571,6 +1573,17 @@ class UIRoot extends Component {
                       </>
                     )}
                     <ChatToolbarButtonContainer onClick={() => this.toggleSidebar("chat")} />
+                    <ToolbarButton
+                      icon={< GotoIcon />}
+                      label={<FormattedMessage id="toolbar.controls-overview" defaultMessage="Controls" />}
+                      preset="cancel"
+                      onClick={() => {
+                        this.showNonHistoriedDialog(ControlsOverviewModal, {
+                          scene: this.props.scene,
+                          store: this.props.store
+                        });
+                      }}
+                    />
                     {entered &&
                       isMobileVR && (
                         <ToolbarButton
