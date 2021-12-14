@@ -13,7 +13,7 @@ export function TutorialControlsModal({ className, onBack, onContinue, ...rest }
     <Modal
       title={<FormattedMessage id="tutorial-controls-modal.title" defaultMessage="Tutorial" />}
       beforeTitle={<BackButton onClick={onBack} />}
-      className={className}
+      className={styles.tutorialControlsModal}
       {...rest}
     >
       <Column padding center className={styles.content}>
@@ -23,7 +23,7 @@ export function TutorialControlsModal({ className, onBack, onContinue, ...rest }
         </video>
         <FormattedMessage
           id="tutorial-controls-modal.controls-overview-info"
-          defaultMessage="Through clicking onto the Controls button in the bottom bar, you will see an overview of the controls, whenever you need to revisit them.{linebreak}"
+          defaultMessage="Click onto the Controls button in the bottom bar for an overview of the controls, whenever you need to.{linebreak}"
           values={{ linebreak: <br /> }}
         />
         <Button preset="accept" onClick={onContinue}>
