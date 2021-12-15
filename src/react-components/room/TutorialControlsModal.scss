@@ -1,0 +1,10 @@
+@use "../styles/theme.scss";
+
+:local(.tutorial-controls-modal) {
+    max-width: 960px;
+
+    @media(max-width: theme.$breakpoint-lg - 1),
+    (max-height: theme.$breakpoint-vr - 1) {
+        max-width: none;
+    }
+}
