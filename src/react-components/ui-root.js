@@ -69,7 +69,7 @@ import { ReactComponent as VRIcon } from "./icons/VR.svg";
 import { ReactComponent as LeaveIcon } from "./icons/Leave.svg";
 import { ReactComponent as EnterIcon } from "./icons/Enter.svg";
 import { ReactComponent as InviteIcon } from "./icons/Invite.svg";
-import { ReactComponent as GotoIcon } from "./icons/GoTo.svg";
+import { ReactComponent as ControlsIcon } from "./icons/Controls.svg";
 import { PeopleSidebarContainer, userFromPresence } from "./room/PeopleSidebarContainer";
 import { ObjectListProvider } from "./room/useObjectList";
 import { ObjectsSidebarContainer } from "./room/ObjectsSidebarContainer";
@@ -1574,7 +1574,7 @@ class UIRoot extends Component {
                     )}
                     <ChatToolbarButtonContainer onClick={() => this.toggleSidebar("chat")} />
                     <ToolbarButton
-                      icon={< GotoIcon />}
+                      icon={< ControlsIcon />}
                       label={<FormattedMessage id="toolbar.controls-overview" defaultMessage="Controls" />}
                       preset="cancel"
                       onClick={() => {
