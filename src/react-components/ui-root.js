@@ -1576,7 +1576,7 @@ class UIRoot extends Component {
                     <ToolbarButton
                       icon={< ControlsIcon />}
                       label={<FormattedMessage id="toolbar.controls-overview" defaultMessage="Controls" />}
-                      preset="cancel"
+                      preset="accent3"
                       onClick={() => {
                         this.showNonHistoriedDialog(ControlsOverviewModal, {
                           scene: this.props.scene,
