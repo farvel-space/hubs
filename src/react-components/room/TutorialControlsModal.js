@@ -7,6 +7,7 @@ import { BackButton } from "../input/BackButton";
 import { Column } from "../layout/Column";
 import { FormattedMessage } from "react-intl";
 import tutorialVideoMP4 from "../../assets/video/tutorial-controls.mp4";
+import tutorialVideoWebM from "../../assets/video/tutorial-controls.webm";
 
 export function TutorialControlsModal({ className, onBack, onContinue, ...rest }) {
   return (
@@ -19,7 +20,7 @@ export function TutorialControlsModal({ className, onBack, onContinue, ...rest }
       <Column padding center className={styles.content}>
         <video playsInline controls autoPlay>
           <source src={tutorialVideoMP4} type="video/mp4" />
-          {/* <source src={discordBotVideoWebM} type="video/webm" /> */}
+          <source src={tutorialVideoWebM} type="video/webm" />
         </video>
         <FormattedMessage
           id="tutorial-controls-modal.controls-overview-info"
