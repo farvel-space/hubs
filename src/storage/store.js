@@ -287,6 +287,8 @@ export default class Store extends EventTarget {
   initProfile = async () => {
     const avatarIdQueryString = qsGet("avatar_id");
     const displayNameQueryString = qsGet("display_name");
+    console.log("avatarIdQueryString", avatarIdQueryString);
+    console.log("displayNameQueryString", displayNameQueryString);
 
     if (this._shouldResetAvatarOnInit) {
       await this.resetToRandomDefaultAvatar();
