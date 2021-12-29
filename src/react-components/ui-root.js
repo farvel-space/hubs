@@ -68,9 +68,9 @@ import { ReactComponent as DiscordIcon } from "./icons/Discord.svg";
 import { ReactComponent as VRIcon } from "./icons/VR.svg";
 import { ReactComponent as LeaveIcon } from "./icons/Leave.svg";
 import { ReactComponent as EnterIcon } from "./icons/Enter.svg";
-import { ReactComponent as InviteIcon } from "./icons/Reaction.svg"; // Changed for farvel
-import { ReactComponent as MailIcon } from "./icons/Invite.svg"; // added for farvel
-import { ReactComponent as LinkIcon } from "./icons/Link.svg"; // added for farvel
+import { ReactComponent as InviteIcon } from "./icons/Reaction.svg"; // TODO: change with new farvel icon
+import { ReactComponent as MailIcon } from "./icons/Invite.svg";
+import { ReactComponent as LinkIcon } from "./icons/Link.svg";
 import { PeopleSidebarContainer, userFromPresence } from "./room/PeopleSidebarContainer";
 import { ObjectListProvider } from "./room/useObjectList";
 import { ObjectsSidebarContainer } from "./room/ObjectsSidebarContainer";
@@ -1170,7 +1170,7 @@ class UIRoot extends Component {
             id: "feedback",
             label: <FormattedMessage id="more-menu.feedback" defaultMessage="Feedback" />,
             icon: MailIcon,
-            onClick: () => (window.location.href = "mailto:hi@farvel.space")
+            onClick: () => (window.location.href = "mailto:hi@farvel.space") // TODO: find a better solution: form?
           },
           this.isFavorited()
             ? {
@@ -1522,13 +1522,12 @@ class UIRoot extends Component {
                       hubChannel={this.props.hubChannel}
                       scene={this.props.scene}
                     />
-                    {/* Additions for farvel */}
                     <FollowUsPopoverContainer scene={this.props.scene} />
                     <ToolbarButton
                       icon={<MailIcon />}
                       preset="basic"
                       label={<FormattedMessage id="toolbar.feedback" defaultMessage="Feedback" />}
-                      onClick={() => (window.location.href = "mailto:hi@farvel.space")}
+                      onClick={() => (window.location.href = "mailto:hi@farvel.space")} // TODO: find a better solution: form?
                     />
                   </>
                 }
@@ -1581,21 +1580,6 @@ class UIRoot extends Component {
                           onClick={() => exit2DInterstitialAndEnterVR(true)}
                         />
                       )}
-                    {/* Follow us + Feedback Icon for Republica (mobile) -> now integrated into more menu?!
-                    {entered &&
-                      isMobile && (
-                        <>
-                          <FollowUsPopoverContainer />
-                          <ToolbarButton
-                            className={styleUtils.hideLg}
-                            icon={<MailIcon />}
-                            preset="basic"
-                            label={<FormattedMessage id="toolbar.feedback" defaultMessage="Feedback" />}
-                            onClick={() => (window.location.href = "mailto:hi@farvel.space")}
-                          />
-                        </>
-                      )}
-                      */}
                   </>
                 }
                 toolbarRight={
