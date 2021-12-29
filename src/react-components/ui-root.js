@@ -68,6 +68,7 @@ import { ReactComponent as DiscordIcon } from "./icons/Discord.svg";
 import { ReactComponent as VRIcon } from "./icons/VR.svg";
 import { ReactComponent as LeaveIcon } from "./icons/Leave.svg";
 import { ReactComponent as EnterIcon } from "./icons/Enter.svg";
+import { ReactComponent as ControlsIcon } from "./icons/Controls.svg";
 import { ReactComponent as InviteIcon } from "./icons/Reaction.svg"; // TODO: change with new farvel icon
 import { ReactComponent as MailIcon } from "./icons/Invite.svg";
 import { ReactComponent as LinkIcon } from "./icons/Link.svg";
@@ -96,6 +97,8 @@ import { TweetModalContainer } from "./room/TweetModalContainer";
 import { TipContainer, FullscreenTip } from "./room/TipContainer";
 import { SpectatingLabel } from "./room/SpectatingLabel";
 import { SignInMessages } from "./auth/SignInModal";
+import { TutorialControlsModal } from "./room/TutorialControlsModal";
+import { ControlsOverviewModal } from "./room/ControlsOverviewModal";
 
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
@@ -784,8 +787,8 @@ class UIRoot extends Component {
   };
 
   renderEntryStartPanel = () => {
-    const { hasAcceptedProfile, hasChangedName } = this.props.store.state.activity;
-    const promptForNameAndAvatarBeforeEntry = this.props.hubIsBound ? !hasAcceptedProfile : !hasChangedName;
+    //const { hasAcceptedProfile, hasChangedName } = this.props.store.state.activity;
+    //const promptForNameAndAvatarBeforeEntry = this.props.hubIsBound ? !hasAcceptedProfile : !hasChangedName;
 
     // TODO: What does onEnteringCanceled do?
     return (
@@ -796,19 +799,20 @@ class UIRoot extends Component {
           roomName={this.props.hub.name}
           showJoinRoom={!this.state.waitingOnAudio && !this.props.entryDisallowed}
           onJoinRoom={() => {
-            if (promptForNameAndAvatarBeforeEntry || !this.props.forcedVREntryType) {
-              this.setState({ entering: true });
-              this.props.hubChannel.sendEnteringEvent();
-
-              if (promptForNameAndAvatarBeforeEntry) {
-                this.pushHistoryState("entry_step", "profile");
-              } else {
-                this.onRequestMicPermission();
-                this.pushHistoryState("entry_step", "mic_grant");
-              }
-            } else {
-              this.handleForceEntry();
-            }
+            this.pushHistoryState("entry_step", "tutorial_controls");
+            // if (promptForNameAndAvatarBeforeEntry || !this.props.forcedVREntryType) {
+            //   this.setState({ entering: true });
+            //   this.props.hubChannel.sendEnteringEvent();
+              
+            //   if (promptForNameAndAvatarBeforeEntry) {
+            //     //this.pushHistoryState("entry_step", "profile");
+            //   } else {
+            //     this.onRequestMicPermission();
+            //     this.pushHistoryState("entry_step", "mic_grant");
+            //   }
+            // } else {
+            //   this.handleForceEntry();
+            // }
           }}
           showEnterOnDevice={!this.state.waitingOnAudio && !this.props.entryDisallowed && !isMobileVR}
           onEnterOnDevice={() => this.attemptLink()}
@@ -1002,6 +1006,8 @@ class UIRoot extends Component {
     const displayNameOverride = this.props.hubIsBound
       ? getPresenceProfileForSession(this.props.presences, this.props.sessionId).displayName
       : null;
+    const { hasAcceptedProfile, hasChangedName } = this.props.store.state.activity;
+    const promptForNameAndAvatarBeforeEntry = this.props.hubIsBound ? !hasAcceptedProfile : !hasChangedName;
 
     const enableSpectateVRButton =
       configs.feature("enable_lobby_ghosts") &&
@@ -1020,6 +1026,26 @@ class UIRoot extends Component {
         />
       ) : (
         <>
+          <StateRoute stateKey="entry_step" stateValue="tutorial_controls" history={this.props.history}>
+            <TutorialControlsModal
+              onBack={() => this.props.history.goBack()}
+              onContinue={() => {
+                if (promptForNameAndAvatarBeforeEntry || !this.props.forcedVREntryType) {
+                  this.setState({ entering: true });
+                  this.props.hubChannel.sendEnteringEvent();
+
+                  if (promptForNameAndAvatarBeforeEntry) {
+                    this.pushHistoryState("entry_step", "profile");
+                  } else {
+                    this.onRequestMicPermission();
+                    this.pushHistoryState("entry_step", "mic_grant");
+                  }
+                } else {
+                  this.handleForceEntry();
+                }
+              }}
+            />
+          </StateRoute>
           <StateRoute stateKey="entry_step" stateValue="device" history={this.props.history}>
             {this.renderDevicePanel()}
           </StateRoute>
@@ -1570,6 +1596,17 @@ class UIRoot extends Component {
                       </>
                     )}
                     <ChatToolbarButtonContainer onClick={() => this.toggleSidebar("chat")} />
+                    <ToolbarButton
+                      icon={< ControlsIcon />}
+                      label={<FormattedMessage id="toolbar.controls-overview" defaultMessage="Controls" />}
+                      preset="accent3"
+                      onClick={() => {
+                        this.showNonHistoriedDialog(ControlsOverviewModal, {
+                          scene: this.props.scene,
+                          store: this.props.store
+                        });
+                      }}
+                    />
                     {entered &&
                       isMobileVR && (
                         <ToolbarButton
