@@ -45,7 +45,7 @@ export const SCHEMA = {
       type: "object",
       additionalProperties: false,
       properties: {
-        displayName: { type: "string", pattern: "^[A-Za-z0-9_~ -]{3,32}$" },
+        displayName: { type: "string", pattern: "^[A-Za-z0-9_~ -]{3,32}$" }, // TODO and Marker for FARM-254
         avatarId: { type: "string" },
         // personalAvatarId is obsolete, but we need it here for backwards compatibility.
         personalAvatarId: { type: "string" }
@@ -268,11 +268,35 @@ export default class Store extends EventTarget {
   };
 
   initProfile = async () => {
+    const avatarIdQueryString = qsGet("avatar_id");
+    const displayNameQueryString = qsGet("display_name");
+
     if (this._shouldResetAvatarOnInit) {
       await this.resetToRandomDefaultAvatar();
+    } else if (avatarIdQueryString) {
+      this.update({ profile: { avatarId: avatarIdQueryString } });
     } else {
       this.update({
         profile: { avatarId: await fetchRandomDefaultAvatarId(), ...(this.state.profile || {}) }
+      });
+    }
+
+    if (displayNameQueryString) {
+      this.update({
+        activity: {
+          hasChangedName: true
+        },
+        profile: {
+          displayName: displayNameQueryString
+        }
+      });
+    }
+
+    if (avatarIdQueryString && displayNameQueryString) {
+      this.update({
+        activity: {
+          hasAcceptedProfile: true
+        }
       });
     }
 

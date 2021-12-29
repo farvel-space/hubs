@@ -68,14 +68,17 @@ import { ReactComponent as DiscordIcon } from "./icons/Discord.svg";
 import { ReactComponent as VRIcon } from "./icons/VR.svg";
 import { ReactComponent as LeaveIcon } from "./icons/Leave.svg";
 import { ReactComponent as EnterIcon } from "./icons/Enter.svg";
-import { ReactComponent as InviteIcon } from "./icons/Invite.svg";
 import { ReactComponent as ControlsIcon } from "./icons/Controls.svg";
+import { ReactComponent as InviteIcon } from "./icons/Reaction.svg"; // TODO: change with new farvel icon
+import { ReactComponent as MailIcon } from "./icons/Invite.svg";
+import { ReactComponent as LinkIcon } from "./icons/Link.svg";
 import { PeopleSidebarContainer, userFromPresence } from "./room/PeopleSidebarContainer";
 import { ObjectListProvider } from "./room/useObjectList";
 import { ObjectsSidebarContainer } from "./room/ObjectsSidebarContainer";
 import { ObjectMenuContainer } from "./room/ObjectMenuContainer";
 import { useCssBreakpoints } from "react-use-css-breakpoints";
 import { PlacePopoverContainer } from "./room/PlacePopoverContainer";
+import { FollowUsPopoverContainer } from "./room/FollowUsPopoverContainer";
 import { SharePopoverContainer } from "./room/SharePopoverContainer";
 import { VoiceButtonContainer } from "./room/VoiceButtonContainer";
 import { ReactionPopoverContainer } from "./room/ReactionPopoverContainer";
@@ -1184,6 +1187,18 @@ class UIRoot extends Component {
               icon: InviteIcon,
               onClick: () => this.props.scene.emit("action_invite")
             },
+          (this.props.breakpoint === "sm" || this.props.breakpoint === "md") && {
+            id: "follow",
+            label: <FormattedMessage id="more-menu.follow" defaultMessage="Follow" />,
+            icon: LinkIcon,
+            onClick: () => this.props.scene.emit("action_followUs")
+          },
+          (this.props.breakpoint === "sm" || this.props.breakpoint === "md") && {
+            id: "feedback",
+            label: <FormattedMessage id="more-menu.feedback" defaultMessage="Feedback" />,
+            icon: MailIcon,
+            onClick: () => (window.location.href = "mailto:hi@farvel.space") // TODO: find a better solution: form?
+          },
           this.isFavorited()
             ? {
                 id: "unfavorite-room",
@@ -1528,11 +1543,20 @@ class UIRoot extends Component {
                 }
                 modal={this.state.dialog}
                 toolbarLeft={
-                  <InvitePopoverContainer
-                    hub={this.props.hub}
-                    hubChannel={this.props.hubChannel}
-                    scene={this.props.scene}
-                  />
+                  <>
+                    <InvitePopoverContainer
+                      hub={this.props.hub}
+                      hubChannel={this.props.hubChannel}
+                      scene={this.props.scene}
+                    />
+                    <FollowUsPopoverContainer scene={this.props.scene} />
+                    <ToolbarButton
+                      icon={<MailIcon />}
+                      preset="basic"
+                      label={<FormattedMessage id="toolbar.feedback" defaultMessage="Feedback" />}
+                      onClick={() => (window.location.href = "mailto:hi@farvel.space")} // TODO: find a better solution: form?
+                    />
+                  </>
                 }
                 toolbarCenter={
                   <>
