@@ -16,7 +16,7 @@ import { AudioRecorderModal } from "./AudioRecorderModal";
 import configs from "../../utils/configs";
 import { FormattedMessage } from "react-intl";
 
-export function PlacePopoverContainer({ scene, mediaSearchStore, showNonHistoriedDialog, hubChannel }) {
+export function PlacePopoverContainer({ scene, mediaSearchStore, showNonHistoriedDialog, hubChannel, store }) {
   const [items, setItems] = useState([]);
 
   useEffect(
@@ -93,7 +93,8 @@ export function PlacePopoverContainer({ scene, mediaSearchStore, showNonHistorie
               label: <FormattedMessage id="place-popover.item-type.audiorecording" defaultMessage="Record" />,
               onSelect: () =>
                 showNonHistoriedDialog(AudioRecorderModal, {
-                  scene: scene
+                  scene: scene,
+                  store: store
                 })
             }
           ];
@@ -131,5 +132,6 @@ PlacePopoverContainer.propTypes = {
   hubChannel: PropTypes.object.isRequired,
   scene: PropTypes.object.isRequired,
   mediaSearchStore: PropTypes.object.isRequired,
-  showNonHistoriedDialog: PropTypes.func.isRequired
+  showNonHistoriedDialog: PropTypes.func.isRequired,
+  store: PropTypes.object.isRequired
 };

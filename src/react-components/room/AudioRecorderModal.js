@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useIntl, defineMessages, FormattedMessage } from "react-intl";
 import PropTypes from "prop-types";
 import { Modal } from "../modal/Modal";
@@ -8,6 +8,7 @@ import { Column } from "../layout/Column";
 import { useAudioRecorder } from "./useAudioRecorder";
 import { AudioRecorderPlayer } from "./AudioRecorderPlayer";
 import { useForm } from "react-hook-form";
+import configs from "../../utils/configs";
 
 const audioRecordingMessages = defineMessages({
   submit: {
@@ -29,11 +30,12 @@ const audioRecordingMessages = defineMessages({
   }
 });
 
-export function AudioRecorderModal({ scene, onClose }) {
-  const store = window.APP.store;
+export function AudioRecorderModal({ scene, store, onClose }) {
   const intl = useIntl();
   const [startRecording, stopRecording, isRecording, audioSrc, audioFile, timerDisplay] = useAudioRecorder();
   const { handleSubmit } = useForm();
+  const isRecordingRef = useRef(isRecording);
+  isRecordingRef.current = isRecording;
 
   const audioSettings = (mute, gMediaV, gVoiceV) => {
     if (mute != scene.is("muted")) scene.emit("action_mute");
@@ -56,10 +58,38 @@ export function AudioRecorderModal({ scene, onClose }) {
     const tmpVoiceVolume = store.state.preferences.globalVoiceVolume;
     audioSettings(true, 0.0, 0.0);
 
+    // save used avatar and set it to "unavailable avatar"
+    const tmpUsedAvatar = store.state.profile.avatarId;
+    store.update({ profile: { avatarId: "JrFMCQ5" } });
+    scene.emit("avatar_updated");
+
     return () => {
       audioSettings(tmpMuted, tmpMediaVolume, tmpVoiceVolume);
+      store.update({ profile: { avatarId: tmpUsedAvatar } });
+      scene.emit("avatar_updated");
     };
   }, []);
+
+  const termsUrl = configs.link("terms_of_use", "https://github.com/mozilla/hubs/blob/master/TERMS.md");
+  const privacyUrl = configs.link("privacy_notice", "https://github.com/mozilla/hubs/blob/master/PRIVACY.md");
+
+  const toslink = useCallback(
+    chunks => (
+      <a rel="noopener noreferrer" target="_blank" href={termsUrl}>
+        {chunks}
+      </a>
+    ),
+    [termsUrl]
+  );
+
+  const privacylink = useCallback(
+    chunks => (
+      <a rel="noopener noreferrer" target="_blank" href={privacyUrl}>
+        {chunks}
+      </a>
+    ),
+    [privacyUrl]
+  );
 
   return (
     <Modal
@@ -68,8 +98,7 @@ export function AudioRecorderModal({ scene, onClose }) {
     >
       <Column as="form" padding center onSubmit={handleSubmit(onSubmit)}>
         <p>{intl.formatMessage(audioRecordingMessages.description)}</p>
-        <AudioRecorderPlayer isRecording={isRecording} audioSrc={audioSrc} />
-        <p>{timerDisplay}</p>
+        <AudioRecorderPlayer isRecording={isRecording} audioSrc={audioSrc} timerDisplay={timerDisplay} />
         <Button
           preset={isRecording ? "cancel" : "primary"}
           onClick={isRecording ? stopRecording : startRecording}
@@ -79,6 +108,18 @@ export function AudioRecorderModal({ scene, onClose }) {
             isRecording ? audioRecordingMessages.stoprecording : audioRecordingMessages.startrecording
           )}
         </Button>
+        <p>
+          <small>
+            <FormattedMessage
+              id="audio-recording-modal.tos-and-privacy"
+              defaultMessage="By submitting, you agree to the <toslink>terms of use</toslink> and <privacylink>privacy notice</privacylink>. All voice messages will be deleted no later than June 30, 2021."
+              values={{
+                toslink,
+                privacylink
+              }}
+            />
+          </small>
+        </p>
         <Button type="submit" preset="accept" disabled={!audioFile || isRecording}>
           {intl.formatMessage(audioRecordingMessages.submit)}
         </Button>
@@ -89,5 +130,6 @@ export function AudioRecorderModal({ scene, onClose }) {
 
 AudioRecorderModal.propTypes = {
   onClose: PropTypes.func,
-  scene: PropTypes.object.isRequired
+  scene: PropTypes.object.isRequired,
+  store: PropTypes.object.isRequired
 };
