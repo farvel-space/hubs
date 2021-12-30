@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useIntl, defineMessages, FormattedMessage } from "react-intl";
 import PropTypes from "prop-types";
 import { Modal } from "../modal/Modal";
@@ -29,11 +29,12 @@ const audioRecordingMessages = defineMessages({
   }
 });
 
-export function AudioRecorderModal({ scene, onClose }) {
-  const store = window.APP.store;
+export function AudioRecorderModal({ scene, store, onClose }) {
   const intl = useIntl();
   const [startRecording, stopRecording, isRecording, audioSrc, audioFile, timerDisplay] = useAudioRecorder();
   const { handleSubmit } = useForm();
+  const isRecordingRef = useRef(isRecording);
+  isRecordingRef.current = isRecording;
 
   const audioSettings = (mute, gMediaV, gVoiceV) => {
     if (mute != scene.is("muted")) scene.emit("action_mute");
@@ -54,10 +55,27 @@ export function AudioRecorderModal({ scene, onClose }) {
     const tmpMuted = scene.is("muted");
     const tmpMediaVolume = store.state.preferences.globalMediaVolume;
     const tmpVoiceVolume = store.state.preferences.globalVoiceVolume;
+
+    // save current volume settings in store, to restore if people reload while recording dialog is opened
+    store.update({
+      preferences: {
+        tmpMutedGlobalMediaVolume: tmpMediaVolume === undefined ? 100 : tmpMediaVolume,
+        tmpMutedGlobalVoiceVolume: tmpVoiceVolume === undefined ? 100 : tmpMediaVolume
+      }
+    });
+
+    // mute the environment
     audioSettings(true, 0.0, 0.0);
+
+    // save used avatar and set it to "unavailable avatar"
+    // const tmpUsedAvatar = store.state.profile.avatarId;
+    // store.update({ profile: { avatarId: "JrFMCQ5" } });
+    // scene.emit("avatar_updated");
 
     return () => {
       audioSettings(tmpMuted, tmpMediaVolume, tmpVoiceVolume);
+      // store.update({ profile: { avatarId: tmpUsedAvatar } });
+      // scene.emit("avatar_updated");
     };
   }, []);
 
@@ -68,8 +86,7 @@ export function AudioRecorderModal({ scene, onClose }) {
     >
       <Column as="form" padding center onSubmit={handleSubmit(onSubmit)}>
         <p>{intl.formatMessage(audioRecordingMessages.description)}</p>
-        <AudioRecorderPlayer isRecording={isRecording} audioSrc={audioSrc} />
-        <p>{timerDisplay}</p>
+        <AudioRecorderPlayer isRecording={isRecording} audioSrc={audioSrc} timerDisplay={timerDisplay} />
         <Button
           preset={isRecording ? "cancel" : "primary"}
           onClick={isRecording ? stopRecording : startRecording}
@@ -89,5 +106,6 @@ export function AudioRecorderModal({ scene, onClose }) {
 
 AudioRecorderModal.propTypes = {
   onClose: PropTypes.func,
-  scene: PropTypes.object.isRequired
+  scene: PropTypes.object.isRequired,
+  store: PropTypes.object.isRequired
 };
