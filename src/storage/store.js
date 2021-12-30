@@ -128,7 +128,9 @@ export const SCHEMA = {
         disableAutoGainControl: { type: "bool" },
         locale: { type: "string" },
         showRtcDebugPanel: { type: "bool" },
-        theme: { type: "string" }
+        theme: { type: "string" },
+        tmpMutedGlobalMediaVolume: { type: "number" },
+        tmpMutedGlobalVoiceVolume: { type: "number" }
       }
     },
 
@@ -304,12 +306,37 @@ export default class Store extends EventTarget {
     if (!this.state.activity.hasChangedName) {
       this.update({ profile: { displayName: generateRandomName() } });
     }
+
+    // Restore audio settings, if user left while having environment audio temporarily muted.
+    this.restoreAudioSettingsFromBeingMuted();
   };
 
   resetToRandomDefaultAvatar = async () => {
     this.update({
       profile: { ...(this.state.profile || {}), avatarId: await fetchRandomDefaultAvatarId() }
     });
+  };
+
+  restoreAudioSettingsFromBeingMuted = async () => {
+    if (this.state.preferences.tmpMutedGlobalMediaVolume || this.state.preferences.tmpMutedGlobalVoiceVolume) {
+      const media =
+        this.state.preferences.tmpMutedGlobalMediaVolume == 100
+          ? undefined
+          : this.state.preferences.tmpMutedGlobalMediaVolume;
+      const voice =
+        this.state.preferences.tmpMutedGlobalVoiceVolume == 100
+          ? undefined
+          : this.state.preferences.tmpMutedGlobalVoiceVolume;
+
+      this.update({
+        preferences: {
+          globalMediaVolume: media,
+          globalVoiceVolume: voice,
+          tmpMutedGlobalMediaVolume: undefined,
+          tmpMutedGlobalVoiceVolume: undefined
+        }
+      });
+    }
   };
 
   get state() {

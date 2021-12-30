@@ -8,7 +8,6 @@ import { Column } from "../layout/Column";
 import { useAudioRecorder } from "./useAudioRecorder";
 import { AudioRecorderPlayer } from "./AudioRecorderPlayer";
 import { useForm } from "react-hook-form";
-import configs from "../../utils/configs";
 
 const audioRecordingMessages = defineMessages({
   submit: {
@@ -56,40 +55,29 @@ export function AudioRecorderModal({ scene, store, onClose }) {
     const tmpMuted = scene.is("muted");
     const tmpMediaVolume = store.state.preferences.globalMediaVolume;
     const tmpVoiceVolume = store.state.preferences.globalVoiceVolume;
+
+    // save current volume settings in store, to restore if people reload while recording dialog is opened
+    store.update({
+      preferences: {
+        tmpMutedGlobalMediaVolume: tmpMediaVolume === undefined ? 100 : tmpMediaVolume,
+        tmpMutedGlobalVoiceVolume: tmpVoiceVolume === undefined ? 100 : tmpMediaVolume
+      }
+    });
+
+    // mute the environment
     audioSettings(true, 0.0, 0.0);
 
     // save used avatar and set it to "unavailable avatar"
-    const tmpUsedAvatar = store.state.profile.avatarId;
-    store.update({ profile: { avatarId: "JrFMCQ5" } });
-    scene.emit("avatar_updated");
+    // const tmpUsedAvatar = store.state.profile.avatarId;
+    // store.update({ profile: { avatarId: "JrFMCQ5" } });
+    // scene.emit("avatar_updated");
 
     return () => {
       audioSettings(tmpMuted, tmpMediaVolume, tmpVoiceVolume);
-      store.update({ profile: { avatarId: tmpUsedAvatar } });
-      scene.emit("avatar_updated");
+      // store.update({ profile: { avatarId: tmpUsedAvatar } });
+      // scene.emit("avatar_updated");
     };
   }, []);
-
-  const termsUrl = configs.link("terms_of_use", "https://github.com/mozilla/hubs/blob/master/TERMS.md");
-  const privacyUrl = configs.link("privacy_notice", "https://github.com/mozilla/hubs/blob/master/PRIVACY.md");
-
-  const toslink = useCallback(
-    chunks => (
-      <a rel="noopener noreferrer" target="_blank" href={termsUrl}>
-        {chunks}
-      </a>
-    ),
-    [termsUrl]
-  );
-
-  const privacylink = useCallback(
-    chunks => (
-      <a rel="noopener noreferrer" target="_blank" href={privacyUrl}>
-        {chunks}
-      </a>
-    ),
-    [privacyUrl]
-  );
 
   return (
     <Modal
@@ -108,18 +96,6 @@ export function AudioRecorderModal({ scene, store, onClose }) {
             isRecording ? audioRecordingMessages.stoprecording : audioRecordingMessages.startrecording
           )}
         </Button>
-        <p>
-          <small>
-            <FormattedMessage
-              id="audio-recording-modal.tos-and-privacy"
-              defaultMessage="By submitting, you agree to the <toslink>terms of use</toslink> and <privacylink>privacy notice</privacylink>. All voice messages will be deleted no later than June 30, 2021."
-              values={{
-                toslink,
-                privacylink
-              }}
-            />
-          </small>
-        </p>
         <Button type="submit" preset="accept" disabled={!audioFile || isRecording}>
           {intl.formatMessage(audioRecordingMessages.submit)}
         </Button>

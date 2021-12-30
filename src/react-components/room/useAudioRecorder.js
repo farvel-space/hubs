@@ -34,6 +34,8 @@ export function useAudioRecorder() {
         setAudioSrc(URL.createObjectURL(blob));
         setAudioFile(new File([blob], "audioMessage.mp3", { type: "audio/mpeg" }));
         setIsRecording(false);
+        // reset timer
+        setTimerDisplay("00:00 / " + timerLimitStr);
         clearInterval(intervalRef.current);
       }
     },
@@ -45,7 +47,7 @@ export function useAudioRecorder() {
       let timer = 0,
         minutes,
         seconds;
-      intervalRef.current = setInterval(async => {
+      intervalRef.current = setInterval(() => {
         minutes = parseInt(timer / 60, 10);
         seconds = parseInt(timer % 60, 10);
 
@@ -72,8 +74,8 @@ export function useAudioRecorder() {
           await recorder.initAudio();
           await recorder.initWorker();
           recorder.startRecording();
-          setIsRecording(true);
           startTimer();
+          setIsRecording(true);
         } catch (e) {
           console.error(e);
         }
