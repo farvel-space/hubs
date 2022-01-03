@@ -1,9 +1,11 @@
 import React from "react";
+import { useCallback } from "react";
 import PropTypes from "prop-types";
 import { Button, AcceptButton } from "../input/Button";
 import styles from "./AvatarSettingsContent.scss";
 import { TextInputField } from "../input/TextInputField";
 import { Column } from "../layout/Column";
+import { AvatarReadyPlayerMe } from "./AvatarReadyPlayerMe";
 import { FormattedMessage } from "react-intl";
 
 export function AvatarSettingsContent({
@@ -14,8 +16,16 @@ export function AvatarSettingsContent({
   avatarPreview,
   displayNamePattern,
   onChangeAvatar,
+  showNonHistoriedDialog,
   ...rest
 }) {
+  const onCreateRdyPlMeAvatar = useCallback(
+    () => {
+      showNonHistoriedDialog(AvatarReadyPlayerMe);
+    },
+    [showNonHistoriedDialog]
+  );
+
   return (
     <Column as="form" className={styles.content} {...rest}>
       <TextInputField
@@ -39,6 +49,9 @@ export function AvatarSettingsContent({
         <Button type="button" preset="basic" onClick={onChangeAvatar}>
           <FormattedMessage id="avatar-settings-content.change-avatar-button" defaultMessage="Change Avatar" />
         </Button>
+        <Button type="button" preset="basic" onClick={onCreateRdyPlMeAvatar}>
+          <FormattedMessage id="avatar-settings-content.create-rdyPlMe-avatar-button" defaultMessage="Create Avatar" />
+        </Button>
       </div>
       <AcceptButton preset="accept" type="submit" />
     </Column>
@@ -53,5 +66,6 @@ AvatarSettingsContent.propTypes = {
   displayNamePattern: PropTypes.string,
   onChangeDisplayName: PropTypes.func,
   avatarPreview: PropTypes.node,
-  onChangeAvatar: PropTypes.func
+  onChangeAvatar: PropTypes.func,
+  showNonHistoriedDialog: PropTypes.func
 };

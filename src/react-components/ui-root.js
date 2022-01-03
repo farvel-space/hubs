@@ -1489,6 +1489,7 @@ class UIRoot extends Component {
                           onClose={() => this.setSidebar(null)}
                           store={this.props.store}
                           mediaSearchStore={this.props.mediaSearchStore}
+                          showNonHistoriedDialog={this.showNonHistoriedDialog}
                         />
                       )}
                       {this.state.sidebarId === "user" && (
