@@ -41,45 +41,5 @@
       "background-hover-color": "#aaaaaa",
       "notice-background-color": "#2f80ed"
     }
-  },
-  {
-    "id": "farvel-default",
-    "default": true,
-    "name": "Farvel Default",
-    "variables": {
-      "primary-color": "#D5AD50",
-      "primary-color-hover": "#D5AD50",
-      "primary-color-pressed": "#a47f28",
-      "loading-screen-background": "#ffffff",
-      "link-color": "#D5AD50",
-      "link-color-hover": "#e1c584",
-      "link-color-pressed": "#a47f28",
-      "accent5-color": "#999999",
-      "accent5-color-hover": "#bfbfbf",
-      "accent5-color-pressed": "#4d4d4d",
-      "accent4-color": "#d5ad50",
-      "accent4-color-hover": "#e1c584",
-      "accent4-color-pressed": "#a47f28",
-      "accent3-color": "#7994A2",
-      "accent3-color-hover": "#96abb6",
-      "accent3-color-pressed": "#495f69",
-      "accent2-color": "#7994A2",
-      "accent2-color-hover": "#96abb6",
-      "accent2-color-pressed": "#495f69",
-      "accept-color": "#779159",
-      "accept-color-hover": "#a7bb90",
-      "accept-color-pressed": "#4e5f3a",
-      "accept-border-color": "#779159",
-      "cancel-color": "#cb5c41",
-      "cancel-color-hover": "#d98773",
-      "cancel-color-pressed": "#8c3b26",
-      "accent1-color": "#d5ad50",
-      "accent1-color-hover": "#e1c584",
-      "accent1-color-pressed": "#a47f28",
-      "action-color": "#D5AD50",
-      "action-color-highlight": "#D5AD50",
-      "notice-background-color": "#D5AD50",
-      "text5-color": "#ffffff"
-    }
   }
 ]
