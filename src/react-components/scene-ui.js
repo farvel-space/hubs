@@ -10,6 +10,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeBranch } from "@fortawesome/free-solid-svg-icons/faCodeBranch";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons/faPencilAlt";
 
+const IfRenderUi = props => {
+  const hide = props.hide === undefined ? "false" : props.hide;
+  return hide == "true" ? null : props.children;
+};
+
 class SceneUI extends Component {
   static propTypes = {
     intl: PropTypes.object,
@@ -25,7 +30,8 @@ class SceneUI extends Component {
     showCreateRoom: PropTypes.bool,
     unavailable: PropTypes.bool,
     isOwner: PropTypes.bool,
-    parentScene: PropTypes.object
+    parentScene: PropTypes.object,
+    hideUI: PropTypes.bool
   };
 
   state = {
@@ -212,84 +218,86 @@ class SceneUI extends Component {
           {this.state.showScreenshot && <img src={this.props.sceneScreenshotURL} />}
         </div>
         <div className={styles.whiteOverlay} />
-        <div className={styles.grid}>
-          <div className={styles.mainPanel}>
-            <a href="/" className={styles.logo}>
-              <img
-                src={configs.image("logo")}
-                alt={<FormattedMessage id="scene-page.logo-alt" defaultMessage="Logo" />}
-              />
-            </a>
-            <div className={styles.logoTagline}>{configs.translation("app-tagline")}</div>
-            {this.props.showCreateRoom && (
-              <div className={styles.createButtons}>
-                <button className={styles.createButton} onClick={this.createRoom}>
-                  <FormattedMessage id="scene-page.create-button" defaultMessage="Create a room with this scene" />
-                </button>
-              </div>
-            )}
-            <IfFeature name="enable_spoke">
-              {isOwner && sceneProjectId ? (
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={getReticulumFetchUrl(`/spoke/projects/${sceneProjectId}`)}
-                  className={styles.spokeButton}
-                >
-                  <FontAwesomeIcon icon={faPencilAlt} />
-                  <FormattedMessage
-                    id="scene-page.edit-button"
-                    defaultMessage="Edit in {editorName}"
-                    values={{ editorName: configs.translation("editor-name") }}
-                  />
-                </a>
-              ) : (
-                sceneAllowRemixing && (
+        <IfRenderUi hide={this.props.hideUI}>
+          <div className={styles.grid}>
+            <div className={styles.mainPanel}>
+              <a href="/" className={styles.logo}>
+                <img
+                  src={configs.image("logo")}
+                  alt={<FormattedMessage id="scene-page.logo-alt" defaultMessage="Logo" />}
+                />
+              </a>
+              <div className={styles.logoTagline}>{configs.translation("app-tagline")}</div>
+              {this.props.showCreateRoom && (
+                <div className={styles.createButtons}>
+                  <button className={styles.createButton} onClick={this.createRoom}>
+                    <FormattedMessage id="scene-page.create-button" defaultMessage="Create a room with this scene" />
+                  </button>
+                </div>
+              )}
+              <IfFeature name="enable_spoke">
+                {isOwner && sceneProjectId ? (
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={getReticulumFetchUrl(`/spoke/projects/new?sceneId=${sceneId}`)}
+                    href={getReticulumFetchUrl(`/spoke/projects/${sceneProjectId}`)}
                     className={styles.spokeButton}
                   >
-                    <FontAwesomeIcon icon={faCodeBranch} />
+                    <FontAwesomeIcon icon={faPencilAlt} />
                     <FormattedMessage
-                      id="scene-page.remix-button"
-                      defaultMessage="Remix in {editorName}"
+                      id="scene-page.edit-button"
+                      defaultMessage="Edit in {editorName}"
                       values={{ editorName: configs.translation("editor-name") }}
                     />
                   </a>
-                )
-              )}
-            </IfFeature>
-            <a href={tweetLink} rel="noopener noreferrer" target="_blank" className={styles.tweetButton}>
-              <img src="../assets/images/twitter.svg" />
-              <div>
-                <FormattedMessage id="scene-page.tweet-button" defaultMessage="Share on Twitter" />
-              </div>
-            </a>
-          </div>
-        </div>
-        <div className={styles.info}>
-          <div className={styles.name}>{this.props.sceneName}</div>
-          <div className={styles.attribution}>{attributions}</div>
-        </div>
-        <IfFeature name="enable_spoke">
-          <div className={styles.spoke}>
-            <div className={styles.madeWith}>
-              <FormattedMessage
-                id="scene-page.made-with"
-                defaultMessage="made with <a/>"
-                values={{
-                  a: () => (
-                    <a href="/spoke">
-                      <img src={configs.image("editor_logo")} />
+                ) : (
+                  sceneAllowRemixing && (
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={getReticulumFetchUrl(`/spoke/projects/new?sceneId=${sceneId}`)}
+                      className={styles.spokeButton}
+                    >
+                      <FontAwesomeIcon icon={faCodeBranch} />
+                      <FormattedMessage
+                        id="scene-page.remix-button"
+                        defaultMessage="Remix in {editorName}"
+                        values={{ editorName: configs.translation("editor-name") }}
+                      />
                     </a>
                   )
-                }}
-              />
+                )}
+              </IfFeature>
+              <a href={tweetLink} rel="noopener noreferrer" target="_blank" className={styles.tweetButton}>
+                <img src="../assets/images/twitter.svg" />
+                <div>
+                  <FormattedMessage id="scene-page.tweet-button" defaultMessage="Share on Twitter" />
+                </div>
+              </a>
             </div>
           </div>
-        </IfFeature>
+          <div className={styles.info}>
+            <div className={styles.name}>{this.props.sceneName}</div>
+            <div className={styles.attribution}>{attributions}</div>
+          </div>
+          <IfFeature name="enable_spoke">
+            <div className={styles.spoke}>
+              <div className={styles.madeWith}>
+                <FormattedMessage
+                  id="scene-page.made-with"
+                  defaultMessage="made with <a/>"
+                  values={{
+                    a: () => (
+                      <a href="/spoke">
+                        <img src={configs.image("editor_logo")} />
+                      </a>
+                    )
+                  }}
+                />
+              </div>
+            </div>
+          </IfFeature>
+        </IfRenderUi>
       </div>
     );
   }
