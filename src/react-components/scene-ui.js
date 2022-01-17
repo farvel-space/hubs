@@ -31,7 +31,7 @@ class SceneUI extends Component {
     unavailable: PropTypes.bool,
     isOwner: PropTypes.bool,
     parentScene: PropTypes.object,
-    hideUI: PropTypes.bool
+    hideUI: PropTypes.string
   };
 
   state = {
