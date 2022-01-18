@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./AvatarReadyPlayerMe.scss";
-import { ReactComponent as CloseIcon } from "../icons/Close.svg";
+import { ReactComponent as BackIcon } from "../icons/ChevronBack.svg";
 import { FormattedMessage } from "react-intl";
 import { IconButton } from "../input/IconButton";
 import { FullscreenLayout } from "../layout/FullscreenLayout";
 import { Column } from "../layout/Column";
 
-export function AvatarReadyPlayerMe({ onClose }) {
+export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser }) {
   const onSuccess = useCallback(
     ({ url }) => {
       // maybe using the scene like that does not work?
@@ -20,8 +20,9 @@ export function AvatarReadyPlayerMe({ onClose }) {
       scene.emit("avatar_updated");
       // TODO: when set for a second time, the avatar is not updated -> might be a caching issue with our cors proxy
       onClose();
+      closeMediaBrowser();
     },
-    [onClose]
+    [onClose, closeMediaBrowser]
   );
 
   useEffect(
@@ -30,8 +31,7 @@ export function AvatarReadyPlayerMe({ onClose }) {
         // Check if the received message is a string and a glb url
         // if not ignore it, and print details to the console
         if (typeof event.data === "string" && event.data.startsWith("https://") && event.data.endsWith(".glb")) {
-          const url = event.data;
-          console.log(`Avatar URL: ${url}`);
+          const url = event.data + "?v=" + new Date().getTime(); // add a timestamp to the url to prevent caching
           onSuccess({ url });
         } /* else {
           console.log(`Received message from unknown source: ${event.data}`);
@@ -50,7 +50,7 @@ export function AvatarReadyPlayerMe({ onClose }) {
     <FullscreenLayout
       headerLeft={
         <IconButton onClick={onClose}>
-          <CloseIcon />
+          <BackIcon />
         </IconButton>
       }
       headerCenter={
@@ -70,7 +70,8 @@ export function AvatarReadyPlayerMe({ onClose }) {
 }
 
 AvatarReadyPlayerMe.propTypes = {
-  onClose: PropTypes.func
+  onClose: PropTypes.func,
+  closeMediaBrowser: PropTypes.func
 };
 
 AvatarReadyPlayerMe.defaultProps = {

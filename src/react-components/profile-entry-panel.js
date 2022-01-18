@@ -19,8 +19,7 @@ export default class ProfileEntryPanel extends Component {
     avatarId: PropTypes.string,
     onClose: PropTypes.func,
     onBack: PropTypes.func,
-    showBackButton: PropTypes.bool,
-    showNonHistoriedDialog: PropTypes.func
+    showBackButton: PropTypes.bool
   };
 
   static defaultProps = {
@@ -136,8 +135,7 @@ export default class ProfileEntryPanel extends Component {
       },
       onSubmit: this.saveStateAndFinish,
       onClose: this.props.onClose,
-      onBack: this.props.onBack,
-      showNonHistoriedDialog: this.props.showNonHistoriedDialog
+      onBack: this.props.onBack
     };
 
     if (this.props.containerType === "sidebar") {
