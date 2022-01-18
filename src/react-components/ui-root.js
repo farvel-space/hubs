@@ -787,8 +787,8 @@ class UIRoot extends Component {
   };
 
   renderEntryStartPanel = () => {
-    //const { hasAcceptedProfile, hasChangedName } = this.props.store.state.activity;
-    //const promptForNameAndAvatarBeforeEntry = this.props.hubIsBound ? !hasAcceptedProfile : !hasChangedName;
+    const { hasAcceptedProfile, hasChangedName } = this.props.store.state.activity;
+    const promptForNameAndAvatarBeforeEntry = this.props.hubIsBound ? !hasAcceptedProfile : !hasChangedName;
 
     // TODO: What does onEnteringCanceled do?
     return (
@@ -799,20 +799,24 @@ class UIRoot extends Component {
           roomName={this.props.hub.name}
           showJoinRoom={!this.state.waitingOnAudio && !this.props.entryDisallowed}
           onJoinRoom={() => {
-            this.pushHistoryState("entry_step", "tutorial_controls");
-            // if (promptForNameAndAvatarBeforeEntry || !this.props.forcedVREntryType) {
-            //   this.setState({ entering: true });
-            //   this.props.hubChannel.sendEnteringEvent();
-              
-            //   if (promptForNameAndAvatarBeforeEntry) {
-            //     //this.pushHistoryState("entry_step", "profile");
-            //   } else {
-            //     this.onRequestMicPermission();
-            //     this.pushHistoryState("entry_step", "mic_grant");
-            //   }
-            // } else {
-            //   this.handleForceEntry();
-            // }
+            if (
+              this.props.store.state.preferences.skipEntryTutorial == undefined ||
+              this.props.store.state.preferences.skipEntryTutorial == false
+            ) {
+              this.pushHistoryState("entry_step", "tutorial_controls");
+            } else if (promptForNameAndAvatarBeforeEntry || !this.props.forcedVREntryType) {
+              this.setState({ entering: true });
+              this.props.hubChannel.sendEnteringEvent();
+
+              if (promptForNameAndAvatarBeforeEntry) {
+                this.pushHistoryState("entry_step", "profile");
+              } else {
+                this.onRequestMicPermission();
+                this.pushHistoryState("entry_step", "mic_grant");
+              }
+            } else {
+              this.handleForceEntry();
+            }
           }}
           showEnterOnDevice={!this.state.waitingOnAudio && !this.props.entryDisallowed && !isMobileVR}
           onEnterOnDevice={() => this.attemptLink()}
