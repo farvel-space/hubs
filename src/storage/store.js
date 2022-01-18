@@ -130,7 +130,8 @@ export const SCHEMA = {
         showRtcDebugPanel: { type: "bool" },
         theme: { type: "string" },
         tmpMutedGlobalMediaVolume: { type: "number" },
-        tmpMutedGlobalVoiceVolume: { type: "number" }
+        tmpMutedGlobalVoiceVolume: { type: "number" },
+        skipEntryTutorial: { type: "bool" }
       }
     },
 
