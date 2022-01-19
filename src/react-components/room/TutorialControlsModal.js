@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Modal } from "../modal/Modal";
 import { Button } from "../input/Button";
@@ -12,7 +12,16 @@ import tutorialVideoMP4_DE from "../../assets/video/tutorial-controls_DE.mp4";
 import tutorialVideoWebM_DE from "../../assets/video/tutorial-controls_DE.webm";
 import { getLocale } from "../../utils/i18n";
 
-export function TutorialControlsModal({ className, onBack, onContinue, ...rest }) {
+export function TutorialControlsModal({ onBack, onContinue, store, ...rest }) {
+  const [skipTutorialIsSet, setSkipTutorial] = useState(store.state.preferences.skipEntryTutorial);
+
+  const skipBtnPressed = useCallback(
+    () => {
+      if (skipTutorialIsSet) store.update({ preferences: { skipEntryTutorial: true } });
+      onContinue();
+    },
+    [skipTutorialIsSet, onContinue, store]
+  );
 
   return (
     <Modal
@@ -26,12 +35,22 @@ export function TutorialControlsModal({ className, onBack, onContinue, ...rest }
           <source src={getLocale() != "de" ? tutorialVideoMP4 : tutorialVideoMP4_DE} type="video/mp4" />
           <source src={getLocale() != "de" ? tutorialVideoWebM : tutorialVideoWebM_DE} type="video/webm" />
         </video>
-        <FormattedMessage
-          id="tutorial-controls-modal.controls-overview-info"
-          defaultMessage="Click onto the Controls button in the bottom bar for an overview of the controls, whenever you need to.{linebreak}"
-          values={{ linebreak: <br /> }}
-        />
-        <Button preset="accept" onClick={onContinue}>
+        <div className="checkbox-container">
+          <input
+            id="checkbox-dont-show-again"
+            type="checkbox"
+            className="checkbox"
+            checked={skipTutorialIsSet}
+            onChange={e => setSkipTutorial(e.target.checked)}
+          />
+          <label>
+            <FormattedMessage
+              id="tutorial-controls-modal.skipTutorialCheckboxLabel"
+              defaultMessage="Don't show this tutorial again."
+            />
+          </label>
+        </div>
+        <Button preset="accept" onClick={skipBtnPressed}>
           <FormattedMessage id="tutorial-controls-modal.skip" defaultMessage="Skip" />
         </Button>
       </Column>
@@ -40,9 +59,10 @@ export function TutorialControlsModal({ className, onBack, onContinue, ...rest }
 }
 
 TutorialControlsModal.propTypes = {
-  className: PropTypes.string,
   error: PropTypes.string,
   errorButtonLabel: PropTypes.string,
   onClickErrorButton: PropTypes.func,
-  onBack: PropTypes.func
+  onBack: PropTypes.func,
+  onContinue: PropTypes.func,
+  store: PropTypes.object
 };
