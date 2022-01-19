@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./AvatarReadyPlayerMe.scss";
-import { ReactComponent as BackIcon } from "../icons/ChevronBack.svg";
 import { FormattedMessage } from "react-intl";
-import { IconButton } from "../input/IconButton";
+import { BackButton } from "../input/BackButton";
 import { FullscreenLayout } from "../layout/FullscreenLayout";
 import { Column } from "../layout/Column";
 
@@ -48,11 +47,7 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser }) {
 
   return (
     <FullscreenLayout
-      headerLeft={
-        <IconButton onClick={onClose}>
-          <BackIcon />
-        </IconButton>
-      }
+      headerLeft={<BackButton onClick={onClose} />}
       headerCenter={
         <>
           <h3>
