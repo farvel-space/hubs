@@ -1079,8 +1079,8 @@ class UIRoot extends Component {
                   }
                 }}
                 showBackButton
-                //onBack={() => this.pushHistoryState()} // did change to following line, why is this other than other entry dialogs?
-                onBack={() => this.props.history.goBack()}
+                onBack={() => this.pushHistoryState()}
+                // onBack={() => this.props.history.goBack()} // does not work if user clicks on "change avatar" before
                 store={this.props.store}
                 mediaSearchStore={this.props.mediaSearchStore}
                 avatarId={props.location.state.detail && props.location.state.detail.avatarId}
