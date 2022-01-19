@@ -6,6 +6,7 @@ import styles from "./MediaTiles.scss";
 import { ReactComponent as PeopleIcon } from "../icons/People.svg";
 import { ReactComponent as StarIcon } from "../icons/Star.svg";
 import { ReactComponent as AddIcon } from "../icons/Add.svg";
+import { ReactComponent as UploadIcon } from "../icons/Upload.svg";
 import { ReactComponent as PenIcon } from "../icons/Pen.svg";
 import { ReactComponent as DuplicateIcon } from "../icons/Duplicate.svg";
 import { ReactComponent as SearchIcon } from "../icons/Search.svg";
@@ -112,18 +113,40 @@ TileAction.propTypes = {
   children: PropTypes.node
 };
 
-export function CreateTile({ label, type, ...rest }) {
+export function IconTile({ label, type, icon, ...rest }) {
   return (
     <BaseTile className={styles.createTile} wide={type === "scene"} tall={type === "avatar"} {...rest}>
       <div className={styles.createTileContent}>
-        <AddIcon width={48} height={48} />
+        {icon}
         <p>{label}</p>
       </div>
     </BaseTile>
   );
 }
 
+IconTile.propTypes = {
+  label: PropTypes.node,
+  type: PropTypes.string,
+  icon: PropTypes.element
+};
+
+export function CreateTile({ label, type, ...rest }) {
+  const icon = <AddIcon width={48} height={48} />;
+  return IconTile({ label, type, icon, ...rest });
+}
+
 CreateTile.propTypes = {
+  label: PropTypes.node,
+  type: PropTypes.string,
+  useUploadIcon: PropTypes.bool
+};
+
+export function UploadTile({ label, type, ...rest }) {
+  const icon = <UploadIcon width={48} height={48} />;
+  return IconTile({ label, type, icon, ...rest });
+}
+
+UploadTile.propTypes = {
   label: PropTypes.node,
   type: PropTypes.string
 };

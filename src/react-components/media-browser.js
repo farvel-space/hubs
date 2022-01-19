@@ -15,7 +15,7 @@ import { ReactComponent as LinkIcon } from "./icons/Link.svg";
 import { remixAvatar } from "../utils/avatar-utils";
 import { fetchReticulumAuthenticated, getReticulumFetchUrl } from "../utils/phoenix-utils";
 import { proxiedUrlFor, scaledThumbnailUrlFor } from "../utils/media-url-utils";
-import { CreateTile, MediaTile } from "./room/MediaTiles";
+import { CreateTile, UploadTile, MediaTile } from "./room/MediaTiles";
 import { SignInMessages } from "./auth/SignInModal";
 import { AvatarReadyPlayerMe } from "./room/AvatarReadyPlayerMe";
 
@@ -492,24 +492,21 @@ class MediaBrowserContainer extends Component {
         !showEmptyStringOnNoResult ? (
           <>
             {urlSource === "avatars" && (
-              <>
-                <CreateTile
-                  type="avatar"
-                  onClick={this.onCreateReadyPlayerMeAvatar}
-                  label={<FormattedMessage id="media-browser.create-avatar" defaultMessage="Create Avatar" />}
-                />
-              </>
+              <CreateTile
+                type="avatar"
+                onClick={this.onCreateReadyPlayerMeAvatar}
+                label={<FormattedMessage id="media-browser.create-avatar" defaultMessage="Create Avatar" />}
+              />
             )}
-            {/* const isModerator = this.props.hubChannel && this.props.hubChannel.canOrWillIfCreator("kick_users") && !isMobileVR; */}
             {urlSource === "avatars" &&
               this.props.hubChannel &&
               this.props.hubChannel.can("pin_objects") && (
-                <CreateTile
+                <UploadTile
                   type="avatar"
                   onClick={this.onCreateAvatar}
                   label={<FormattedMessage id="media-browser.upload-avatar" defaultMessage="Upload Avatar" />}
                 />
-            )}
+              )}
             {urlSource === "scenes" &&
               configs.feature("enable_spoke") && (
                 <CreateTile
