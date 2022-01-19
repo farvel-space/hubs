@@ -7,4 +7,45 @@
     (max-height: theme.$breakpoint-vr - 1) {
         max-width: none;
     }
+
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        margin: 12px 0;
+
+        .checkbox {
+            cursor: pointer;
+            appearance: none;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            width: 2em;
+            height: 2em;
+            border: 1px solid theme.$input-border-color;
+            background-color: theme.$input-bg-color;
+            border-radius: 6px;
+            vertical-align: sub;
+            margin: 0 0.7em;
+            min-width: 2em;
+            min-height: 2em;
+        }
+
+        .checkbox:checked {
+            position: relative;
+
+            &::after {
+                content: ' ';
+                position: absolute;
+                background: theme.$active-color;
+                top: 0.3em;
+                left: 0.3em;
+                right: 0.3em;
+                bottom: 0.3em;
+                border-radius: 0.3em;
+            }
+        }
+
+        label {
+            font-size: 14px;
+        }
+    }
 }

@@ -483,6 +483,10 @@ const preferenceLabels = defineMessages({
   theme: {
     id: "preferences-screen.preference.theme",
     defaultMessage: "Theme"
+  },
+  skipEntryTutorial: {
+    id: "preferences-screen.preference.skipEntryTutorial",
+    defaultMessage: "Skip video tutorial on entry"
   }
 });
 
@@ -1004,6 +1008,11 @@ class PreferencesScreen extends Component {
             prefType: PREFERENCE_LIST_ITEM_TYPE.SELECT,
             options: availableThemes,
             defaultString: "Browser Default"
+          },
+          {
+            key: "skipEntryTutorial",
+            prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX,
+            defaultBool: false
           },
           { key: "onlyShowNametagsInFreeze", prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX, defaultBool: false },
           { key: "maxResolution", prefType: PREFERENCE_LIST_ITEM_TYPE.MAX_RESOLUTION },
