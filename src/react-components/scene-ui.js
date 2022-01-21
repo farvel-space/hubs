@@ -217,8 +217,8 @@ class SceneUI extends Component {
         >
           {this.state.showScreenshot && <img src={this.props.sceneScreenshotURL} />}
         </div>
-        <div className={styles.whiteOverlay} />
         <IfRenderUi hide={this.props.hideUI}>
+          <div className={styles.whiteOverlay} />
           <div className={styles.grid}>
             <div className={styles.mainPanel}>
               <a href="/" className={styles.logo}>
