@@ -68,9 +68,9 @@ import { ReactComponent as DiscordIcon } from "./icons/Discord.svg";
 import { ReactComponent as VRIcon } from "./icons/VR.svg";
 import { ReactComponent as LeaveIcon } from "./icons/Leave.svg";
 import { ReactComponent as EnterIcon } from "./icons/Enter.svg";
+import { ReactComponent as InviteIcon } from "./icons/Invite.svg";
 import { ReactComponent as ControlsIcon } from "./icons/Controls.svg";
-import { ReactComponent as InviteIcon } from "./icons/Reaction.svg"; // TODO: change with new farvel icon
-import { ReactComponent as MailIcon } from "./icons/Invite.svg";
+import { ReactComponent as FeedbackIcon } from "./icons/Feedback.svg";
 import { ReactComponent as LinkIcon } from "./icons/Link.svg";
 import { PeopleSidebarContainer, userFromPresence } from "./room/PeopleSidebarContainer";
 import { ObjectListProvider } from "./room/useObjectList";
@@ -1201,7 +1201,7 @@ class UIRoot extends Component {
           (this.props.breakpoint === "sm" || this.props.breakpoint === "md") && {
             id: "feedback",
             label: <FormattedMessage id="more-menu.feedback" defaultMessage="Feedback" />,
-            icon: MailIcon,
+            icon: FeedbackIcon,
             onClick: () => (window.location.href = "mailto:hi@farvel.space") // TODO: find a better solution: form?
           },
           this.isFavorited()
@@ -1556,7 +1556,7 @@ class UIRoot extends Component {
                     />
                     <FollowUsPopoverContainer scene={this.props.scene} />
                     <ToolbarButton
-                      icon={<MailIcon />}
+                      icon={<FeedbackIcon />}
                       preset="basic"
                       label={<FormattedMessage id="toolbar.feedback" defaultMessage="Feedback" />}
                       onClick={() => (window.location.href = "mailto:hi@farvel.space")} // TODO: find a better solution: form?
