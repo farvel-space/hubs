@@ -11,7 +11,7 @@ import { TextAreaInputField } from "../input/TextAreaInputField";
 const ritualMessageMessages = defineMessages({
   title: {
     id: "ritual-message-modal.title",
-    defaultMessage: "Submit a message to the decendent"
+    defaultMessage: "Submit a message to the descendent"
   },
   submit: {
     id: "ritual-message-modal.submit",
