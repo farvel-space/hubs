@@ -290,7 +290,7 @@
   "media-tile.action.edit-scene": "Szene bearbeiten",
   "media-tile.action.room-info": "Raum Info",
   "media-tile.action.show-similar-avatars": "Ähnliche Avatare anzeigen",
-  "media-tile.joined-room": "Verbunden {relativeTime}",
+  "media-tile.joined-room": "Besucht {relativeTime}",
   "mic-permissions-modal.grant-mic-permissions": "Mikrofonberechtigungen erteilen",
   "mic-permissions-modal.mic-access-needed": "Mikrofonzugriff ist erforderlich, um von anderen gehört zu werden. {linebreak} Das Mikrofon kann im Raum stummgeschaltet werden.",
   "mic-permissions-modal.title": "In VR betreten",
