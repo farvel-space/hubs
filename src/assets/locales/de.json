@@ -127,7 +127,7 @@
   "close-room-modal.title": "Raum schließen",
   "close-room-modal.type-to-confirm": "Gib den Raumnamen zur Bestätigung ein: {roomName}",
   "content-menu.objects-menu-button": "Objekte",
-  "content-menu.people-menu-button": "Person(en)",
+  "content-menu.people-menu-button": "Personen ({presenceCount})",
   "controls-overview-modal.title": "Steuerungsübersicht",
   "copyable-text-input-field.copied-label": "Kopiert",
   "copyable-text-input-field.copy-label": "Kopieren",
