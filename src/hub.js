@@ -1329,6 +1329,41 @@ document.addEventListener("DOMContentLoaded", async () => {
       createInWorldLogMessage(incomingMessage);
     }
 
+    console.log("hub Phx Channel message", incomingMessage);
+    if (type === "ritual") {
+      // TODO: check permission?
+      // TODO: Check if in room or specatate?
+      remountUI({ showRitualMessageDialog: true });
+
+      // TODO: Change bool when dialog is closed or message sent.
+      // remountUI({
+      //   showSignInDialog: true,
+      //   signInMessage,
+      //   onContinueAfterSignIn: async () => {
+      //     remountUI({ showSignInDialog: false });
+      //     let actionError = null;
+      //     if (predicate()) {
+      //       try {
+      //         await action();
+      //       } catch (e) {
+      //         actionError = e;
+      //       }
+      //     } else {
+      //       actionError = new Error("Predicate failed post sign-in");
+      //     }
+  
+      //     if (actionError && onFailure) onFailure(actionError);
+      //     exit2DInterstitialAndEnterVR();
+      //   },
+      //   onSignInDialogVisibilityChanged: visible => {
+      //     if (visible) {
+      //       remountUI({ showSignInDialog: true });
+      //     } else {
+      //       remountUI({ showSignInDialog: false, onContinueAfterSignIn: null });
+      //     }
+      //   }
+      // });
+    }
     messageDispatch.receive(incomingMessage);
   });
 
