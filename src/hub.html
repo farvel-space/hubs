@@ -582,22 +582,27 @@
                 </a-entity>
             </template>
 
+            <!-- TODO: change id ending to sth different, but think about server restriction: 
+                 https://github.com/mozilla/reticulum/blob/969f2f43b33c195358e5e72d3060b59fac2dff1a/lib/ret_web/channels/hub_channel.ex#L708 -->
             <template id="ritual-spark-avatar">
                 <a-entity
-                    geometry="primitive: box; width: 1; height: 1; depth: 1"
-                    material="color: red"
-                    class="interactable"
+                    billboard
+                    class="ritual-spark-avatar"
                     ritual-spark-avatar
-                    body-helper="type: dynamic; mass: 1; collisionFilterGroup: 1; collisionFilterMask: 15;"
                     set-unowned-body-kinematic
-                    is-remote-hover-target
-                    tags="isHandCollisionTarget: true; isHoldable: true; offersRemoteConstraint: true; offersHandConstraint: true; inspectable: true;"
                     destroy-at-extreme-distances
-                    scalable-when-grabbed
-                    floaty-object="modifyGravityOnRelease: true; autoLockOnLoad: true;"
                     set-yxz-order
                     matrix-auto-update
-                ></a-entity>
+                >
+                    <!-- <a-entity
+                        billboard
+                        is-not-remote-hover-target
+                        class="modBadge"
+                        sprite="name: mod-badge.png"
+                        scale="0.10 0.10 0.10"
+                        position="0 1.2 -0.02"
+                    ></a-entity> -->
+                </a-entity>
             </template>
 
             <template id="interactable-media-frame">

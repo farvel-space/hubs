@@ -100,6 +100,7 @@ import { SpectatingLabel } from "./room/SpectatingLabel";
 import { SignInMessages } from "./auth/SignInModal";
 import { TutorialControlsModal } from "./room/TutorialControlsModal";
 import { ControlsOverviewModal } from "./room/ControlsOverviewModal";
+import { RitualMessageModal } from "./room/RitualMessageModal";
 
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
@@ -149,6 +150,7 @@ class UIRoot extends Component {
     subscriptions: PropTypes.object,
     initialIsFavorited: PropTypes.bool,
     showSignInDialog: PropTypes.bool,
+    showRitualMessageDialog: PropTypes.bool,
     signInMessage: PropTypes.string,
     onContinueAfterSignIn: PropTypes.func,
     onSignInDialogVisibilityChanged: PropTypes.func,
@@ -217,7 +219,7 @@ class UIRoot extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { hubChannel, showSignInDialog } = this.props;
+    const { hubChannel, showSignInDialog, showRitualMessageDialog } = this.props;
     if (hubChannel) {
       const { signedIn } = hubChannel;
       if (signedIn !== this.state.signedIn) {
@@ -227,6 +229,13 @@ class UIRoot extends Component {
     if (prevProps.showSignInDialog !== showSignInDialog) {
       if (showSignInDialog) {
         this.showContextualSignInDialog();
+      } else {
+        this.closeDialog();
+      }
+    }
+    if (prevProps.showRitualMessageDialog !== showRitualMessageDialog) {
+      if (showRitualMessageDialog) {
+        this.showRitualMessageModal();
       } else {
         this.closeDialog();
       }
@@ -429,6 +438,14 @@ class UIRoot extends Component {
         });
       },
       onClose: onCallback
+    });
+  };
+
+  showRitualMessageModal = () => {
+    this.showNonHistoriedDialog(RitualMessageModal, {
+      scene: this.props.scene,
+      store: this.props.store,
+      onClose: () => this.closeDialog()
     });
   };
 

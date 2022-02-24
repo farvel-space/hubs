@@ -358,7 +358,7 @@ function registerNetworkSchemas() {
   });
 
   NAF.schemas.add({
-    template: "#interactable-ritual-spark",
+    template: "#ritual-spark-avatar",
     components: [
       {
         component: "position",
@@ -371,9 +371,7 @@ function registerNetworkSchemas() {
       {
         component: "scale",
         requiresNetworkUpdate: vectorRequiresUpdate(0.001) // Only send updates when the object scale has changed over 0.001 units
-      },
-      "media-loader",
-      "pinnable"
+      }
     ]
   });
 }

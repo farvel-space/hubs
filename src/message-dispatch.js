@@ -212,6 +212,10 @@ export default class MessageDispatch extends EventTarget {
           }
         }
         break;
+      case "startRitual": {
+        console.log("startRitual");
+        this.hubChannel.sendMessage("start", "ritual");
+      }
     }
   };
 }
