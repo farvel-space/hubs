@@ -14,19 +14,14 @@ AFRAME.registerComponent("ritual-spark-avatar", {
   // },
 
   init: function() {
-    console.log("ritual-spark init", this.el);
+    // console.log("ritual-spark init", this.el);
     this.fpsCounter = 0;
     this.animation_1_started = false;
-    this.initialScale = this.el.object3D.scale.x;
-    this.maxScale = this.data.maxScale * this.initialScale;
 
-    NAF.utils.getNetworkedEntity(this.el).then(networkedEntity => {
-      console.log("ritual-spark networkedEntity", networkedEntity);
-      this.networkedEntity = networkedEntity;
-
-      this.initialScale = this.networkedEntity.object3D.scale.x;
-      this.maxScale = this.data.maxScale * this.initialScale;
-    });
+    // NAF.utils.getNetworkedEntity(this.el).then(networkedEntity => {
+    //   // console.log("ritual-spark networkedEntity", networkedEntity);
+    //   this.networkedEntity = networkedEntity;
+    // });
 
     const geometry = new THREE.PlaneGeometry(0.5, 0.5);
     const texture = new THREE.TextureLoader().load(sparkImageSrcUrl);
@@ -36,11 +31,7 @@ AFRAME.registerComponent("ritual-spark-avatar", {
     mesh.material.transparent = true;
     mesh.material.alphaTest = 0;
     this.el.setObject3D("mesh", mesh);
-
-
-
-    console.log("position", this.el.object3D.position);
-
+    // console.log("position", this.el.object3D.position);
   },
 
   startAnimation: function() {
@@ -51,10 +42,6 @@ AFRAME.registerComponent("ritual-spark-avatar", {
       const lastValue = {};
       return function(anim) {
         const value = anim.animatables[0].target;
-        // value.x = Math.max(Number.MIN_VALUE, value.x);
-        // value.y = Math.max(Number.MIN_VALUE, value.y);
-        // value.z = Math.max(Number.MIN_VALUE, value.z);
-
         // console.log("ritual-spark step", value);
 
         // For animation timeline.
@@ -71,10 +58,9 @@ AFRAME.registerComponent("ritual-spark-avatar", {
       };
     })();
 
-    
     const config = {
       duration: 10000,
-      easing: "linear",
+      easing: "easeOutSine",
       loop: 0,
       round: false,
       x: 0,
@@ -84,7 +70,7 @@ AFRAME.registerComponent("ritual-spark-avatar", {
       update: anim => step(anim),
       complete: anim => step(anim)
     };
-    console.log("ritual-spark startAnimation config", config);
+    // console.log("ritual-spark startAnimation config", config);
 
     anime(config);
   },
@@ -101,13 +87,12 @@ AFRAME.registerComponent("ritual-spark-avatar", {
   tick: function() {
     this.fpsCounter += 1;
     // console.log("ritual-spark tick", t, dt);
-   
+
     if (!this.networkedEntity || NAF.utils.isMine(this.networkedEntity)) {
       const entity = this.networkedEntity || this.el;
-
       // console.log("ritual-spark tick", entity.object3D.position);
 
-      // change opacity of material to random value
+      // change opacity of material to random value // TODO: use anime.js for this?
       if (this.fpsCounter % 12 === 0) {
         entity.getObject3D("mesh").material.opacity = Math.random() * 0.1 + 0.9;
       }
