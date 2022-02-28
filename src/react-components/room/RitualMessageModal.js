@@ -19,7 +19,7 @@ const ritualMessageMessages = defineMessages({
   },
   description: {
     id: "ritual-message-modal.description",
-    defaultMessage: "In this dialog you can submit a message to the decendent. The message will be used as part of the ritual and will be shown in the room afterwards. This is optional, if you don't want to submit a message, you can leave this dialog empty."
+    defaultMessage: "In this dialog you can submit a message to the decendent. The message will be used as part of the ritual and will be shown in the room afterwards. Participation is optional, if you don't want to submit a message, you can leave this dialog empty."
   }
 });
 
@@ -40,7 +40,7 @@ export function RitualMessageModal({ scene, store, onClose }) {
 
   const onSubmit = () => {
     console.log("submit");
-    // scene.emit("add_media", audioFile.size > 0 && audioFile);
+    scene.emit("ritual_spark_start");
     onClose();
   };
 

@@ -1330,7 +1330,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     console.log("hub Phx Channel message", incomingMessage);
-    if (type === "ritual") {
+    if (type === "ritual" && body == "start") {
       // TODO: check permission?
       // TODO: Check if in room or specatate?
       remountUI({ showRitualMessageDialog: true });
@@ -1363,6 +1363,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       //     }
       //   }
       // });
+    } else if (type == "ritual_anchor_mapping") {
+      // set id locally
+      const index = body.indexOf(window.NAF.clientId) + 1; // index of anchors starts with 1
+      console.log("ritual_anchor_mapping", index);
+      scene.systems["hubs-systems"].ritualSystem.anchorId = index;
     }
     messageDispatch.receive(incomingMessage);
   });

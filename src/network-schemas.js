@@ -371,6 +371,10 @@ function registerNetworkSchemas() {
       {
         component: "scale",
         requiresNetworkUpdate: vectorRequiresUpdate(0.001) // Only send updates when the object scale has changed over 0.001 units
+      },
+      {
+        component: "ritual-spark-avatar",
+        property: "anchorId"
       }
     ]
   });

@@ -213,8 +213,10 @@ export default class MessageDispatch extends EventTarget {
         }
         break;
       case "startRitual": {
+        // TODO: remove
         console.log("startRitual");
-        this.hubChannel.sendMessage("start", "ritual");
+        //this.hubChannel.sendMessage("start", "ritual");
+        this.scene.emit("ritual_initiated");
       }
     }
   };

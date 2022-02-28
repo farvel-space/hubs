@@ -7,11 +7,9 @@ const sparkImageSrcUrl = new URL(sparkImage, window.location.href).href;
  * @component ritual-spark
  */
 AFRAME.registerComponent("ritual-spark-avatar", {
-  // schema: {
-  //   initialForce: { default: 0 },
-  //   maxForce: { default: 6.5 },
-  //   maxScale: { default: 5 }
-  // },
+  schema: {
+    anchorId: { default: 1, type: "int" }
+  },
 
   init: function() {
     // console.log("ritual-spark init", this.el);
@@ -31,7 +29,11 @@ AFRAME.registerComponent("ritual-spark-avatar", {
     mesh.material.transparent = true;
     mesh.material.alphaTest = 0;
     this.el.setObject3D("mesh", mesh);
-    // console.log("position", this.el.object3D.position);
+
+    // select tree anchor
+    const anchor = document.querySelector("a-entity.ritual-anchor-" + String(this.data.anchorId).padStart(3, "0"));
+    this.anchor = anchor.object3D.position;
+    console.log("anchor selector", "a-entity.ritual-anchor-" + String(this.data.anchorId).padStart(3, "0"));
   },
 
   startAnimation: function() {
@@ -63,9 +65,9 @@ AFRAME.registerComponent("ritual-spark-avatar", {
       easing: "easeOutSine",
       loop: 0,
       round: false,
-      x: 0,
-      y: 0.5,
-      z: 0,
+      x: this.anchor.x,
+      y: this.anchor.y,
+      z: this.anchor.z,
       targets: [{ x: obj.position.x, y: obj.position.y, z: obj.position.z }],
       update: anim => step(anim),
       complete: anim => step(anim)
