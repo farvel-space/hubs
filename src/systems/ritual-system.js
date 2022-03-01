@@ -4,6 +4,8 @@ export class RitualSystem {
 
     this.scene.addEventListener("ritual_initiated", this.onRitualInitiated);
     this.scene.addEventListener("ritual_spark_start", this.onSpawnRitualSpark);
+    this.scene.addEventListener("ritual_spark_release", this.onRitualSparkRelease);
+    this.scene.addEventListener("ritual_spark_release_initiated", this.onRitualSparkReleaseInitiated);
   }
 
   onSpawnRitualSpark = () => {
@@ -14,7 +16,10 @@ export class RitualSystem {
     this.scene.appendChild(entity);
     entity.setAttribute("ritual-spark-avatar", { anchorId: this.anchorId ? this.anchorId : 1 });
     entity.setAttribute("offset-relative-to", { target: "#avatar-pov-node", offset: { x: 0, y: -0.25, z: 0 } });
+    entity.setAttribute("destroy-at-extreme-distances", { yMax: 300 }); // for release animation, 400 is enough
     entity.setAttribute("networked", { template: "#ritual-spark-avatar" });
+
+    this.entity = entity;
   };
 
   onRitualInitiated = () => {
@@ -31,5 +36,15 @@ export class RitualSystem {
 
     // set own id --> necessary?
     // this.anchorId = this.intIds.indexOf(window.NAF.clientId) + 1;
+  };
+
+  onRitualSparkReleaseInitiated = () => {
+    console.log("onRitualSparkReleaseInitiated");
+    APP.hubChannel.sendMessage("release", "ritual");
+  };
+
+  onRitualSparkRelease = () => {
+    console.log("ritual_spark_release", this.entity);
+    this.entity.components["ritual-spark-avatar"].releaseAnimation();
   };
 }

@@ -1,6 +1,8 @@
 import anime from "animejs";
 import sparkImage from "../assets/images/ritual-spark.png";
 const sparkImageSrcUrl = new URL(sparkImage, window.location.href).href;
+const animation_1_duration = 10000;
+const animation_2_duration = 60000;
 
 /**
  *
@@ -36,7 +38,7 @@ AFRAME.registerComponent("ritual-spark-avatar", {
     console.log("anchor selector", "a-entity.ritual-anchor-" + String(this.data.anchorId).padStart(3, "0"));
   },
 
-  startAnimation: function() {
+  animate: function(x, y, z, duration) {
     // animation
     const obj = this.el.object3D;
 
@@ -61,13 +63,13 @@ AFRAME.registerComponent("ritual-spark-avatar", {
     })();
 
     const config = {
-      duration: 10000,
-      easing: "easeOutSine",
+      duration: duration,
+      easing: "easeInOutQuad",
       loop: 0,
       round: false,
-      x: this.anchor.x,
-      y: this.anchor.y,
-      z: this.anchor.z,
+      x: x,
+      y: y,
+      z: z,
       targets: [{ x: obj.position.x, y: obj.position.y, z: obj.position.z }],
       update: anim => step(anim),
       complete: anim => step(anim)
@@ -75,6 +77,8 @@ AFRAME.registerComponent("ritual-spark-avatar", {
     // console.log("ritual-spark startAnimation config", config);
 
     anime(config);
+
+    // TODO: maybe add a second animation to use a different easing function for z values
   },
 
   // update: function(oldData) {
@@ -85,6 +89,23 @@ AFRAME.registerComponent("ritual-spark-avatar", {
   // updateSchema: function(data) {
   //   console.log("ritual-spark updateSchema", data);
   // },
+
+  // how to trigger this function?
+  releaseAnimation: function() {
+    const y = 1001;
+    let x = this.anchor.x;
+    let z = this.anchor.z;
+
+    if (Math.random() > 0.5) {
+      x += Math.random() * 10;
+      z += Math.random() * 10;
+    } else {
+      x -= Math.random() * 10;
+      z -= Math.random() * 10;
+    }
+
+    this.animate(x, y, z, animation_2_duration); // because of destroy-at-extreme-distances, this entity will be destroyed when passing 1000 units
+  },
 
   tick: function() {
     this.fpsCounter += 1;
@@ -101,7 +122,7 @@ AFRAME.registerComponent("ritual-spark-avatar", {
 
       if (!this.animation_1_started) {
         this.animation_1_started = true;
-        this.startAnimation();
+        this.animate(this.anchor.x, this.anchor.y, this.anchor.z, animation_1_duration);
       }
     }
   }

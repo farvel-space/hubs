@@ -1330,45 +1330,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     console.log("hub Phx Channel message", incomingMessage);
-    if (type === "ritual" && body == "start") {
+    if (type == "ritual") {
       // TODO: check permission?
       // TODO: Check if in room or specatate?
-      remountUI({ showRitualMessageDialog: true });
 
-      // TODO: Change bool when dialog is closed or message sent.
-      // remountUI({
-      //   showSignInDialog: true,
-      //   signInMessage,
-      //   onContinueAfterSignIn: async () => {
-      //     remountUI({ showSignInDialog: false });
-      //     let actionError = null;
-      //     if (predicate()) {
-      //       try {
-      //         await action();
-      //       } catch (e) {
-      //         actionError = e;
-      //       }
-      //     } else {
-      //       actionError = new Error("Predicate failed post sign-in");
-      //     }
-  
-      //     if (actionError && onFailure) onFailure(actionError);
-      //     exit2DInterstitialAndEnterVR();
-      //   },
-      //   onSignInDialogVisibilityChanged: visible => {
-      //     if (visible) {
-      //       remountUI({ showSignInDialog: true });
-      //     } else {
-      //       remountUI({ showSignInDialog: false, onContinueAfterSignIn: null });
-      //     }
-      //   }
-      // });
+      if (body == "start") {
+        remountUI({ showRitualMessageDialog: true });
+
+        // TODO: Chjange bool when dialog is closed or message sent.
+        // remountUI({
+        //   showSignInDialog: true,
+        //   signInMessage,
+        //   onContinueAfterSignIn: async () => {
+        //     remountUI({ showSignInDialog: false });
+        //     let actionError = null;
+        //     if (predicate()) {
+        //       try {
+        //         await action();
+        //       } catch (e) {
+        //         actionError = e;
+        //       }
+        //     } else {
+        //       actionError = new Error("Predicate failed post sign-in");
+        //     }
+    
+        //     if (actionError && onFailure) onFailure(actionError);
+        //     exit2DInterstitialAndEnterVR();
+        //   },
+        //   onSignInDialogVisibilityChanged: visible => {
+        //     if (visible) {
+        //       remountUI({ showSignInDialog: true });
+        //     } else {
+        //       remountUI({ showSignInDialog: false, onContinueAfterSignIn: null });
+        //     }
+        //   }
+        // });
+      } else if (body == "release") {
+        scene.emit("ritual_spark_release");
+      }
     } else if (type == "ritual_anchor_mapping") {
       // set id locally
       const index = body.indexOf(window.NAF.clientId) + 1; // index of anchors starts with 1
       console.log("ritual_anchor_mapping", index);
       scene.systems["hubs-systems"].ritualSystem.anchorId = index;
     }
+
     messageDispatch.receive(incomingMessage);
   });
 
