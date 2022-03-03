@@ -1,5 +1,13 @@
 @use "../styles/theme.scss";
 
+:local(.hiddenAttr) {
+
+  &[hidden=""],
+  &[hidden="true"] {
+    display: none;
+  }
+}
+
 :local(.entry) {
   padding: 40px 20px;
 
@@ -8,7 +16,11 @@
   }
 }
 
-:local(.message) {
+:local(.form) {
+  .messageGroup {
+    width: 100%;
+  }
+
   .checkbox-container {
     display: flex;
     align-items: center;

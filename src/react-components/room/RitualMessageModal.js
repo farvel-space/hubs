@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useIntl, defineMessages } from "react-intl";
 import PropTypes from "prop-types";
 import { Modal } from "../modal/Modal";
@@ -10,40 +10,53 @@ import { TextAreaInputField } from "../input/TextAreaInputField";
 import { TextInputField } from "../input/TextInputField";
 import styles from "./RitualMessageModal.scss";
 import { SCHEMA } from "../../storage/store";
-import { store } from "../../storage/store";
+import classNames from "classnames";
 
 const ritualMessageMessages = defineMessages({
   titleEntry: {
-    id: "ritual-message-modal.titleEntry",
+    id: "ritual-message-modal.entry.title",
     defaultMessage: "Take part in the ritual"
   },
   titleMessage: {
-    id: "ritual-message-modal.titleMessage",
-    defaultMessage: "Submit a message to the descendent"
+    id: "ritual-message-modal.message.title",
+    defaultMessage: "Message"
   },
   titleThoughts: {
-    id: "ritual-message-modal.titleThoughts",
-    defaultMessage: "Send your thoughts of the descendent"
+    id: "ritual-message-modal.thoughts.title",
+    defaultMessage: "Thoughts"
   },
   entryButtonMessage: {
-    id: "ritual-message-modal.entryButtonMessage",
+    id: "ritual-message-modal.entry.buttonMessage",
     defaultMessage: "I want to send last words"
   },
   entryButtonThoughts: {
-    id: "ritual-message-modal.entryButtonThoughts",
+    id: "ritual-message-modal.entry.buttonThoughts",
     defaultMessage: "Words fail me"
   },
-  submit: {
-    id: "ritual-message-modal.submit",
-    defaultMessage: "Submit Message"
+  submitMessage: {
+    id: "ritual-message-modal.message.submit",
+    defaultMessage: "Send Message"
+  },
+  submitThoughts: {
+    id: "ritual-message-modal.thoughts.submit",
+    defaultMessage: "My thoughts are with you."
   },
   description: {
-    id: "ritual-message-modal.description",
-    defaultMessage: "In this dialog you can submit a message to the decendent. The message will be used as part of the ritual and will be shown in the room afterwards. Participation is optional, if you don't want to submit a message, you can go back and choose the - Words fail me - option."
+    id: "ritual-message-modal.message.description",
+    defaultMessage:
+      "In this dialog you can submit a message to the decendent. The message will be used as part of the ritual and will be shown in the room afterwards. Participation is optional, if you don't want to submit a message, you can go back and choose the - Words fail me - option."
   },
   checkboxShowName: {
     id: "ritual-message-modal.checkboxShowName",
-    defaultMessage: "Sign the message with my name."
+    defaultMessage: "Sign with my name."
+  },
+  labelName: {
+    id: "ritual-message-modal.labelName",
+    defaultMessage: "Name"
+  },
+  labelMessage: {
+    id: "ritual-message-modal.labelMessage",
+    defaultMessage: "Message"
   }
 });
 
@@ -51,44 +64,21 @@ const ENTRY_STATE = 0;
 const MESSAGE_STATE = 1;
 const THOUGHTS_STATE = -1;
 
-function stopPropagation(e) {
-  console.log("stopPropagation");
-  e.stopPropagation();
-}
-
 export function RitualMessageModal({ scene, store, onClose }) {
   const intl = useIntl();
+  const { handleSubmit, register, watch, setValue } = useForm();
   const [dialogState, setDialogState] = useState(ENTRY_STATE);
-  const { handleSubmit } = useForm();
-  const [hasEnteredMessage, setHasEnteredMessage] = useState(false);
+  // const [hasEnteredMessage, setHasEnteredMessage] = useState(false);
   const [submitDisplayName, setSubmitDisplayName] = useState(true);
-  const [submittedName, setSubmittedName] = useState(store.state.profile.displayName);
-  const displayNameInputRef = useRef(null);
+  const submittedName = watch("submittedName", store.state.profile.displayName);
 
-
-
-  // useEffect(() => {
-  //   console.log("useEffect");
-  //   if (displayNameInputRef.current) {
-  //     console.log("useEffect: add event listener");
-  //     // stop propagation so that avatar doesn't move when wasd'ing during text input.
-  //     displayNameInputRef.current.addEventListener("keydown", stopPropagation);
-  //     displayNameInputRef.current.addEventListener("keypress", stopPropagation);
-  //     displayNameInputRef.current.addEventListener("keyup", stopPropagation);
-  //   }
-  //   return () => {
-  //     console.log("useEffect: remove event listener");
-  //     if (displayNameInputRef.current) {
-  //       displayNameInputRef.current.removeEventListener("keydown", stopPropagation);
-  //       displayNameInputRef.current.removeEventListener("keypress", stopPropagation);
-  //       displayNameInputRef.current.removeEventListener("keyup", stopPropagation);
-  //     }
-  //   };
-  // }, []);
-
-  const onBack = () => {
-    setDialogState(ENTRY_STATE);
-  };
+  useEffect(
+    () => {
+      register("submittedName");
+      return () => {};
+    },
+    [register]
+  );
 
   const onSubmit = () => {
     console.log("submit");
@@ -96,114 +86,15 @@ export function RitualMessageModal({ scene, store, onClose }) {
     onClose();
   };
 
-  const changeToMessageState = () => {
-    setDialogState(MESSAGE_STATE);
-  };
-
-  const changeToThoughtState = () => {
-    setDialogState(THOUGHTS_STATE);
-  };
-
-  const changeToEntryState = () => {
-    setDialogState(ENTRY_STATE);
-  };
-
-  const EntryDialog = () => {
-    return (
-      <Column as="form" padding center className={styles.entry}>
-        <Button type="button" preset="accent1" onClick={handleSubmit(changeToMessageState)}>
-          {intl.formatMessage(ritualMessageMessages.entryButtonMessage)}
-        </Button>
-        <Button type="button" preset="accent2" onClick={handleSubmit(changeToThoughtState)}>
-          {intl.formatMessage(ritualMessageMessages.entryButtonThoughts)}
-        </Button>
-      </Column>
-    );
-  };
-
-  const SubmitNameCheckbox = () => {
-    return (
-      <div className="checkbox-container">
-        <input
-          id="checkbox-submit-display-name"
-          type="checkbox"
-          className="checkbox"
-          checked={submitDisplayName}
-          onChange={e => setSubmitDisplayName(e.target.checked)}
-        />
-        <label>{intl.formatMessage(ritualMessageMessages.checkboxShowName)}</label>
-      </div>
-    );
-  };
-
-  const NameTextfield = () => {
-    return (
-      <TextInputField
-        disabled={!submitDisplayName}
-        // label={<FormattedMessage id="avatar-settings-content.display-name-label" defaultMessage="Display Name" />}
-        value={submittedName} // does not work this way, gets reset after every press
-        pattern={SCHEMA.definitions.profile.properties.displayName.pattern}
-        spellCheck="false"
-        required
-        onChange={e => setSubmittedName(e.target.value)} // needed when using form?
-        // description={
-        //   <FormattedMessage
-        //     id="avatar-settings-content.display-name-description"
-        //     defaultMessage="Alphanumerics, hyphens, underscores, and tildes. At least 3 characters, no more than 32"
-        //   />
-        // }
-        ref={displayNameInputRef}
-      />
-    );
-  };
-
-  const MessageDialog = () => {
-    return (
-      <Column as="form" className={styles.message} padding center onSubmit={handleSubmit(onSubmit)}>
-        {/* <p>{intl.formatMessage(ritualMessageMessages.description)}</p> */}
-        {/* Textarea for message */}
-        {/* <textarea
-          id="textarea-message"
-          placeholder={intl.formatMessage(ritualMessageMessages.description)}
-          className="textarea"
-          onChange={console.log("changed")}
-        /> */}
-        <TextAreaInputField
-          name="textarea-message"
-          autoComplete="off"
-          placeholder={intl.formatMessage(ritualMessageMessages.description)}
-          // label={<FormattedMessage id="room-settings-sidebar.description" defaultMessage="Room Description" />}
-          minRows={5}
-          // ref={register}
-          // error={errors.description}
-          required
-          fullWidth
-        />
-        {/* store.state.profile.displayName */}
-        <NameTextfield />
-        <SubmitNameCheckbox />
-        {/* <Button type="submit" preset="accept" disabled={!hasEnteredMessage}> */}
-        <Button type="submit" preset="accept">
-          {intl.formatMessage(ritualMessageMessages.submit)}
-        </Button>
-      </Column>
-    );
-  };
-
-  const ThoughtsDialog = () => {
-    return (
-      <Column as="form" className={styles.message} padding center onSubmit={handleSubmit(onSubmit)}>
-        <NameTextfield />
-        <SubmitNameCheckbox />
-        <Button type="submit" preset="accept">
-          {intl.formatMessage(ritualMessageMessages.submit)}
-        </Button>
-      </Column>
-    );
-  };
+  const onNameChange = useCallback(
+    e => {
+      console.log("onNameChange", e);
+      setValue("submittedName", e.target.value);
+    },
+    [setValue]
+  );
 
   return (
-    // <Modal title={intl.formatMessage(ritualMessageMessages.title)} beforeTitle={<CloseButton onClick={onClose} />}>
     <Modal
       title={
         dialogState == ENTRY_STATE
@@ -212,18 +103,85 @@ export function RitualMessageModal({ scene, store, onClose }) {
             ? intl.formatMessage(ritualMessageMessages.titleMessage)
             : intl.formatMessage(ritualMessageMessages.titleThoughts)
       }
-      beforeTitle={dialogState == ENTRY_STATE ? null : <BackButton onClick={onBack} />}
+      beforeTitle={dialogState == ENTRY_STATE ? null : <BackButton onClick={() => setDialogState(ENTRY_STATE)} />}
     >
-      {/* { dialogState == ENTRY_STATE ? 
-        <EntryDialog />
-        : (dialogState == MESSAGE_STATE ?
-          <MessageDialog />
-        :
-          <ThoughtsDialog />
-        } */}
-      {dialogState == ENTRY_STATE && <EntryDialog />}
-      {dialogState == MESSAGE_STATE && <MessageDialog />}
-      {dialogState == THOUGHTS_STATE && <ThoughtsDialog />}
+      {/* Entry Dialog */}
+      <Column
+        padding
+        center
+        className={classNames(styles.entry, styles.hiddenAttr)}
+        hidden={!(dialogState == ENTRY_STATE)}
+      >
+        <Button type="button" preset="accent1" onClick={() => setDialogState(MESSAGE_STATE)}>
+          {intl.formatMessage(ritualMessageMessages.entryButtonMessage)}
+        </Button>
+        <Button type="button" preset="accent2" onClick={() => setDialogState(THOUGHTS_STATE)}>
+          {intl.formatMessage(ritualMessageMessages.entryButtonThoughts)}
+        </Button>
+      </Column>
+
+      {/* Message and Thought Form */}
+      <Column
+        as="form"
+        className={classNames(styles.hiddenAttr, styles.form)}
+        padding
+        center
+        onSubmit={handleSubmit(onSubmit)}
+        hidden={dialogState == ENTRY_STATE}
+      >
+        {/* <p>{intl.formatMessage(ritualMessageMessages.description)}</p> */}
+        {/* Textarea for message */}
+        {/* <textarea
+          id="textarea-message"
+          placeholder={intl.formatMessage(ritualMessageMessages.description)}
+          className="textarea"
+          onChange={console.log("changed")}
+        /> */}
+        <div className="messageGroup" hidden={dialogState != MESSAGE_STATE}>
+          <TextAreaInputField
+            name="textarea-message"
+            autoComplete="off"
+            placeholder={intl.formatMessage(ritualMessageMessages.description)}
+            label={intl.formatMessage(ritualMessageMessages.labelMessage)}
+            minRows={5}
+            // ref={register}
+            // error={errors.description}
+            required
+            fullWidth
+          />
+        </div>
+        <TextInputField
+          name="submittedName"
+          disabled={!submitDisplayName}
+          label={intl.formatMessage(ritualMessageMessages.labelName)}
+          value={submitDisplayName ? submittedName : ""} // does not work this way, gets reset after every press
+          pattern={SCHEMA.definitions.profile.properties.displayName.pattern}
+          spellCheck="false"
+          required
+          onChange={onNameChange} // needed when using form?
+          // description={
+          //   <FormattedMessage
+          //     id="avatar-settings-content.display-name-description"
+          //     defaultMessage="Alphanumerics, hyphens, underscores, and tildes. At least 3 characters, no more than 32"
+          //   />
+          // }
+        />
+        <div className="checkbox-container">
+          <input
+            id="checkbox-submit-display-name"
+            type="checkbox"
+            className="checkbox"
+            checked={submitDisplayName}
+            onChange={e => setSubmitDisplayName(e.target.checked)}
+          />
+          <label>{intl.formatMessage(ritualMessageMessages.checkboxShowName)}</label>
+        </div>
+        <Button type="submit" preset="accept">
+          {intl.formatMessage(
+            dialogState == MESSAGE_STATE ? ritualMessageMessages.submitMessage : ritualMessageMessages.submitThoughts
+          )}
+        </Button>
+      </Column>
     </Modal>
   );
 }
