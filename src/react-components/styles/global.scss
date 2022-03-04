@@ -101,6 +101,14 @@
   --disabled-bg-color: var(--background3-color);
   --disabled-icon-color: var(--text3-color);
 
+  --signin-color: #{theme.$blue};
+  --signin-border-color: var(--signin-color);
+
+  --landing-color: #{theme.$blue};
+  --landing-color-hover: #{theme.$blue-hover};
+  --landing-color-pressed: #{theme.$blue-pressed};
+  --landing-border-color: var(--landing-border-color);
+
   --radio-border-color: var(--border1-color);
   --radio-bg-color: var(--basic-color);
   --radio-bg-color-hover: var(--basic-color-hover);
