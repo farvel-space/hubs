@@ -107,7 +107,7 @@
   --landing-color: #{theme.$blue};
   --landing-color-hover: #{theme.$blue-hover};
   --landing-color-pressed: #{theme.$blue-pressed};
-  --landing-border-color: var(--landing-border-color);
+  --landing-border-color: var(--landing-color);
 
   --radio-border-color: var(--border1-color);
   --radio-bg-color: var(--basic-color);
