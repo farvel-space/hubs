@@ -44,7 +44,7 @@ const ritualMessageMessages = defineMessages({
   description: {
     id: "ritual-message-modal.message.description",
     defaultMessage:
-      "In this dialog you can submit a message to the decendent. The message will be used as part of the ritual and will be shown in the room afterwards. Participation is optional, if you don't want to submit a message, you can go back and choose the - Words fail me - option."
+      "You can now submit a message to the decendent. The message will be used as part of the ritual and will be shown in the room afterwards. Participation is optional, if you don't want to submit a message, you can go back and choose the - Words fail me - option."
   },
   checkboxShowName: {
     id: "ritual-message-modal.checkboxShowName",
@@ -143,7 +143,7 @@ export function RitualMessageModal({ scene, store, onClose }) {
             autoComplete="off"
             placeholder={intl.formatMessage(ritualMessageMessages.description)}
             label={intl.formatMessage(ritualMessageMessages.labelMessage)}
-            minRows={5}
+            minRows={8}
             // ref={register}
             // error={errors.description}
             required
@@ -151,6 +151,7 @@ export function RitualMessageModal({ scene, store, onClose }) {
           />
         </div>
         <TextInputField
+          id="text-input-name"
           name="submittedName"
           disabled={!submitDisplayName}
           label={intl.formatMessage(ritualMessageMessages.labelName)}
@@ -159,6 +160,7 @@ export function RitualMessageModal({ scene, store, onClose }) {
           spellCheck="false"
           required
           onChange={onNameChange} // needed when using form?
+          fullWidth
           // description={
           //   <FormattedMessage
           //     id="avatar-settings-content.display-name-description"
