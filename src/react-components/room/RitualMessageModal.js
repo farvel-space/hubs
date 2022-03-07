@@ -146,7 +146,7 @@ export function RitualMessageModal({ scene, store, onClose }) {
             minRows={8}
             // ref={register}
             // error={errors.description}
-            required
+            required={dialogState == MESSAGE_STATE}
             fullWidth
           />
         </div>
