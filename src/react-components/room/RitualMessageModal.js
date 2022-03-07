@@ -27,7 +27,7 @@ const ritualMessageMessages = defineMessages({
   },
   entryButtonMessage: {
     id: "ritual-message-modal.entry.buttonMessage",
-    defaultMessage: "I want to send last words"
+    defaultMessage: "I want to share my last words"
   },
   entryButtonThoughts: {
     id: "ritual-message-modal.entry.buttonThoughts",
@@ -35,7 +35,7 @@ const ritualMessageMessages = defineMessages({
   },
   submitMessage: {
     id: "ritual-message-modal.message.submit",
-    defaultMessage: "Send Message"
+    defaultMessage: "Share Message"
   },
   submitThoughts: {
     id: "ritual-message-modal.thoughts.submit",
@@ -112,10 +112,10 @@ export function RitualMessageModal({ scene, store, onClose }) {
         className={classNames(styles.entry, styles.hiddenAttr)}
         hidden={!(dialogState == ENTRY_STATE)}
       >
-        <Button type="button" preset="accent1" onClick={() => setDialogState(MESSAGE_STATE)}>
+        <Button lg type="button" preset="accent1" onClick={() => setDialogState(MESSAGE_STATE)}>
           {intl.formatMessage(ritualMessageMessages.entryButtonMessage)}
         </Button>
-        <Button type="button" preset="accent2" onClick={() => setDialogState(THOUGHTS_STATE)}>
+        <Button lg type="button" preset="accent2" onClick={() => setDialogState(THOUGHTS_STATE)}>
           {intl.formatMessage(ritualMessageMessages.entryButtonThoughts)}
         </Button>
       </Column>

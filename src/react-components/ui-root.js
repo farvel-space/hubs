@@ -150,7 +150,6 @@ class UIRoot extends Component {
     subscriptions: PropTypes.object,
     initialIsFavorited: PropTypes.bool,
     showSignInDialog: PropTypes.bool,
-    showRitualMessageDialog: PropTypes.bool,
     signInMessage: PropTypes.string,
     onContinueAfterSignIn: PropTypes.func,
     onSignInDialogVisibilityChanged: PropTypes.func,
@@ -162,6 +161,8 @@ class UIRoot extends Component {
     showInterstitialPrompt: PropTypes.bool,
     onInterstitialPromptClicked: PropTypes.func,
     performConditionalSignIn: PropTypes.func,
+    showRitualMessageDialog: PropTypes.bool,
+    onRitualMessageDialogClosed: PropTypes.func,
     hide: PropTypes.bool,
     showPreload: PropTypes.bool,
     onPreloadLoadClicked: PropTypes.func,
@@ -442,10 +443,14 @@ class UIRoot extends Component {
   };
 
   showRitualMessageModal = () => {
+    const onCallback = () => {
+      const { onRitualMessageDialogClosed } = this.props;
+      (onRitualMessageDialogClosed && onRitualMessageDialogClosed()) || this.closeDialog();
+    };
     this.showNonHistoriedDialog(RitualMessageModal, {
       scene: this.props.scene,
       store: this.props.store,
-      onClose: () => this.closeDialog()
+      onClose: onCallback
     });
   };
 
