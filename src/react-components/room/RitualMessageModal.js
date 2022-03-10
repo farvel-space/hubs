@@ -27,11 +27,11 @@ const ritualMessageMessages = defineMessages({
   },
   entryButtonMessage: {
     id: "ritual-message-modal.entry.buttonMessage",
-    defaultMessage: "I want to share my last words"
+    defaultMessage: "I want to share my last words."
   },
   entryButtonThoughts: {
     id: "ritual-message-modal.entry.buttonThoughts",
-    defaultMessage: "Words fail me"
+    defaultMessage: "Words fail me."
   },
   submitMessage: {
     id: "ritual-message-modal.message.submit",
@@ -57,6 +57,18 @@ const ritualMessageMessages = defineMessages({
   labelMessage: {
     id: "ritual-message-modal.labelMessage",
     defaultMessage: "Message"
+  },
+  labelPreview: {
+    id: "ritual-message-modal.labelPreview",
+    defaultMessage: "Preview"
+  },
+  messageThought: {
+    id: "ritual-message-modal.messageThought",
+    defaultMessage: "{name} thought of you."
+  },
+  nameThoughtAnonymous: {
+    id: "ritual-message-modal.nameThoughtAnonymous",
+    defaultMessage: "Someone"
   }
 });
 
@@ -88,10 +100,18 @@ export function RitualMessageModal({ scene, store, onClose }) {
 
   const onNameChange = useCallback(
     e => {
-      console.log("onNameChange", e);
       setValue("submittedName", e.target.value);
     },
     [setValue]
+  );
+
+  const getThoughtValue = useCallback(
+    e => {
+      // console.log("getThoughtValue", e);
+      const name = submitDisplayName ? submittedName : intl.formatMessage(ritualMessageMessages.nameThoughtAnonymous);
+      return intl.formatMessage(ritualMessageMessages.messageThought, { name: name });
+    },
+    [submitDisplayName, submittedName, intl]
   );
 
   return (
@@ -150,12 +170,40 @@ export function RitualMessageModal({ scene, store, onClose }) {
             fullWidth
           />
         </div>
+        <div className="messageGroup thought-preview" hidden={dialogState != THOUGHTS_STATE}>
+          <TextAreaInputField
+            name="textarea-message-preview"
+            autoComplete="off"
+            label={intl.formatMessage(ritualMessageMessages.labelPreview)}
+            minRows={2}
+            disabled={true}
+            value={getThoughtValue()}
+            fullWidth
+          />
+        </div>
+        {/* <TextAreaInputField
+            name="textarea-message-preview"
+            autoComplete="off"
+            placeholder={dialogState == MESSAGE_STATE ? intl.formatMessage(ritualMessageMessages.description) : ""}
+            label={
+              dialogState == MESSAGE_STATE
+                ? intl.formatMessage(ritualMessageMessages.labelMessage)
+                : intl.formatMessage(ritualMessageMessages.labelPreview)
+            }
+            minRows={dialogState == MESSAGE_STATE ? 8 : 4}
+            // ref={register}
+            // error={errors.description}
+            required={dialogState == MESSAGE_STATE}
+            disabled={dialogState != MESSAGE_STATE}
+            value={dialogState == MESSAGE_STATE ? null : getThoughtValue()}
+            fullWidth
+          /> */}
         <TextInputField
           id="text-input-name"
           name="submittedName"
           disabled={!submitDisplayName}
           label={intl.formatMessage(ritualMessageMessages.labelName)}
-          value={submitDisplayName ? submittedName : ""} // does not work this way, gets reset after every press
+          value={submitDisplayName ? submittedName : ""}
           pattern={SCHEMA.definitions.profile.properties.displayName.pattern}
           spellCheck="false"
           required
