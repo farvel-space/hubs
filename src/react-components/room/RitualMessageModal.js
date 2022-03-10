@@ -44,7 +44,7 @@ const ritualMessageMessages = defineMessages({
   description: {
     id: "ritual-message-modal.message.description",
     defaultMessage:
-      "You can now submit a message to the decendent. The message will be used as part of the ritual and will be shown in the room afterwards. Participation is optional, if you don't want to submit a message, you can go back and choose the - Words fail me - option."
+      "You can now submit a message to the deceased. The message will be be shown in the room afterwards. Participation is optional. If you don't want to submit a message, you can go back and choose the - Words fail me. - option."
   },
   checkboxShowName: {
     id: "ritual-message-modal.checkboxShowName",
