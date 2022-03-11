@@ -3,13 +3,14 @@ export class RitualSystem {
     this.scene = scene;
 
     this.scene.addEventListener("ritual_initiated", this.onRitualInitiated);
+    this.scene.addEventListener("ritual_close_dialog_initiated", this.onCloseDialogInitiated);
     this.scene.addEventListener("ritual_spark_start", this.onSpawnRitualSpark);
     this.scene.addEventListener("ritual_spark_release", this.onRitualSparkRelease);
     this.scene.addEventListener("ritual_spark_release_initiated", this.onRitualSparkReleaseInitiated);
   }
 
   onSpawnRitualSpark = () => {
-    console.log("ritual_spark_start");
+    if (this.entity) return;
 
     const entity = document.createElement("a-entity");
     // const tmpAnchorId = this.anchorId ? this.anchorId : 1;
@@ -23,6 +24,8 @@ export class RitualSystem {
   };
 
   onRitualInitiated = () => {
+    if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users")) return;
+
     // emit message to open message modal
     APP.hubChannel.sendMessage("start", "ritual");
 
@@ -33,18 +36,19 @@ export class RitualSystem {
 
     // send message to all clients
     APP.hubChannel.sendMessage(this.intIds, "ritual_anchor_mapping");
+  };
 
-    // set own id --> necessary?
-    // this.anchorId = this.intIds.indexOf(window.NAF.clientId) + 1;
+  onCloseDialogInitiated = () => {
+    if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users")) return;
+    // emit message to close message modal
+    APP.hubChannel.sendMessage("closeDialog", "ritual");
   };
 
   onRitualSparkReleaseInitiated = () => {
-    console.log("onRitualSparkReleaseInitiated");
     APP.hubChannel.sendMessage("release", "ritual");
   };
 
   onRitualSparkRelease = () => {
-    console.log("ritual_spark_release", this.entity);
     this.entity.components["ritual-spark-avatar"].releaseAnimation();
   };
 }

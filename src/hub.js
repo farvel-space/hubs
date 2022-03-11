@@ -1329,10 +1329,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       createInWorldLogMessage(incomingMessage);
     }
 
-    if (type == "ritual") {
-      // TODO: check permission?
-      // TODO: Check if in room or specatate?
-      if (body == "start") {
+    const checkForRitual = () => {
+      if (!(hubChannel.presence.state[session_id].metas[0].permissions.kick_users && type.startsWith("ritual"))) return;
+
+      if (type == "ritual_anchor_mapping") {
+        const index = body.indexOf(window.NAF.clientId) + 1; // index of anchors starts with 1
+        scene.systems["hubs-systems"].ritualSystem.anchorId = index;
+        console.log("ritual_anchor_mapping", index); // TODO: remove
+      } else if (body == "start") {
         remountUI({
           showRitualMessageDialog: true,
           onRitualMessageDialogClosed: () => {
@@ -1341,14 +1345,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
       } else if (body == "release") {
         scene.emit("ritual_spark_release");
+      } else if (body == "closeDialog") {
+        remountUI({ showRitualMessageDialog: false });
+        scene.emit("ritual_spark_start"); // only start spark if the user has not completed the dialog
       }
-    } else if (type == "ritual_anchor_mapping") {
-      // set id locally
-      const index = body.indexOf(window.NAF.clientId) + 1; // index of anchors starts with 1
-      scene.systems["hubs-systems"].ritualSystem.anchorId = index;
-      console.log("ritual_anchor_mapping", index); // TODO: remove
-    }
-    
+    };
+    checkForRitual();
+
     messageDispatch.receive(incomingMessage);
   });
 
