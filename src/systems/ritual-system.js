@@ -26,21 +26,19 @@ export class RitualSystem {
   onRitualInitiated = () => {
     if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users")) return;
 
-    // emit message to open message modal
-    APP.hubChannel.sendMessage("start", "ritual");
-
-    console.log("RitualSystem.onRitualStarted");
     // map sessionid to int id
     this.presences = window.APP.hubChannel.presence.state;
     this.intIds = Object.keys(this.presences);
-
-    // send message to all clients
+    // send message with mapping info to all clients
     APP.hubChannel.sendMessage(this.intIds, "ritual_anchor_mapping");
+
+    // send message to open RitualMessageModal
+    APP.hubChannel.sendMessage("start", "ritual");
   };
 
   onCloseDialogInitiated = () => {
     if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users")) return;
-    // emit message to close message modal
+    // send message to close RitualMessageModal
     APP.hubChannel.sendMessage("closeDialog", "ritual");
   };
 

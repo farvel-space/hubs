@@ -46,8 +46,7 @@ AFRAME.registerComponent("ritual-spark-avatar", {
       const lastValue = {};
       return function(anim) {
         const value = anim.animatables[0].target;
-        // console.log("ritual-spark step", value);
-
+        
         // For animation timeline.
         if (value.x === lastValue.x && value.y === lastValue.y && value.z === lastValue.z) {
           return;
@@ -57,28 +56,33 @@ AFRAME.registerComponent("ritual-spark-avatar", {
         lastValue.y = value.y;
         lastValue.z = value.z;
 
-        obj.position.set( value.x, value.y, value.z);
+        obj.position.set(value.x, value.y, value.z);
         obj.matrixNeedsUpdate = true;
       };
     })();
 
+    // TODO: depending on scenery structure, x and z should be swapped. Maybe there should be a config in the scene.
     const config = {
       duration: duration,
-      easing: "easeInOutQuad",
       loop: 0,
       round: false,
-      x: x,
-      y: y,
-      z: z,
-      targets: [{ x: obj.position.x, y: obj.position.y, z: obj.position.z }],
+      x: {
+        value: x,
+        easing: "easeOutBack" // "easeInOutQuad"
+      },
+      y: {
+        value: y,
+        easing: "easeInCubic"
+      },
+      z: {
+        value: z,
+        easing: "easeInOutQuad"
+      },
+      targets: obj.position,
       update: anim => step(anim),
       complete: anim => step(anim)
     };
-    // console.log("ritual-spark startAnimation config", config);
-
     anime(config);
-
-    // TODO: maybe add a second animation to use a different easing function for z values
   },
 
   // update: function(oldData) {
