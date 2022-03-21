@@ -1335,7 +1335,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (type == "ritual_anchor_mapping") {
         const index = body.indexOf(window.NAF.clientId) + 1; // index of anchors starts with 1
         scene.systems["hubs-systems"].ritualSystem.anchorId = index;
-        console.log("ritual_anchor_mapping", index); // TODO: remove
+        //console.log("ritual_anchor_mapping", index); // TODO: remove
       } else if (body == "start") {
         remountUI({
           showRitualMessageDialog: true,

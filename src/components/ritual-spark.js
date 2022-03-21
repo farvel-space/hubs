@@ -35,7 +35,7 @@ AFRAME.registerComponent("ritual-spark-avatar", {
     // select tree anchor
     const anchor = document.querySelector("a-entity.ritual-anchor-" + String(this.data.anchorId).padStart(3, "0"));
     this.anchor = anchor.object3D.position;
-    console.log("anchor selector", "a-entity.ritual-anchor-" + String(this.data.anchorId).padStart(3, "0"));
+    // console.log("anchor selector", "a-entity.ritual-anchor-" + String(this.data.anchorId).padStart(3, "0"));
   },
 
   animate: function(x, y, z, duration) {
@@ -46,7 +46,8 @@ AFRAME.registerComponent("ritual-spark-avatar", {
       const lastValue = {};
       return function(anim) {
         const value = anim.animatables[0].target;
-        
+        // console.log("ritual-spark step", value);
+
         // For animation timeline.
         if (value.x === lastValue.x && value.y === lastValue.y && value.z === lastValue.z) {
           return;
@@ -68,7 +69,7 @@ AFRAME.registerComponent("ritual-spark-avatar", {
       round: false,
       x: {
         value: x,
-        easing: "easeOutBack" // "easeInOutQuad"
+        easing: "easeInOutCubic"
       },
       y: {
         value: y,
