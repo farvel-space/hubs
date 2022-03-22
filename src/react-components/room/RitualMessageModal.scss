@@ -47,6 +47,11 @@
       margin: 0 0.5em;
       min-width: 1em;
       min-height: 1em;
+
+      &:disabled {
+        cursor: not-allowed;
+        background-color: theme.$lightgrey;
+      }
     }
 
     .checkbox:checked {
@@ -66,6 +71,11 @@
 
     label {
       font-size: 14px;
+
+      &.disabled {
+        // cursor: not-allowed;
+        color: theme.$text3-color;
+      }
     }
   }
 }

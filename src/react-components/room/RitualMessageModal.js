@@ -50,6 +50,10 @@ const ritualMessageMessages = defineMessages({
     id: "ritual-message-modal.checkboxShowName",
     defaultMessage: "Sign with my name."
   },
+  checkboxDiscloseToRoom: {
+    id: "ritual-message-modal.discloseToRoom",
+    defaultMessage: "Publish message in room."
+  },
   labelName: {
     id: "ritual-message-modal.labelName",
     defaultMessage: "Name"
@@ -82,6 +86,8 @@ export function RitualMessageModal({ scene, store, onClose }) {
   const [dialogState, setDialogState] = useState(ENTRY_STATE);
   // const [hasEnteredMessage, setHasEnteredMessage] = useState(false);
   const [submitDisplayName, setSubmitDisplayName] = useState(true);
+  const [submitDisplayNameChangedState, setSubmitDisplayNameChangedState] = useState(true);
+  const [discloseToRoom, setDiscloseToRoom] = useState(true);
   const submittedName = watch("submittedName", store.state.profile.displayName);
 
   useEffect(
@@ -112,6 +118,26 @@ export function RitualMessageModal({ scene, store, onClose }) {
       return intl.formatMessage(ritualMessageMessages.messageThought, { name: name });
     },
     [submitDisplayName, submittedName, intl]
+  );
+
+  const onCheckboxSubmitDisplayNameChange = useCallback(
+    e => {
+      setSubmitDisplayName(e.target.checked);
+      setSubmitDisplayNameChangedState(e.target.checked);
+    },
+    [setSubmitDisplayName, setSubmitDisplayNameChangedState]
+  );
+
+  const onCheckboxDiscloseToRoomChange = useCallback(
+    e => {
+      setDiscloseToRoom(e.target.checked);
+      if (e.target.checked) {
+        setSubmitDisplayName(submitDisplayNameChangedState);
+      } else {
+        setSubmitDisplayName(false);
+      }
+    },
+    [setDiscloseToRoom, setSubmitDisplayName, submitDisplayNameChangedState]
   );
 
   return (
@@ -222,9 +248,22 @@ export function RitualMessageModal({ scene, store, onClose }) {
             type="checkbox"
             className="checkbox"
             checked={submitDisplayName}
-            onChange={e => setSubmitDisplayName(e.target.checked)}
+            onChange={onCheckboxSubmitDisplayNameChange}
+            disabled={!discloseToRoom}
           />
-          <label>{intl.formatMessage(ritualMessageMessages.checkboxShowName)}</label>
+          <label className={!discloseToRoom ? "disabled" : null}>
+            {intl.formatMessage(ritualMessageMessages.checkboxShowName)}
+          </label>
+        </div>
+        <div className="checkbox-container">
+          <input
+            id="checkbox-disclose-to-room"
+            type="checkbox"
+            className="checkbox"
+            checked={discloseToRoom}
+            onChange={onCheckboxDiscloseToRoomChange}
+          />
+          <label>{intl.formatMessage(ritualMessageMessages.checkboxDiscloseToRoom)}</label>
         </div>
         <Button type="submit" preset="accept">
           {intl.formatMessage(
