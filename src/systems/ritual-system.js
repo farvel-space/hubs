@@ -48,5 +48,6 @@ export class RitualSystem {
 
   onRitualSparkRelease = () => {
     this.entity.components["ritual-spark-avatar"].releaseAnimation();
+    this.entity = null;
   };
 }

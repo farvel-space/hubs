@@ -101,6 +101,7 @@ import { SignInMessages } from "./auth/SignInModal";
 import { TutorialControlsModal } from "./room/TutorialControlsModal";
 import { ControlsOverviewModal } from "./room/ControlsOverviewModal";
 import { RitualMessageModal } from "./room/RitualMessageModal";
+import { RitualControlSidebarContainer } from "./room/RitualControlSidebarContainer";
 
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
@@ -1589,6 +1590,9 @@ class UIRoot extends Component {
                           onChangeScene={this.onChangeScene}
                         />
                       )}
+                      {this.state.sidebarId === "ritual-control" && (
+                        <RitualControlSidebarContainer onClose={() => this.setSidebar(null)} scene={this.props.scene} />
+                      )}
                     </>
                   ) : (
                     undefined
@@ -1670,6 +1674,15 @@ class UIRoot extends Component {
                           preset="accept"
                           label={<FormattedMessage id="toolbar.enter-vr-button" defaultMessage="Enter VR" />}
                           onClick={() => exit2DInterstitialAndEnterVR(true)}
+                        />
+                      )}
+                    {configs.isAdmin() && // TODO: We may need a new role for this?
+                      entered && (
+                        <ToolbarButton
+                          icon={< FeedbackIcon />}
+                          label={<FormattedMessage id="toolbar.ritual-open-control" defaultMessage="Ritual" />}
+                          preset="accent3"
+                          onClick={() => this.toggleSidebar("ritual-control")}
                         />
                       )}
                   </>
