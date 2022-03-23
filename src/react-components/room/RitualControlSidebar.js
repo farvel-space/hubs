@@ -101,21 +101,24 @@ export function RitualControlSidebar({ onClose, scene }) {
           {intl.formatMessage(ritualControlMessages.releaseCompleted)}: {numberReleaseCompleted} / {numberPeople}
         </p>
         <Button
-          preset="accept"
+          preset="primary"
+          sm
           onClick={() => ritualButtonClicked("ritual_initiated")}
           disabled={ritualState != ENTRY_STATE}
         >
           {intl.formatMessage(ritualControlMessages.buttonInitiate)}
         </Button>
         <Button
-          preset="accept"
+          preset="primary"
+          sm
           onClick={() => ritualButtonClicked("ritual_close_dialog_initiated")}
           disabled={ritualState != MESSAGE_STATE}
         >
           {intl.formatMessage(ritualControlMessages.buttonCloseDialogs)}
         </Button>
         <Button
-          preset="accept"
+          preset="primary"
+          sm
           onClick={() => ritualButtonClicked("ritual_spark_release_initiated")}
           disabled={ritualState != TREE_STATE}
         >

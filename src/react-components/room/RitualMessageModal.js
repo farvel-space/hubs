@@ -98,11 +98,13 @@ export function RitualMessageModal({ scene, store, onClose }) {
     [register]
   );
 
-  const onSubmit = () => {
-    console.log("submit");
-    scene.emit("ritual_spark_start");
-    onClose();
-  };
+  const onSubmit = useCallback(
+    () => {
+      scene.emit("ritual_spark_start");
+      onClose();
+    },
+    [scene, onClose]
+  );
 
   const onNameChange = useCallback(
     e => {
@@ -112,8 +114,7 @@ export function RitualMessageModal({ scene, store, onClose }) {
   );
 
   const getThoughtValue = useCallback(
-    e => {
-      // console.log("getThoughtValue", e);
+    () => {
       const name = submitDisplayName ? submittedName : intl.formatMessage(ritualMessageMessages.nameThoughtAnonymous);
       return intl.formatMessage(ritualMessageMessages.messageThought, { name: name });
     },
@@ -175,14 +176,6 @@ export function RitualMessageModal({ scene, store, onClose }) {
         onSubmit={handleSubmit(onSubmit)}
         hidden={dialogState == ENTRY_STATE}
       >
-        {/* <p>{intl.formatMessage(ritualMessageMessages.description)}</p> */}
-        {/* Textarea for message */}
-        {/* <textarea
-          id="textarea-message"
-          placeholder={intl.formatMessage(ritualMessageMessages.description)}
-          className="textarea"
-          onChange={console.log("changed")}
-        /> */}
         <div className="messageGroup" hidden={dialogState != MESSAGE_STATE}>
           <TextAreaInputField
             name="textarea-message"
@@ -207,23 +200,6 @@ export function RitualMessageModal({ scene, store, onClose }) {
             fullWidth
           />
         </div>
-        {/* <TextAreaInputField
-            name="textarea-message-preview"
-            autoComplete="off"
-            placeholder={dialogState == MESSAGE_STATE ? intl.formatMessage(ritualMessageMessages.description) : ""}
-            label={
-              dialogState == MESSAGE_STATE
-                ? intl.formatMessage(ritualMessageMessages.labelMessage)
-                : intl.formatMessage(ritualMessageMessages.labelPreview)
-            }
-            minRows={dialogState == MESSAGE_STATE ? 8 : 4}
-            // ref={register}
-            // error={errors.description}
-            required={dialogState == MESSAGE_STATE}
-            disabled={dialogState != MESSAGE_STATE}
-            value={dialogState == MESSAGE_STATE ? null : getThoughtValue()}
-            fullWidth
-          /> */}
         <TextInputField
           id="text-input-name"
           name="submittedName"
