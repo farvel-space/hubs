@@ -5,8 +5,11 @@ import { FormattedMessage } from "react-intl";
 import { BackButton } from "../input/BackButton";
 import { FullscreenLayout } from "../layout/FullscreenLayout";
 import { Column } from "../layout/Column";
+import { proxiedUrlFor } from "../../utils/media-url-utils";
 
 export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser }) {
+  const iframeURL = "https://farvel.readyplayer.me";
+
   const onSuccess = useCallback(
     ({ url }) => {
       // maybe using the scene like that does not work?
@@ -14,10 +17,7 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser }) {
       const scene = document.querySelector("a-scene");
 
       store.update({ profile: { ...store.state.profile, ...{ avatarId: url } } });
-      // avatar_updated seems to only work after being in the room --> scene-entry-manager is not yet loaded
-      // this seems to be a bug, since profile-entry-panel also uses this event, but it does not work when entering the room via setup dialog.
       scene.emit("avatar_updated");
-      // TODO: when set for a second time, the avatar is not updated -> might be a caching issue with our cors proxy
       onClose();
       closeMediaBrowser();
     },
@@ -30,11 +30,11 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser }) {
         // Check if the received message is a string and a glb url
         // if not ignore it, and print details to the console
         if (typeof event.data === "string" && event.data.startsWith("https://") && event.data.endsWith(".glb")) {
-          const url = event.data + "?v=" + new Date().getTime(); // add a timestamp to the url to prevent caching
+          const url = proxiedUrlFor(event.data + "?v=" + new Date().getTime()); // add a timestamp to the url to prevent caching
           onSuccess({ url });
-        } /* else {
-          console.log(`Received message from unknown source: ${event.data}`);
-        } */
+        } else {
+          console.warn(`Received message from unknown source: ${event.data}`);
+        }
       }
       window.addEventListener("message", receiveMessage, false);
 
@@ -58,7 +58,7 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser }) {
       //   headerRight={}
     >
       <Column grow padding center className={styles.content}>
-        <iframe src="https://demo.readyplayer.me/" className={styles.iframe} allow="camera *; microphone *" />
+        <iframe src={iframeURL} className={styles.iframe} allow="camera *; microphone *" />
       </Column>
     </FullscreenLayout>
   );
