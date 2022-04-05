@@ -5,7 +5,7 @@
 // Theme CSS Variables
 // Injected theme will overwrite these defaults
 :root {
-  --font-family-default: 'Mulish', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-family-default: 'Mulish', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --font-family-monospace: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
 
   --text1-color: #{theme.$black};
@@ -23,9 +23,8 @@
   --text5-color: #{theme.$white};
   --text5-color-hover: var(--text5-color);
   --text5-color-pressed: var(--text5-color);
-  --text6-color: #{theme.$black};
-  --text6-color-hover: var(--text6-color);
-  --text6-color-pressed: var(--text6-color);
+  --text-inverted-color: #{theme.$white};
+
 
   --link-color: #{theme.$blue};
   --link-color-hover: #{theme.$blue-hover};
@@ -174,7 +173,7 @@
   --overlay-outline-color: #{theme.$white};
 
   --toolbar-icon-color: var(--text5-color);
-  --toolbar-icon-selected-bg: var(--transparent); 
+  --toolbar-icon-selected-bg: var(--transparent);
   --toolbar-basic-icon-color: var(--text1-color);
   --toolbar-basic-selected-icon-color: var(--text1-color);
   --toolbar-basic-color: var(--secondary-color);
