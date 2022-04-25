@@ -58,7 +58,13 @@ async function enableChromeAEC(gainNode) {
     console.warn(
       "enableChromeAEC: outboundPeerConnection state changed to " + outboundPeerConnection.iceConnectionState
     );
-    if (outboundPeerConnection.iceConnectionState === "disconnected") {
+
+    // FARM-307: tryied solution from https://github.com/mozilla/hubs/issues/5379
+    if (
+      outboundPeerConnection.iceConnectionState === "disconnected" ||
+      outboundPeerConnection.iceConnectionState === "failed" ||
+      outboundPeerConnection.iceConnectionState === "closed"
+    ) {
       performDelayedReconnect(gainNode);
     }
     if (outboundPeerConnection.iceConnectionState === "connected") {
@@ -75,7 +81,12 @@ async function enableChromeAEC(gainNode) {
   });
   inboundPeerConnection.addEventListener("iceconnectionstatechange", () => {
     console.warn("enableChromeAEC: inboundPeerConnection state changed to " + inboundPeerConnection.iceConnectionState);
-    if (inboundPeerConnection.iceConnectionState === "disconnected") {
+    // FARM-307: tryied solution from https://github.com/mozilla/hubs/issues/5379
+    if (
+      inboundPeerConnection.iceConnectionState === "disconnected" ||
+      inboundPeerConnection.iceConnectionState === "failed" ||
+      inboundPeerConnection.iceConnectionState === "closed"
+    ) {
       performDelayedReconnect(gainNode);
     }
     if (inboundPeerConnection.iceConnectionState === "connected") {
@@ -90,6 +101,11 @@ async function enableChromeAEC(gainNode) {
   inboundPeerConnection.addEventListener("track", e => {
     audioEl.srcObject = e.streams[0];
   });
+
+  // FARM-307: tryied solution from https://github.com/mozilla/hubs/issues/5379
+  if (inboundPeerConnection.iceConnectionState === "new" || outboundPeerConnection.iceConnectionState === "new") {
+    performDelayedReconnect(gainNode);
+  }
 
   try {
     //The following should never fail, but just in case, we won't disconnect/reconnect the gainNode unless all of this succeeds
