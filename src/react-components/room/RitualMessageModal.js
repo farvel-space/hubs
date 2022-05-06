@@ -89,21 +89,45 @@ export function RitualMessageModal({ scene, store, onClose }) {
   const [submitDisplayNameChangedState, setSubmitDisplayNameChangedState] = useState(true);
   const [discloseToRoom, setDiscloseToRoom] = useState(true);
   const submittedName = watch("submittedName", store.state.profile.displayName);
+  const submittedMessage = watch("submittedMessage", "");
 
   useEffect(
     () => {
       register("submittedName");
+      register("submittedMessage");
       return () => {};
     },
     [register]
   );
 
+  const getThoughtValue = useCallback(
+    () => {
+      const name = submitDisplayName ? submittedName : intl.formatMessage(ritualMessageMessages.nameThoughtAnonymous);
+      return intl.formatMessage(ritualMessageMessages.messageThought, { name: name });
+    },
+    [submitDisplayName, submittedName, intl]
+  );
+
   const onSubmit = useCallback(
     () => {
+      let tmpMsg = submittedMessage;
+      let tmpName = submittedName;
+      if (dialogState === THOUGHTS_STATE) {
+        tmpMsg = getThoughtValue();
+        tmpName = null;
+      }
+
+      // send message to manager with conditionals
+      const message = {
+        name: submitDisplayName ? tmpName : null, // TODO: if not wanted, dont show name or send "anonymous"?!
+        message: discloseToRoom ? tmpMsg : null
+      };
+      APP.hubChannel.sendMessage(JSON.stringify(message), "ritual");
+
       scene.emit("ritual_spark_start");
       onClose();
     },
-    [scene, onClose]
+    [scene, onClose, submittedName, submittedMessage, discloseToRoom, submitDisplayName, getThoughtValue, dialogState]
   );
 
   const onNameChange = useCallback(
@@ -113,12 +137,11 @@ export function RitualMessageModal({ scene, store, onClose }) {
     [setValue]
   );
 
-  const getThoughtValue = useCallback(
-    () => {
-      const name = submitDisplayName ? submittedName : intl.formatMessage(ritualMessageMessages.nameThoughtAnonymous);
-      return intl.formatMessage(ritualMessageMessages.messageThought, { name: name });
+  const onMessageChange = useCallback(
+    e => {
+      setValue("submittedMessage", e.target.value);
     },
-    [submitDisplayName, submittedName, intl]
+    [setValue]
   );
 
   const onCheckboxSubmitDisplayNameChange = useCallback(
@@ -183,6 +206,7 @@ export function RitualMessageModal({ scene, store, onClose }) {
             placeholder={intl.formatMessage(ritualMessageMessages.description)}
             label={intl.formatMessage(ritualMessageMessages.labelMessage)}
             minRows={8}
+            onChange={onMessageChange}
             // ref={register}
             // error={errors.description}
             required={dialogState == MESSAGE_STATE}
