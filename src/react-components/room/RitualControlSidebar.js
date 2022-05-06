@@ -38,7 +38,8 @@ const ENTRY_STATE = 0;
 const MESSAGE_STATE = 1;
 const TREE_STATE = 2;
 const RELEASE_STATE = 3;
-const FINAL_STATE = 4;
+const MESSAGE_RELEASE_STATE = 4;
+const FINAL_STATE = 5;
 
 export function RitualControlSidebar({ onClose, scene }) {
   const intl = useIntl();
@@ -60,7 +61,7 @@ export function RitualControlSidebar({ onClose, scene }) {
           setNumberReleaseCompleted(numberPeople - document.querySelectorAll("a-entity.ritual-spark-avatar").length);
           break;
       }
-      if (numberReleaseCompleted == numberPeople && ritualState == RELEASE_STATE) {
+      if (numberReleaseCompleted == numberPeople && ritualState == MESSAGE_RELEASE_STATE) {
         setRitualState(FINAL_STATE);
       }
     },
@@ -121,6 +122,14 @@ export function RitualControlSidebar({ onClose, scene }) {
           sm
           onClick={() => ritualButtonClicked("ritual_spark_release_initiated")}
           disabled={ritualState != TREE_STATE}
+        >
+          {intl.formatMessage(ritualControlMessages.buttonRelease)}
+        </Button>
+        <Button
+          preset="primary"
+          sm
+          onClick={() => ritualButtonClicked("ritual_release_messages")}
+          disabled={ritualState != RELEASE_STATE}
         >
           {intl.formatMessage(ritualControlMessages.buttonRelease)}
         </Button>

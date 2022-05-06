@@ -12,6 +12,9 @@ export class RitualSystem {
     this.scene.addEventListener("ritual_spark_start", this.onSpawnRitualSpark);
     this.scene.addEventListener("ritual_spark_release", this.onRitualSparkRelease);
     this.scene.addEventListener("ritual_spark_release_initiated", this.onRitualSparkReleaseInitiated);
+    this.scene.addEventListener("ritual_release_messages", this.onReleaseMessages);
+
+    this.messageObjs = [];
   }
 
   onSpawnRitualSpark = () => {
@@ -61,7 +64,6 @@ export class RitualSystem {
   };
 
   // TODO: do some refactoring in order to have nicer styling for messages in room. probably add to the functionality of chat-message.js or using troika text altogether
-  // TODO: Visibility of messages
   handleRitualMessage = async msgBody => {
     if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users")) return;
     if (msgBody.message === null) return; // TODO: remove later on
@@ -92,7 +94,7 @@ export class RitualSystem {
       false
     );
     entity.setAttribute("media-loader", { playSoundEffect: false });
-    // entity.setAttribute("visible", false);
+    entity.setAttribute("visible", false);
     entity.setAttribute("position", anchorPos);
 
     entity.addEventListener("media_resolved", ({ detail }) => {
@@ -101,6 +103,17 @@ export class RitualSystem {
         return;
       }
       window.APP.pinningHelper.setPinned(entity, true);
+
+      this.messageObjs.push(entity);
+      console.log("messageObjs", this.messageObjs);
+    });
+  };
+
+  onReleaseMessages = () => {
+    if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users")) return;
+
+    this.messageObjs.forEach(entity => {
+      entity.setAttribute("visible", true);
     });
   };
 }

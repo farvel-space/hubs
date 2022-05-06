@@ -1335,11 +1335,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (type == "ritual_anchor_mapping") {
         const index = body.indexOf(window.NAF.clientId) + 1; // index of anchors starts with 1
         scene.systems["hubs-systems"].ritualSystem.anchorId = index;
-        //console.log("ritual_anchor_mapping", index); // TODO: remove
-      } else if (body.startsWith("{") && hubChannel.can("kick_users")) { // only pursue this if admin
+      } else if (body.startsWith("{") && hubChannel.can("kick_users")) {
         const msgBody = JSON.parse(body);
         msgBody.sessionId = session_id;
-        console.log("jsonBody", msgBody);
         scene.systems["hubs-systems"].ritualSystem.handleRitualMessage(msgBody);
       } else if (body == "start") {
         remountUI({
