@@ -1330,15 +1330,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const checkForRitual = () => {
-      if (!(hubChannel.presence.state[session_id].metas[0].permissions.kick_users && type.startsWith("ritual"))) return;
+      if (!type.startsWith("ritual")) return;
 
+      // manager receiving messages from normal clients.
+      if (typeof body === "string" && body.startsWith("{") && hubChannel.can("kick_users")) {
+        const msgBody = JSON.parse(body);
+        if (!msgBody.message) return; // TODO: right now okay, later on report all messages to ritual manager
+        msgBody.sessionId = session_id;
+        scene.systems["hubs-systems"].ritualSystem.handleRitualMessage(msgBody);
+        return;
+      }
+
+      // TODO: Problems can happen, if the user presence is not there - have to investigate.
+      // receiving messages from manager - return if not authorized.
+      if (!hubChannel.presence.state[session_id].metas[0].permissions.kick_users) return;
       if (type == "ritual_anchor_mapping") {
         const index = body.indexOf(window.NAF.clientId) + 1; // index of anchors starts with 1
         scene.systems["hubs-systems"].ritualSystem.anchorId = index;
-      } else if (body.startsWith("{") && hubChannel.can("kick_users")) {
-        const msgBody = JSON.parse(body);
-        msgBody.sessionId = session_id;
-        scene.systems["hubs-systems"].ritualSystem.handleRitualMessage(msgBody);
+        return;
       } else if (body == "start") {
         remountUI({
           showRitualMessageDialog: true,
@@ -1346,11 +1355,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             remountUI({ showRitualMessageDialog: false });
           }
         });
+        return;
       } else if (body == "release") {
         scene.emit("ritual_spark_release");
+        return;
       } else if (body == "closeDialog") {
         remountUI({ showRitualMessageDialog: false });
         scene.emit("ritual_spark_start"); // only start spark if the user has not completed the dialog
+        return;
       }
     };
     checkForRitual();

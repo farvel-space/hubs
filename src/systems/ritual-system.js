@@ -68,11 +68,12 @@ export class RitualSystem {
     if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users")) return;
     if (msgBody.message === null) return; // TODO: remove later on
 
+    const msgScale = 1.5;
+
     const { name, message, sessionId } = msgBody;
     let rndrMsg = message + "\n" + " - " + name;
     if (name == null) rndrMsg = message;
-
-    console.log("handleRitualMessage", name, message, sessionId);
+    // console.log("handleRitualMessage", name, message, sessionId);
 
     // code snippet from src/react-components/chat-message.js:
     const [blob] = await renderChatMessage(rndrMsg, null, true);
@@ -80,8 +81,14 @@ export class RitualSystem {
 
     // position of anchor
     const iId = this.getIntIdFromSessionId(sessionId);
-    const anchorPos = document.querySelector("a-entity.ritual-anchor-message-" + String(iId).padStart(3, "0")).object3D
-      .position;
+    const anchorObj = document.querySelector("a-entity.ritual-anchor-message-" + String(iId).padStart(3, "0"));
+    const anchorPos = anchorObj.object3D.position;
+    // convert to degrees and round to 2 decimals
+    const anchorRot = {
+      x: Math.round(anchorObj.object3D.rotation.x * (180 / Math.PI) * 100) / 100,
+      y: Math.round(anchorObj.object3D.rotation.y * (180 / Math.PI) * 100) / 100,
+      z: Math.round(anchorObj.object3D.rotation.z * (180 / Math.PI) * 100) / 100
+    };
 
     // code snippet from src/scene-entry-manager.js:
     const { entity } = addMedia(
@@ -96,16 +103,16 @@ export class RitualSystem {
     entity.setAttribute("media-loader", { playSoundEffect: false });
     entity.setAttribute("visible", false);
     entity.setAttribute("position", anchorPos);
+    entity.setAttribute("rotation", anchorRot);
+    entity.setAttribute("scale", { x: msgScale, y: msgScale });
 
     entity.addEventListener("media_resolved", ({ detail }) => {
-      if (!NAF.utils.isMine(entity) && !NAF.utils.takeOwnership(entity)) {
+      if (!NAF.utils.isMine(entity) && !NAF.utils.takeOwnership(entity)) {0
         console.error("Could not take ownership of media entity", detail);
         return;
       }
       window.APP.pinningHelper.setPinned(entity, true);
-
       this.messageObjs.push(entity);
-      console.log("messageObjs", this.messageObjs);
     });
   };
 
