@@ -1340,39 +1340,55 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const checkForRitual = () => {
-      if (!type.startsWith("ritual")) return;
+      if (type != "ritual") return;
 
-      // manager receiving messages from normal clients.
-      if (typeof body === "string" && body.startsWith("{") && hubChannel.can("kick_users")) {
-        const msgBody = JSON.parse(body);
-        if (!msgBody.message) return; // TODO: right now okay, later on report all messages to ritual manager
-        msgBody.sessionId = session_id;
+      const msgBody = JSON.parse(body);
+
+      console.log("check foir ritual", msgBody);
+
+      if (msgBody.dest == "client") {
+        // TODO: Problems can happen, if the user presence is not there - have to investigate.
+        // receiving messages from manager - return if not authorized.
+        if (!hubChannel.presence.state[session_id].metas[0].permissions.kick_users) return;
+
+        switch (msgBody.action) {
+          case "start":
+            // anchor-id: index of anchors starts with 1
+            scene.systems["hubs-systems"].ritualSystem.anchorId = msgBody.data.indexOf(window.NAF.clientId) + 1;
+
+            // open dialog
+            remountUI({
+              showRitualMessageDialog: true,
+              onRitualMessageDialogClosed: () => {
+                remountUI({ showRitualMessageDialog: false });
+              }
+            });
+            return;
+          case "release":
+            scene.emit("ritual_spark_release");
+            return;
+          case "closeDialog":
+            remountUI({ showRitualMessageDialog: false });
+            scene.emit("ritual_spark_start"); // only start spark if the user has not completed the dialog
+            return;
+          default:
+            console.warn("Unknown ritual action:", msgBody);
+            return;
+        }
+      } else if (msgBody.dest == "manager" && msgBody.action == "ritualMessage") {
+        console.log("received ritual message for manager", msgBody);
+        // TODO: check if this client is the actual ritual manager
+        // right now the manager only receives the ritual messages from clients. no switch case necessary.
+        if (!hubChannel.can("kick_users")) return;
+        if (!msgBody.data.message) return; // TODO: right now okay, later on report all messages to ritual manager
+
+        console.log("manaer 2");
+
+        msgBody.data.sessionId = session_id;
         scene.systems["hubs-systems"].ritualSystem.handleRitualMessage(msgBody);
         return;
-      }
-
-      // TODO: Problems can happen, if the user presence is not there - have to investigate.
-      // receiving messages from manager - return if not authorized.
-      if (!hubChannel.presence.state[session_id].metas[0].permissions.kick_users) return;
-      if (type == "ritual_anchor_mapping") {
-        const index = body.indexOf(window.NAF.clientId) + 1; // index of anchors starts with 1
-        scene.systems["hubs-systems"].ritualSystem.anchorId = index;
-        return;
-      } else if (body == "start") {
-        remountUI({
-          showRitualMessageDialog: true,
-          onRitualMessageDialogClosed: () => {
-            remountUI({ showRitualMessageDialog: false });
-          }
-        });
-        return;
-      } else if (body == "release") {
-        scene.emit("ritual_spark_release");
-        return;
-      } else if (body == "closeDialog") {
-        remountUI({ showRitualMessageDialog: false });
-        scene.emit("ritual_spark_start"); // only start spark if the user has not completed the dialog
-        return;
+      } else {
+        console.warn("Unknown ritual destination:", msgBody);
       }
     };
     checkForRitual();

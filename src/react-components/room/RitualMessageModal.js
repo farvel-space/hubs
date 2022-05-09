@@ -119,8 +119,12 @@ export function RitualMessageModal({ scene, store, onClose }) {
 
       // send message to manager with conditionals
       const message = {
-        name: submitDisplayName ? tmpName : null, // TODO: if not wanted, dont show name or send "anonymous"?!
-        message: discloseToRoom ? tmpMsg : null
+        dest: "manager",
+        action: "ritualMessage",
+        data: {
+          name: submitDisplayName ? tmpName : null, // TODO: if not wanted, dont show name or send "anonymous"?!
+          message: discloseToRoom ? tmpMsg : null
+        }
       };
       APP.hubChannel.sendMessage(JSON.stringify(message), "ritual");
 

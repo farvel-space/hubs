@@ -1,7 +1,6 @@
 import { addMedia } from "../utils/media-utils";
 import { renderChatMessage } from "../react-components/chat-message";
 import { ObjectContentOrigins } from "../object-types";
-import { usePinObject } from "../react-components/room/object-hooks";
 
 export class RitualSystem {
   constructor(scene) {
@@ -16,6 +15,15 @@ export class RitualSystem {
 
     this.messageObjs = [];
   }
+
+  sendJSONMessageToHubChannel = (dest, action, data) => {
+    const message = {
+      dest: dest,
+      action: action,
+      data: data
+    };
+    APP.hubChannel.sendMessage(JSON.stringify(message), "ritual");
+  };
 
   onSpawnRitualSpark = () => {
     if (this.entity) return;
@@ -37,21 +45,40 @@ export class RitualSystem {
     // map sessionid to int id
     this.presences = window.APP.hubChannel.presence.state;
     this.intIds = Object.keys(this.presences);
-    // send message with mapping info to all clients
-    APP.hubChannel.sendMessage(this.intIds, "ritual_anchor_mapping");
 
-    // send message to open RitualMessageModal
-    APP.hubChannel.sendMessage("start", "ritual");
+    this.sendJSONMessageToHubChannel("client", "start", this.intIds);
+
+    // // combine start message with intIDs
+    // const msg = {
+    //   dest: "client",
+    //   action: "start",
+    //   data: this.intIds
+    // };
+
+    // // send message with mapping info to all clients and start ritual
+    // APP.hubChannel.sendMessage(JSON.stringify(msg), "ritual");
   };
 
   onCloseDialogInitiated = () => {
     if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users")) return;
-    // send message to close RitualMessageModal
-    APP.hubChannel.sendMessage("closeDialog", "ritual");
+
+    // // send message to close RitualMessageModal
+    // const msg = {
+    //   dest: "client",
+    //   action: "closeDialog"
+    // };
+    // APP.hubChannel.sendMessage(JSON.stringify(msg), "ritual");
+
+    this.sendJSONMessageToHubChannel("client", "closeDialog");
   };
 
   onRitualSparkReleaseInitiated = () => {
-    APP.hubChannel.sendMessage("release", "ritual");
+    // const msg = {
+    //   dest: "client",
+    //   action: "release"
+    // };
+    // APP.hubChannel.sendMessage(JSON.stringify(msg), "ritual");
+    this.sendJSONMessageToHubChannel("client", "release");
   };
 
   onRitualSparkRelease = () => {
@@ -66,11 +93,11 @@ export class RitualSystem {
   // TODO: do some refactoring in order to have nicer styling for messages in room. probably add to the functionality of chat-message.js or using troika text altogether
   handleRitualMessage = async msgBody => {
     if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users")) return;
-    if (msgBody.message === null) return; // TODO: remove later on
+    if (msgBody.data.message === null) return; // TODO: remove later on
 
     const msgScale = 1.5;
 
-    const { name, message, sessionId } = msgBody;
+    const { name, message, sessionId } = msgBody.data;
     let rndrMsg = message + "\n" + " - " + name;
     if (name == null) rndrMsg = message;
     // console.log("handleRitualMessage", name, message, sessionId);
