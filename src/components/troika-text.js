@@ -125,7 +125,9 @@ AFRAME.registerComponent("text", {
     mesh.textIndent = data.textIndent;
     mesh.whiteSpace = data.whiteSpace;
     mesh.maxWidth = data.maxWidth;
-    mesh.sync();
+    mesh.sync(() => {
+      this.el.emit("text-updated", this);
+    });
   },
 
   /**
@@ -135,5 +137,17 @@ AFRAME.registerComponent("text", {
   remove: function() {
     // Free memory
     this.troikaTextMesh.dispose();
-  }
+  },
+
+  getSize: (function() {
+    const size = new THREE.Vector3();
+    return function(outSize) {
+      this.troikaTextMesh.geometry.boundingBox.getSize(size);
+      outSize.set(
+        size.x * this.troikaTextMesh.scale.x,
+        size.y * this.troikaTextMesh.scale.y,
+        size.z * this.troikaTextMesh.scale.z
+      );
+    };
+  })()
 });
