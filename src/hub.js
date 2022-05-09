@@ -1344,8 +1344,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const msgBody = JSON.parse(body);
 
-      console.log("check foir ritual", msgBody);
-
       if (msgBody.dest == "client") {
         // TODO: Problems can happen, if the user presence is not there - have to investigate.
         // receiving messages from manager - return if not authorized.
@@ -1376,13 +1374,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
       } else if (msgBody.dest == "manager" && msgBody.action == "ritualMessage") {
-        console.log("received ritual message for manager", msgBody);
         // TODO: check if this client is the actual ritual manager
         // right now the manager only receives the ritual messages from clients. no switch case necessary.
         if (!hubChannel.can("kick_users")) return;
         if (!msgBody.data.message) return; // TODO: right now okay, later on report all messages to ritual manager
-
-        console.log("manaer 2");
 
         msgBody.data.sessionId = session_id;
         scene.systems["hubs-systems"].ritualSystem.handleRitualMessage(msgBody);
