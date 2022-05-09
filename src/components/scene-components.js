@@ -30,3 +30,5 @@ import "./particle-emitter";
 import "./audio-zone";
 import "./audio-zone-source";
 import "./ritual-spark"
+import "./troika-text";
+import "./frustrum";

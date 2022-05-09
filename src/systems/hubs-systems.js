@@ -34,6 +34,7 @@ import { AudioZonesSystem } from "./audio-zones-system";
 import { GainSystem } from "./audio-gain-system";
 import { EnvironmentSystem } from "./environment-system";
 import { RitualSystem } from "./ritual-system";
+import { NameTagVisibilitySystem } from "./name-tag-visibility-system";
 
 AFRAME.registerSystem("hubs-systems", {
   init() {
@@ -77,6 +78,7 @@ AFRAME.registerSystem("hubs-systems", {
     this.gainSystem = new GainSystem();
     this.environmentSystem = new EnvironmentSystem(this.el);
     this.ritualSystem = new RitualSystem(this.el);
+    this.nameTagSystem = new NameTagVisibilitySystem(this.el);
   },
 
   tick(t, dt) {
@@ -124,6 +126,7 @@ AFRAME.registerSystem("hubs-systems", {
     this.audioZonesSystem.tick(this.el);
     this.gainSystem.tick();
     // this.ritualSystem.tick();
+    this.nameTagSystem.tick();
 
     // We run this late in the frame so that its the last thing to have an opinion about the scale of an object
     this.boneVisibilitySystem.tick();
