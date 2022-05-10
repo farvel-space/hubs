@@ -1376,7 +1376,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else if (msgBody.dest == "manager" && msgBody.action == "ritualMessage") {
         // TODO: check if this client is the actual ritual manager
         // right now the manager only receives the ritual messages from clients. no switch case necessary.
-        if (!hubChannel.can("kick_users")) return;
+        if (!hubChannel.can("kick_users") || !scene.systems["hubs-systems"].ritualSystem.isRitualManager) return;
         if (!msgBody.data.message) return; // TODO: right now okay, later on report all messages to ritual manager
 
         msgBody.data.sessionId = session_id;

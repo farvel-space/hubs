@@ -45,6 +45,7 @@ export class RitualSystem {
     // map sessionid to int id
     this.presences = window.APP.hubChannel.presence.state;
     this.intIds = Object.keys(this.presences);
+    this.isRitualManager = true;
 
     this.sendJSONMessageToHubChannel("client", "start", this.intIds);
 
@@ -92,15 +93,13 @@ export class RitualSystem {
 
   // TODO: do some refactoring in order to have nicer styling for messages in room. probably add to the functionality of chat-message.js or using troika text altogether
   handleRitualMessage = async msgBody => {
-    if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users")) return;
+    if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users") || !this.isRitualManager) return;
     if (msgBody.data.message === null) return; // TODO: remove later on
 
     const msgScale = 1.5;
-
     const { name, message, sessionId } = msgBody.data;
     let rndrMsg = message + "\n" + " - " + name;
     if (name == null) rndrMsg = message;
-    // console.log("handleRitualMessage", name, message, sessionId);
 
     // code snippet from src/react-components/chat-message.js:
     const [blob] = await renderChatMessage(rndrMsg, null, true);
@@ -149,5 +148,6 @@ export class RitualSystem {
     this.messageObjs.forEach(entity => {
       entity.setAttribute("visible", true);
     });
+    this.isRitualManager = false;
   };
 }
