@@ -141,6 +141,7 @@ export const SCHEMA = {
         theme: { type: "string", default: "Browser Default" },
         tmpMutedGlobalMediaVolume: { type: "number" },
         tmpMutedGlobalVoiceVolume: { type: "number" },
+        tmpMutedGlobalSFXVolume: { type: "number" },
         skipEntryTutorial: { type: "bool" },
         cursorSize: { type: "number", default: 1 },
         nametagVisibility: { type: "string", default: "showAll" },
@@ -341,7 +342,11 @@ export default class Store extends EventTarget {
   };
 
   restoreAudioSettingsFromBeingMuted = async () => {
-    if (this.state.preferences.tmpMutedGlobalMediaVolume || this.state.preferences.tmpMutedGlobalVoiceVolume) {
+    if (
+      this.state.preferences.tmpMutedGlobalMediaVolume ||
+      this.state.preferences.tmpMutedGlobalVoiceVolume ||
+      this.state.preferences.tmpMutedGlobalSFXVolume
+    ) {
       const media =
         this.state.preferences.tmpMutedGlobalMediaVolume == 100
           ? undefined
@@ -350,13 +355,19 @@ export default class Store extends EventTarget {
         this.state.preferences.tmpMutedGlobalVoiceVolume == 100
           ? undefined
           : this.state.preferences.tmpMutedGlobalVoiceVolume;
+      const sfx =
+        this.state.preferences.tmpMutedGlobalSFXVolume == 100
+          ? undefined
+          : this.state.preferences.tmpMutedGlobalSFXVolume;
 
       this.update({
         preferences: {
           globalMediaVolume: media,
           globalVoiceVolume: voice,
+          globalSFXVolume: sfx,
           tmpMutedGlobalMediaVolume: undefined,
-          tmpMutedGlobalVoiceVolume: undefined
+          tmpMutedGlobalVoiceVolume: undefined,
+          tmpMutedGlobalSFXVolume: undefined
         }
       });
     }
