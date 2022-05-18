@@ -173,6 +173,7 @@
   "header.signed-in-as": "Angemeldet als {email}",
   "header.source": "Quellcode",
   "header.spoke": "Szenen Editor",
+  "editor-name": "Szenen Editor",
   "home-page.add-to-discord": "Füge den Bot {appName} zu Discord hinzu",
   "home-page.communicate-blurb": "Wähle einen Avatar, der dich repräsentiert, setze deine Kopfhörer auf und leg los. Hubs macht es einfach, mit Sprach- und Text-Chat mit anderen Personen in deinem privaten Raum in Verbindung zu bleiben.",
   "home-page.communicate-title": "Kommuniziere natürlich",
