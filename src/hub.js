@@ -1339,6 +1339,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       createInWorldLogMessage(incomingMessage);
     }
 
+    const checkForLeaveMessage = () => {
+      if (type != "leaveMessage") return;
+      const msgBody = JSON.parse(body);
+      if (
+        msgBody.dest != "manager" &&
+        msgBody.action != "leaveMessage" &&
+        !hubChannel.can("kick_users") &&
+        !scene.systems["hubs-systems"].leaveMessageSystem.isLeaveMessageManager
+      )
+        return;
+
+      msgBody.data.sessionId = session_id;
+      scene.systems["hubs-systems"].leaveMessageSystem.handleLeaveMessage(msgBody);
+      return;
+    };
+    checkForLeaveMessage();
+
     messageDispatch.receive(incomingMessage);
   });
 

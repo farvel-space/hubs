@@ -100,6 +100,7 @@ import { SignInMessages } from "./auth/SignInModal";
 import { TutorialControlsModal } from "./room/TutorialControlsModal";
 import { ControlsOverviewModal } from "./room/ControlsOverviewModal";
 import { MediaDevicesEvents } from "../utils/media-devices-utils";
+import { LeaveMessageModal } from "./room/LeaveMessageModal";
 
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
@@ -1629,6 +1630,18 @@ class UIRoot extends Component {
                       </>
                     )}
                     <ChatToolbarButtonContainer onClick={() => this.toggleSidebar("chat")} />
+                    <ToolbarButton
+                      icon={< ControlsIcon />}
+                      label={<FormattedMessage id="toolbar.leave-message" defaultMessage="Leave a message" />}
+                      preset="accent3"
+                      onClick={() => {
+                        this.showNonHistoriedDialog(LeaveMessageModal, {
+                          onClose: () => this.closeDialog(),
+                          scene: this.props.scene,
+                          store: this.props.store
+                        });
+                      }}
+                    />
                     <ToolbarButton
                       icon={< ControlsIcon />}
                       label={<FormattedMessage id="toolbar.controls-overview" defaultMessage="Controls" />}

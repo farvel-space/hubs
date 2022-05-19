@@ -34,6 +34,7 @@ import { AudioZonesSystem } from "./audio-zones-system";
 import { GainSystem } from "./audio-gain-system";
 import { EnvironmentSystem } from "./environment-system";
 import { NameTagVisibilitySystem } from "./name-tag-visibility-system";
+import { LeaveMessageSystem } from "./leave-message-system";
 
 AFRAME.registerSystem("hubs-systems", {
   init() {
@@ -77,6 +78,7 @@ AFRAME.registerSystem("hubs-systems", {
     this.gainSystem = new GainSystem();
     this.environmentSystem = new EnvironmentSystem(this.el);
     this.nameTagSystem = new NameTagVisibilitySystem(this.el);
+    this.leaveMessageSystem = new LeaveMessageSystem(this.el);
   },
 
   tick(t, dt) {

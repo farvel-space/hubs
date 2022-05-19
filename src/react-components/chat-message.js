@@ -41,7 +41,7 @@ const messageBodyDom = (body, from, fromSessionId, onViewProfile, emojiClassName
   return { content, multiline, emoji };
 };
 
-function renderChatMessage(body, from, allowEmojiRender) {
+export function renderChatMessage(body, from, allowEmojiRender) {
   const { content, emoji, multiline } = messageBodyDom(body, from, null, null, styles.emoji);
   const isEmoji = allowEmojiRender && emoji;
   const el = document.createElement("div");
