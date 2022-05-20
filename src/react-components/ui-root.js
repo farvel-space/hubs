@@ -1130,6 +1130,21 @@ class UIRoot extends Component {
     const canCloseRoom = this.props.hubChannel && !!this.props.hubChannel.canOrWillIfCreator("close_hub");
     const isModerator = this.props.hubChannel && this.props.hubChannel.canOrWillIfCreator("kick_users") && !isMobileVR;
 
+    const isFarvelLeaveMessageBotPresent = () => {
+      const presences = this.props.hubChannel.presence.state;
+      for (const key in presences) {
+        if (
+          presences[key].metas[0].profile.identityName &&
+          presences[key].metas[0].profile.identityName == "farvel Bot" &&
+          presences[key].metas[0].roles["owner"] == true &&
+          presences[key].metas[0].roles["signed_in"] == true
+        ) {
+          return true;
+        }
+      }
+      return false;
+    };
+
     const moreMenu = [
       {
         id: "user",
@@ -1630,18 +1645,20 @@ class UIRoot extends Component {
                       </>
                     )}
                     <ChatToolbarButtonContainer onClick={() => this.toggleSidebar("chat")} />
-                    <ToolbarButton
-                      icon={< ControlsIcon />}
-                      label={<FormattedMessage id="toolbar.leave-message" defaultMessage="Leave a message" />}
-                      preset="accent3"
-                      onClick={() => {
-                        this.showNonHistoriedDialog(LeaveMessageModal, {
-                          onClose: () => this.closeDialog(),
-                          scene: this.props.scene,
-                          store: this.props.store
-                        });
-                      }}
-                    />
+                    {isFarvelLeaveMessageBotPresent() && (
+                      <ToolbarButton
+                        icon={< FeedbackIcon />}
+                        label={<FormattedMessage id="toolbar.leave-message" defaultMessage="Write a message" />}
+                        preset="accent3"
+                        onClick={() => {
+                          this.showNonHistoriedDialog(LeaveMessageModal, {
+                            onClose: () => this.closeDialog(),
+                            scene: this.props.scene,
+                            store: this.props.store
+                          });
+                        }}
+                      />
+                    )}
                     <ToolbarButton
                       icon={< ControlsIcon />}
                       label={<FormattedMessage id="toolbar.controls-overview" defaultMessage="Controls" />}
