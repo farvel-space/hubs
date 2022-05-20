@@ -1061,7 +1061,7 @@ class UIRoot extends Component {
                     this.pushHistoryState("entry_step", "profile");
                   } else {
                     this.onRequestMicPermission();
-                    this.pushHistoryState("entry_step", "mic_grant");
+                    this.pushHistoryState("entry_step", "audio");
                   }
                 } else {
                   this.handleForceEntry();
