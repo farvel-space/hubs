@@ -17,11 +17,11 @@ import { THREE } from "aframe";
 const leaveMessageMessages = defineMessages({
   titleEntry: {
     id: "leave-message-modal.entry.title",
-    defaultMessage: "Leave a message or thought"
+    defaultMessage: "Leave a comment or thought"
   },
   titleMessage: {
     id: "leave-message-modal.message.title",
-    defaultMessage: "Message"
+    defaultMessage: "Comment"
   },
   titleThoughts: {
     id: "leave-message-modal.thoughts.title",
@@ -29,7 +29,7 @@ const leaveMessageMessages = defineMessages({
   },
   entryButtonMessage: {
     id: "leave-message-modal.entry.buttonMessage",
-    defaultMessage: "Leave a message."
+    defaultMessage: "Leave a comment."
   },
   entryButtonThoughts: {
     id: "leave-message-modal.entry.buttonThoughts",
@@ -37,16 +37,12 @@ const leaveMessageMessages = defineMessages({
   },
   submitMessage: {
     id: "leave-message-modal.message.submit",
-    defaultMessage: "Share Message"
-  },
-  submitThoughts: {
-    id: "leave-message-modal.thoughts.submit",
-    defaultMessage: "My thoughts are with you."
+    defaultMessage: "Share comment"
   },
   description: {
     id: "leave-message-modal.message.description",
     defaultMessage:
-      "You can now submit a message to the deceased. The message will be be placed in the room. If you don't want to submit a message, you can go back and choose the - Words fail me. - option or you click onto the X in the top left."
+      "You can now submit a comment to the deceased. The comment will be be placed in the room. If you don't want to submit a comment, you can go back and choose the - Words fail me. - option or you click onto the X in the top left."
   },
   checkboxShowName: {
     id: "leave-message-modal.checkboxShowName",
@@ -58,7 +54,7 @@ const leaveMessageMessages = defineMessages({
   },
   labelMessage: {
     id: "leave-message-modal.labelMessage",
-    defaultMessage: "Message"
+    defaultMessage: "Comment"
   },
   labelPreview: {
     id: "leave-message-modal.labelPreview",
@@ -66,12 +62,22 @@ const leaveMessageMessages = defineMessages({
   },
   messageThought: {
     id: "leave-message-modal.messageThought",
-    defaultMessage: "{name} thought of you."
+    defaultMessage: "{name} thinks of you."
   },
-  nameThoughtAnonymous: {
-    id: "leave-message-modal.nameThoughtAnonymous",
-    defaultMessage: "Someone"
-  }
+  messageThoughtAnonymous: {
+    id: "leave-message-modal.messageThoughtAnonymous",
+    defaultMessage: "I think of you."
+  },
+  infoGoInFrontOfPicture: {
+    id: "leave-message-modal.infoGoInFrontOfPicture",
+    defaultMessage:
+      "The comment will be placed in front of you. Please go in front of the picture, you want to comment on."
+  },
+  infoPubliclyVisible: {
+    id: "leave-message-modal.infoPubliclyVisible",
+    defaultMessage:
+      "The comment will be visible to everyone. If you don't want that, please go back and close the dialog via the X in the top left."
+  },
 });
 
 const ENTRY_STATE = 0;
@@ -98,8 +104,11 @@ export function LeaveMessageModal({ scene, store, onClose }) {
 
   const getThoughtValue = useCallback(
     () => {
-      const name = submitDisplayName ? submittedName : intl.formatMessage(leaveMessageMessages.nameThoughtAnonymous);
-      return intl.formatMessage(leaveMessageMessages.messageThought, { name: name });
+      if (submitDisplayName) {
+        return intl.formatMessage(leaveMessageMessages.messageThought, { name: submittedName });
+      } else {
+        return intl.formatMessage(leaveMessageMessages.messageThoughtAnonymous);
+      }
     },
     [submitDisplayName, submittedName, intl]
   );
@@ -184,6 +193,7 @@ export function LeaveMessageModal({ scene, store, onClose }) {
         className={classNames(styles.entry, styles.hiddenAttr)}
         hidden={!(dialogState == ENTRY_STATE)}
       >
+        <p>{intl.formatMessage(leaveMessageMessages.infoGoInFrontOfPicture)}</p>
         <Button lg type="button" preset="accent1" onClick={() => setDialogState(MESSAGE_STATE)}>
           {intl.formatMessage(leaveMessageMessages.entryButtonMessage)}
         </Button>
@@ -216,6 +226,7 @@ export function LeaveMessageModal({ scene, store, onClose }) {
           />
         </div>
         <div className="messageGroup thought-preview" hidden={dialogState != THOUGHTS_STATE}>
+          <p>{intl.formatMessage(leaveMessageMessages.infoPubliclyVisible)}</p>
           <TextAreaInputField
             name="textarea-message-preview"
             autoComplete="off"
@@ -265,9 +276,7 @@ export function LeaveMessageModal({ scene, store, onClose }) {
           <label>{intl.formatMessage(leaveMessageMessages.checkboxDiscloseToRoom)}</label>
         </div> */}
         <Button type="submit" preset="accept">
-          {intl.formatMessage(
-            dialogState == MESSAGE_STATE ? leaveMessageMessages.submitMessage : leaveMessageMessages.submitThoughts
-          )}
+          {intl.formatMessage(leaveMessageMessages.submitMessage)}
         </Button>
       </Column>
     </Modal>

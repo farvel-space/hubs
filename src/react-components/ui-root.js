@@ -1645,20 +1645,21 @@ class UIRoot extends Component {
                       </>
                     )}
                     <ChatToolbarButtonContainer onClick={() => this.toggleSidebar("chat")} />
-                    {isFarvelLeaveMessageBotPresent() && (
-                      <ToolbarButton
-                        icon={< FeedbackIcon />}
-                        label={<FormattedMessage id="toolbar.leave-message" defaultMessage="Write a message" />}
-                        preset="accent3"
-                        onClick={() => {
-                          this.showNonHistoriedDialog(LeaveMessageModal, {
-                            onClose: () => this.closeDialog(),
-                            scene: this.props.scene,
-                            store: this.props.store
-                          });
-                        }}
-                      />
-                    )}
+                    {isFarvelLeaveMessageBotPresent() &&
+                      entered && (
+                        <ToolbarButton
+                          icon={< FeedbackIcon />}
+                          label={<FormattedMessage id="toolbar.leave-message" defaultMessage="Comment" />}
+                          preset="accent3"
+                          onClick={() => {
+                            this.showNonHistoriedDialog(LeaveMessageModal, {
+                              onClose: () => this.closeDialog(),
+                              scene: this.props.scene,
+                              store: this.props.store
+                            });
+                          }}
+                        />
+                      )}
                     <ToolbarButton
                       icon={< ControlsIcon />}
                       label={<FormattedMessage id="toolbar.controls-overview" defaultMessage="Controls" />}
