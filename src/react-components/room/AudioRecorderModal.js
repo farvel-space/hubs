@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useIntl, defineMessages, FormattedMessage } from "react-intl";
 import PropTypes from "prop-types";
 import { Modal } from "../modal/Modal";
@@ -8,6 +8,7 @@ import { Column } from "../layout/Column";
 import { useAudioRecorder } from "./useAudioRecorder";
 import { AudioRecorderPlayer } from "./AudioRecorderPlayer";
 import { useForm } from "react-hook-form";
+// import { useMicrophoneStatus } from "./useMicrophoneStatus"; // TODO: implement correctly instead of APP.mediaDevicesManager
 
 const audioRecordingMessages = defineMessages({
   submit: {
@@ -36,15 +37,21 @@ export function AudioRecorderModal({ scene, store, onClose }) {
   const isRecordingRef = useRef(isRecording);
   isRecordingRef.current = isRecording;
 
-  const audioSettings = (mute, gMediaV, gVoiceV) => {
-    if (mute != scene.is("muted")) scene.emit("action_mute");
-    store.update({
-      preferences: {
-        globalMediaVolume: gMediaV,
-        globalVoiceVolume: gVoiceV
+  const audioSettings = useCallback(
+    (isMicEnabled, gMediaV, gVoiceV, gSfxV) => {
+      if (isMicEnabled != APP.mediaDevicesManager.isMicEnabled) {
+        APP.mediaDevicesManager.toggleMic();
       }
-    });
-  };
+      store.update({
+        preferences: {
+          globalMediaVolume: gMediaV,
+          globalVoiceVolume: gVoiceV,
+          globalSFXVolume: gSfxV
+        }
+      });
+    },
+    [store]
+  );
 
   const onSubmit = () => {
     scene.emit("add_media", audioFile.size > 0 && audioFile);
@@ -52,20 +59,22 @@ export function AudioRecorderModal({ scene, store, onClose }) {
   };
 
   useEffect(() => {
-    const tmpMuted = scene.is("muted");
+    const tmpMicEnabled = APP.mediaDevicesManager.isMicEnabled;
     const tmpMediaVolume = store.state.preferences.globalMediaVolume;
     const tmpVoiceVolume = store.state.preferences.globalVoiceVolume;
+    const tmpSfxVolume = store.state.preferences.globalSFXVolume;
 
     // save current volume settings in store, to restore if people reload while recording dialog is opened
     store.update({
       preferences: {
         tmpMutedGlobalMediaVolume: tmpMediaVolume === undefined ? 100 : tmpMediaVolume,
-        tmpMutedGlobalVoiceVolume: tmpVoiceVolume === undefined ? 100 : tmpMediaVolume
+        tmpMutedGlobalVoiceVolume: tmpVoiceVolume === undefined ? 100 : tmpMediaVolume,
+        tmpMutedGlobalSFXVolume: tmpSfxVolume === undefined ? 100 : tmpSfxVolume
       }
     });
 
     // mute the environment
-    audioSettings(true, 0.0, 0.0);
+    audioSettings(false, 0.0, 0.0, 0.0);
 
     // save used avatar and set it to "unavailable avatar"
     // const tmpUsedAvatar = store.state.profile.avatarId;
@@ -73,7 +82,7 @@ export function AudioRecorderModal({ scene, store, onClose }) {
     // scene.emit("avatar_updated");
 
     return () => {
-      audioSettings(tmpMuted, tmpMediaVolume, tmpVoiceVolume);
+      audioSettings(tmpMicEnabled, tmpMediaVolume, tmpVoiceVolume, tmpSfxVolume);
       // store.update({ profile: { avatarId: tmpUsedAvatar } });
       // scene.emit("avatar_updated");
     };

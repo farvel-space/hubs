@@ -1,6 +1,6 @@
 /* global performance THREE AFRAME NAF MediaStream setTimeout */
 import configs from "../utils/configs";
-import audioIcon from "../assets/images/audio.png";
+import audioIcon from "../assets/images/audio_farvel.png";
 import { paths } from "../systems/userinput/paths";
 import HLS from "hls.js";
 import { MediaPlayer } from "dashjs";
@@ -475,6 +475,7 @@ AFRAME.registerComponent("media-video", {
     }
 
     if (!texture.isVideoTexture) {
+      this.mesh.material.transparent = true; // have transparency for farvel audio icon texture (rounded)
       this.mesh.material.map = audioIconTexture;
     } else {
       this.mesh.material.map = texture;
