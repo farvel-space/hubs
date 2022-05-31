@@ -49,11 +49,15 @@ export class LeaveMessageSystem {
     entity.setAttribute("scale", { x: msgScale, y: msgScale });
 
     entity.addEventListener("media_resolved", ({ detail }) => {
-      if (!NAF.utils.isMine(entity) && !NAF.utils.takeOwnership(entity)) {
-        console.error("Could not take ownership of media entity", detail);
-        return;
-      }
-      window.APP.pinningHelper.setPinned(entity, true);
+      // if (!NAF.utils.isMine(entity) && !NAF.utils.takeOwnership(entity)) return;
+      // setTimeout(() => {
+      //   window.APP.pinningHelper.setPinned(entity, true);
+      // }, 1000);
+
+      NAF.utils.getNetworkedEntity(entity).then(networkedEl => {
+        if (!NAF.utils.isMine(networkedEl) && !NAF.utils.takeOwnership(networkedEl)) return;
+        window.APP.pinningHelper.setPinned(entity, true);
+      });
     });
   };
 }
