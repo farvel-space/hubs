@@ -25,8 +25,8 @@ export const DistanceModelType = {
 export const AvatarAudioDefaults = Object.freeze({
   audioType: AudioType.PannerNode,
   distanceModel: DistanceModelType.Inverse,
-  rolloffFactor: 5,
-  refDistance: 5,
+  rolloffFactor: 20, // FARM-325: adapt for better usage in small rooms
+  refDistance: 3, // FARM-325: adapt for better usage in small rooms
   maxDistance: 10000,
   coneInnerAngle: 180,
   coneOuterAngle: 360,
