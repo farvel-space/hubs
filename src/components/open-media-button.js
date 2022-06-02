@@ -21,6 +21,12 @@ AFRAME.registerComponent("open-media-button", {
 
       if (visible) {
         let label = "open link";
+
+        // for FARM-411: leave text messages behind hack
+        if (src == "writeComment") {
+          if (!this.isFarvelLeaveMessageBotPresent()) return;
+          label = "comment";
+        }
         if (!this.data.onlyOpenLink) {
           let hubId;
           if (await isLocalHubsAvatarUrl(src)) {
@@ -67,6 +73,10 @@ AFRAME.registerComponent("open-media-button", {
           await exitImmersive();
           location.href = this.src;
         }
+      } else if (this.src == "writeComment") {
+        // for FARM-411: leave text messages behind hack
+        console.log("open-media-button.onClick.writeText");
+        this.el.sceneEl.emit("leave_message_clicked");
       } else {
         await exitImmersive();
         window.open(this.src);
@@ -86,5 +96,20 @@ AFRAME.registerComponent("open-media-button", {
 
   pause() {
     this.el.object3D.removeEventListener("interact", this.onClick);
+  },
+
+  isFarvelLeaveMessageBotPresent() {
+    const presences = window.APP.hubChannel.presence.state;
+    for (const key in presences) {
+      if (
+        presences[key].metas[0].profile.identityName &&
+        presences[key].metas[0].profile.identityName == "farvel Bot" &&
+        presences[key].metas[0].roles["owner"] == true &&
+        presences[key].metas[0].roles["signed_in"] == true
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
 });

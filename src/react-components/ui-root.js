@@ -161,6 +161,8 @@ class UIRoot extends Component {
     showInterstitialPrompt: PropTypes.bool,
     onInterstitialPromptClicked: PropTypes.func,
     performConditionalSignIn: PropTypes.func,
+    showLeaveMessageDialog: PropTypes.bool,
+    onLeaveMessageDialogClosed: PropTypes.func,
     hide: PropTypes.bool,
     showPreload: PropTypes.bool,
     onPreloadLoadClicked: PropTypes.func,
@@ -219,7 +221,7 @@ class UIRoot extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { hubChannel, showSignInDialog } = this.props;
+    const { hubChannel, showSignInDialog, showLeaveMessageDialog } = this.props;
     if (hubChannel) {
       const { signedIn } = hubChannel;
       if (signedIn !== this.state.signedIn) {
@@ -233,6 +235,15 @@ class UIRoot extends Component {
         this.closeDialog();
       }
     }
+
+    if (prevProps.showLeaveMessageDialog !== showLeaveMessageDialog) {
+      if (showLeaveMessageDialog) {
+        this.showLeaveMessageModal();
+      } else {
+        this.closeDialog();
+      }
+    }
+
     if (!this.willCompileAndUploadMaterials && this.state.noMoreLoadingUpdates) {
       this.willCompileAndUploadMaterials = true;
       // We want to ensure that react and the browser have had the chance to render / update.
@@ -432,6 +443,18 @@ class UIRoot extends Component {
           onContinue: onCallback
         });
       },
+      onClose: onCallback
+    });
+  };
+
+  showLeaveMessageModal = () => {
+    const onCallback = () => {
+      const { onLeaveMessageDialogClosed } = this.props;
+      (onLeaveMessageDialogClosed && onLeaveMessageDialogClosed()) || this.closeDialog();
+    };
+    this.showNonHistoriedDialog(LeaveMessageModal, {
+      scene: this.props.scene,
+      store: this.props.store,
       onClose: onCallback
     });
   };
@@ -1130,20 +1153,20 @@ class UIRoot extends Component {
     const canCloseRoom = this.props.hubChannel && !!this.props.hubChannel.canOrWillIfCreator("close_hub");
     const isModerator = this.props.hubChannel && this.props.hubChannel.canOrWillIfCreator("kick_users") && !isMobileVR;
 
-    const isFarvelLeaveMessageBotPresent = () => {
-      const presences = this.props.hubChannel.presence.state;
-      for (const key in presences) {
-        if (
-          presences[key].metas[0].profile.identityName &&
-          presences[key].metas[0].profile.identityName == "farvel Bot" &&
-          presences[key].metas[0].roles["owner"] == true &&
-          presences[key].metas[0].roles["signed_in"] == true
-        ) {
-          return true;
-        }
-      }
-      return false;
-    };
+    // const isFarvelLeaveMessageBotPresent = () => {
+    //   const presences = this.props.hubChannel.presence.state;
+    //   for (const key in presences) {
+    //     if (
+    //       presences[key].metas[0].profile.identityName &&
+    //       presences[key].metas[0].profile.identityName == "farvel Bot" &&
+    //       presences[key].metas[0].roles["owner"] == true &&
+    //       presences[key].metas[0].roles["signed_in"] == true
+    //     ) {
+    //       return true;
+    //     }
+    //   }
+    //   return false;
+    // };
 
     const moreMenu = [
       {
@@ -1645,7 +1668,7 @@ class UIRoot extends Component {
                       </>
                     )}
                     <ChatToolbarButtonContainer onClick={() => this.toggleSidebar("chat")} />
-                    {isFarvelLeaveMessageBotPresent() &&
+                    {/* {isFarvelLeaveMessageBotPresent() &&
                       entered && (
                         <ToolbarButton
                           icon={< FeedbackIcon />}
@@ -1659,7 +1682,7 @@ class UIRoot extends Component {
                             });
                           }}
                         />
-                      )}
+                      )} */}
                     <ToolbarButton
                       icon={< ControlsIcon />}
                       label={<FormattedMessage id="toolbar.controls-overview" defaultMessage="Controls" />}
