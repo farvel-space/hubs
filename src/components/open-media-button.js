@@ -22,11 +22,6 @@ AFRAME.registerComponent("open-media-button", {
       if (visible) {
         let label = "open link";
 
-        // for FARM-411: leave text messages behind hack
-        if (src == "writeComment") {
-          if (!this.isFarvelLeaveMessageBotPresent()) return;
-          label = "comment";
-        }
         if (!this.data.onlyOpenLink) {
           let hubId;
           if (await isLocalHubsAvatarUrl(src)) {
@@ -41,6 +36,10 @@ AFRAME.registerComponent("open-media-button", {
               label = "visit room";
             }
           }
+        }
+        // for FARM-411: leave text messages behind hack
+        if (src == "writeComment") {
+          label = "comment";
         }
         this.label.setAttribute("text", "value", label);
       }
@@ -96,20 +95,6 @@ AFRAME.registerComponent("open-media-button", {
 
   pause() {
     this.el.object3D.removeEventListener("interact", this.onClick);
-  },
-
-  isFarvelLeaveMessageBotPresent() {
-    const presences = window.APP.hubChannel.presence.state;
-    for (const key in presences) {
-      if (
-        presences[key].metas[0].profile.identityName &&
-        presences[key].metas[0].profile.identityName == "farvel Bot" &&
-        presences[key].metas[0].roles["owner"] == true &&
-        presences[key].metas[0].roles["signed_in"] == true
-      ) {
-        return true;
-      }
-    }
-    return false;
   }
+
 });

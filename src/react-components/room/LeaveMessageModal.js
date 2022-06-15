@@ -78,6 +78,23 @@ const leaveMessageMessages = defineMessages({
     defaultMessage:
       "The comment will be visible to everyone. If you don't want that, please go back and close the dialog via the X in the top left."
   },
+  notAvailableInfo: {
+    id: "leave-message-modal.notAvailableInfo",
+    defaultMessage:
+      "Sorry, the comment functionality is currently not available. Please contact {contactEmail} to enable it again."
+  },
+  notAvailableCloseBtn: {
+    id: "leave-message-modal.notAvailableCloseBtn",
+    defaultMessage: "Close"
+  },
+  notAvailableMailSubject: {
+    id: "leave-message-modal.notAvailableMailSubject",
+    defaultMessage: "Comment functionality not available"
+  },
+  notAvailableMailBody: {
+    id: "leave-message-modal.notAvailableMailBody",
+    defaultMessage: "Hi farvel team, I cannot comment on pictures in room:"
+  }
 });
 
 const ENTRY_STATE = 0;
@@ -168,6 +185,50 @@ export function LeaveMessageModal({ scene, store, onClose }) {
     },
     [setSubmitDisplayName]
   );
+
+  const isFarvelLeaveMessageBotPresent = () => {
+    const presences = window.APP.hubChannel.presence.state;
+    for (const key in presences) {
+      if (
+        presences[key].metas[0].profile.identityName &&
+        presences[key].metas[0].profile.identityName == "farvel Bot" &&
+        presences[key].metas[0].roles["owner"] == true &&
+        presences[key].metas[0].roles["signed_in"] == true
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  if (!isFarvelLeaveMessageBotPresent()) {
+    const contactEmail = "hi@farvel.space";
+    return (
+      <Modal
+        title={intl.formatMessage(leaveMessageMessages.titleEntry)}
+        beforeTitle={<CloseButton onClick={onClose} />}
+      >
+        <Column padding center className={classNames(styles.entry, styles.hiddenAttr)}>
+          <p>
+            {intl.formatMessage(leaveMessageMessages.notAvailableInfo, {
+              contactEmail: (
+                <a
+                  href={`mailto:${contactEmail}?subject=${intl.formatMessage(
+                    leaveMessageMessages.notAvailableMailSubject
+                  )}&body=${intl.formatMessage(leaveMessageMessages.notAvailableMailBody)} ${window.location.href} `}
+                >
+                  {contactEmail}
+                </a>
+              )
+            })}
+          </p>
+          <Button lg type="button" preset="cancel" onClick={onClose}>
+            {intl.formatMessage(leaveMessageMessages.notAvailableCloseBtn)}
+          </Button>
+        </Column>
+      </Modal>
+    );
+  }
 
   return (
     <Modal
