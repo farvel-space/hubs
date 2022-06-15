@@ -81,7 +81,7 @@ const leaveMessageMessages = defineMessages({
   notAvailableInfo: {
     id: "leave-message-modal.notAvailableInfo",
     defaultMessage:
-      "Sorry, the comment functionality is currently not available. Please contact {contactEmail} to enable it again."
+      "Sorry, it is not possible to comment right now. Please let the farvel team know via {contactEmail}, so that this feature can be reactivated."
   },
   notAvailableCloseBtn: {
     id: "leave-message-modal.notAvailableCloseBtn",

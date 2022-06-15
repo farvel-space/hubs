@@ -222,7 +222,7 @@
   "leave-message-modal.messageThought": "{name} denkt an dich.",
   "leave-message-modal.messageThoughtAnonymous": "Ich denke an dich.",
   "leave-message-modal.notAvailableCloseBtn": "Schließen",
-  "leave-message-modal.notAvailableInfo": "Entschuldigung, leider ist es gerade nicht möglich zu kommentieren. Bitte kontaktiere {contactEmail} um diese Funktion wieder zu aktivieren.",
+  "leave-message-modal.notAvailableInfo": "Entschuldigung, leider ist es gerade nicht möglich zu kommentieren. Bitte gib dem Team von farvel via {contactEmail} Bescheid, damit diese Funktion wieder aktiviert wird.",
   "leave-message-modal.notAvailableMailBody": "Hallo farvel Team, ich kann leider keine Bilder kommentieren. Link: ",
   "leave-message-modal.notAvailableMailSubject": "Kommentieren nicht möglich",
   "leave-message-modal.thoughts.title": "Gedanken",
