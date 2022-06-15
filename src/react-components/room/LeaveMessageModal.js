@@ -140,7 +140,7 @@ export function LeaveMessageModal({ scene, store, onClose }) {
       }
 
       // position and rotation
-      const objOffset = new THREE.Vector3(0, 0, -1.5);
+      const objOffset = new THREE.Vector3(0, 0, -0.5);
       const avatarRig = document.querySelector("#avatar-pov-node");
       avatarRig.object3D.localToWorld(objOffset); // getting current world position
       const objQuat = new THREE.Quaternion();

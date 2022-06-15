@@ -16,7 +16,7 @@ export class LeaveMessageSystem {
   handleLeaveMessage = async msgBody => {
     if (!this.scene.systems.permissions.canOrWillIfCreator("kick_users") || !this.isLeaveMessageManager) return;
 
-    const msgScale = 1.5;
+    const msgScale = 1;
     const { name, message, objOffset, objRotation } = msgBody.data;
     let rndrMsg = message + "\n" + " - " + name;
     if (name == null) rndrMsg = message;
