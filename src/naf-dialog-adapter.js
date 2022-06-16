@@ -74,11 +74,14 @@ export class DialogAdapter extends EventEmitter {
 
     this._serverUrl = `wss://${host}:${port}`;
 
+    // farvel Test Param
     if (this._forceStun) {
-      console.log("### forceSTUN?", this._forceStun);
+      console.log("### forceSTUN", this._forceStun);
       iceServers.push({ urls: "stun:stun1.l.google.com:19302" }, { urls: "stun:stun2.l.google.com:19302" });
       return iceServers;
     }
+    // farvel Test Param end
+
     if (turn && turn.enabled) {
       console.log("### turn", turn);
       turn.transports.forEach(ts => {
@@ -482,6 +485,7 @@ export class DialogAdapter extends EventEmitter {
       clientId: this._clientId,
       forceTcp: this._forceTcp,
       forceTurn: this._forceTurn,
+      forceStun: this._forceStun,
       iceTransportPolicy: this._iceTransportPolicy
     });
   }
