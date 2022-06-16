@@ -58,6 +58,7 @@ export class DialogAdapter extends EventEmitter {
     this.scene = null;
     this._serverParams = {};
     this._consumerStats = {};
+    this._forceStun = false;
   }
 
   get consumerStats() {
@@ -73,7 +74,13 @@ export class DialogAdapter extends EventEmitter {
 
     this._serverUrl = `wss://${host}:${port}`;
 
+    if (this._forceStun) {
+      console.log("### forceSTUN?", this._forceStun);
+      iceServers.push({ urls: "stun:stun1.l.google.com:19302" }, { urls: "stun:stun2.l.google.com:19302" });
+      return iceServers;
+    }
     if (turn && turn.enabled) {
+      console.log("### turn", turn);
       turn.transports.forEach(ts => {
         // Try both TURN DTLS and TCP/TLS
         if (!this._forceTcp) {
@@ -90,7 +97,7 @@ export class DialogAdapter extends EventEmitter {
           credential: turn.credential
         });
       });
-      iceServers.push({ urls: "stun:stun1.l.google.com:19302" });
+      // iceServers.push({ urls: "stun:stun1.l.google.com:19302" }); // commented out for debugging purposes.
     } else {
       iceServers.push({ urls: "stun:stun1.l.google.com:19302" }, { urls: "stun:stun2.l.google.com:19302" });
     }
@@ -247,6 +254,7 @@ export class DialogAdapter extends EventEmitter {
     clientId,
     forceTcp,
     forceTurn,
+    forceStun,
     iceTransportPolicy
   }) {
     this._serverUrl = serverUrl;
@@ -257,6 +265,7 @@ export class DialogAdapter extends EventEmitter {
     this.scene = scene;
     this._forceTcp = forceTcp;
     this._forceTurn = forceTurn;
+    this._forceStun = forceStun;
     this._iceTransportPolicy = iceTransportPolicy;
 
     const urlWithParams = new URL(this._serverUrl);

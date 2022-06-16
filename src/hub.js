@@ -632,6 +632,7 @@ function handleHubChannelJoined(entryManager, hubChannel, messageDispatch, data,
         clientId: data.session_id,
         forceTcp: qs.get("force_tcp"),
         forceTurn: qs.get("force_turn"),
+        forceStun: qs.get("force_stun"),
         iceTransportPolicy: qs.get("force_tcp") || qs.get("force_turn") ? "relay" : "all"
       });
       scene.addEventListener(
