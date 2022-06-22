@@ -17,6 +17,7 @@ import { scaledThumbnailUrlFor } from "../../utils/media-url-utils";
 import { Column } from "../layout/Column";
 import { Button } from "../input/Button";
 import { Container } from "../layout/Container";
+import { ConnectionTest } from "../../react-components/debug-panel/ConnectionTest";
 import { SocialBar } from "../home/SocialBar";
 import { SignInButton } from "./SignInButton";
 import maskEmail from "../../utils/mask-email";
@@ -192,6 +193,7 @@ export function HomePage() {
           </Button>
         </Column>
       </Container>
+      <Container><ConnectionTest></ConnectionTest></Container>
       {isHmc ? (
         <Column center>
           <SocialBar />
