@@ -4,7 +4,10 @@ import { getReticulumMeta, connectToReticulum, createAndRedirectToNewHub } from 
 import HubChannel from "../../utils/hub-channel";
 import "aframe";
 import "networked-aframe";
-// import { DialogAdapter } from "../../naf-dialog-adapter";
+import { Presence } from "phoenix";
+import { DialogAdapter } from "../../naf-dialog-adapter";
+import PhoenixAdapter from "../../phoenix-adapter";
+import { emitter } from "../../emitter";
 
 import { App } from "../../App";
 window.APP = new App();
@@ -43,7 +46,9 @@ export class ConnectionTest extends React.Component {
     this.state = {
       isStarted: false,
       copyButtonLabel: "Copy results to clipboard",
+      downloadButtonLabel: "Download results",
       tests: {
+        fetchUserAgentTest: new TestState("Fetch User Agent"),
         metadataTest: new TestState("Fetch Metadata"),
         roomTest: new TestState("Open Room"),
         reticulumTest: new TestState("Connect to Reticulum"),
@@ -57,8 +62,28 @@ export class ConnectionTest extends React.Component {
     };
 
     // Uncomment to test with existing room ID rather than creating a new one each time
-    //this._roomId = "3z2zcE3";
+    this._roomId = "rLhU2RT";
   }
+
+  fetchUserAgent = async () => {
+    console.info("Called fetchUserAgent");
+    const test = this.state.tests.fetchUserAgentTest;
+    test.start();
+    this.setState(state => (state.tests.fetchUserAgentTest = test));
+
+    try {
+      const userAgent = window.navigator.userAgent;
+      test.stop(true);
+      test.notes = userAgent;
+    } catch (error) {
+      console.error(error);
+      test.stop(false);
+      test.notes = error.toString();
+    }
+    this.setState(state => (state.tests.fetchUserAgentTest = test));
+    this.setState({ isStarted: true });
+    this.dowloadMetadata();
+  };
 
   dowloadMetadata = async () => {
     console.info("Called dowloadMetadata");
@@ -78,7 +103,7 @@ export class ConnectionTest extends React.Component {
       .finally(() => {
         this.setState(state => (state.tests.metadataTest = test));
       });
-    this.setState({ isStarted: true });
+    // this.setState({ isStarted: true });
   };
 
   openNewRoom = async () => {
@@ -169,8 +194,8 @@ export class ConnectionTest extends React.Component {
     const hubChannel = new HubChannel(store, this._roomId);
     this._hubChannel = hubChannel;
     window.APP.hubChannel = hubChannel;
-    // hubChannel.setPhoenixChannel(hubPhxChannel);
-    hubChannel.migrateToSocket(hubPhxChannel);
+    hubChannel.channel = hubPhxChannel;
+    hubChannel.presence = new Presence(hubPhxChannel);
     hubPhxChannel
       .join()
       .receive("ok", async data => {
@@ -198,17 +223,35 @@ export class ConnectionTest extends React.Component {
     this.setState(state => (state.tests.joinTest = test));
 
     try {
-      // This mimics what happens in NAF::networked-scene::setupNetworkAdapter
-      const adapter = NAF.adapters.make("dialog");
-      this._adapter = adapter;
+      window.APP.dialog = new DialogAdapter();
+      // const dialogAdapter = new DialogAdapter();
+      // this._adapter = dialogAdapter;
+      const qs = new URLSearchParams(location.search);
+      const events = emitter();
+
+      NAF.adapters.register("phoenix", PhoenixAdapter);
+      const adapter = NAF.adapters.make("phoenix");
+      // this._adapter = adapter;
       NAF.connection.setNetworkAdapter(adapter);
 
-      // Normally set in hubs.js in response to the adapter-ready event
-      adapter.setClientId(this._clientId);
-      adapter.setRoom(this._roomId);
-      adapter.setJoinToken(this._perms_token);
+      const surrogateFunction = (...payload) => {
+        payload.forEach(arg => {
+          console.info("surrogateFunction arg,", arg);
+        });
+      };
+      const scene = { emit: surrogateFunction };
 
-      // Normally hubs.js links these up to the phoenix hub channel
+      // // Normally set in hubs.js in response to the adapter-ready event
+      adapter.session_id = this._clientId;
+      adapter.hubChannel = this._hubChannel;
+      adapter.events = events;
+      adapter.scene = scene;
+      adapter.setServerConnectListeners(surrogateFunction, surrogateFunction);
+      adapter.setDataChannelListeners(surrogateFunction, surrogateFunction, surrogateFunction);
+      // adapter.setRoom(this._roomId);
+      // adapter.setJoinToken(this._perms_token);
+
+      // // Normally hubs.js links these up to the phoenix hub channel
       adapter.reliableTransport = (clientId, dataType, data) => {
         console.info(`adapter.reliableTransport: ${clientId} ${dataType} ${data}}`);
       };
@@ -216,25 +259,32 @@ export class ConnectionTest extends React.Component {
         console.info(`adapter.unreliableTransport: ${clientId} ${dataType} ${data}}`);
       };
 
-      // Calls NAF::NetworkConnection::connect, which in turn calls DialogAdapter::connect
-      NAF.connection
-        .connect(
-          connectionUrl,
-          "default",
-          this._roomId,
-          true
-        )
-        .then(async () => {
-          test.stop(true);
-          this.setState(state => (state.tests.joinTest = test));
-          this.enterRoom();
-        })
-        .catch(error => {
-          console.error(error);
-          test.stop(false);
-          test.notes = error.reason;
-          this.setState(state => (state.tests.joinTest = test));
-        });
+      await Promise.all([
+        APP.dialog.connect({
+          serverUrl: connectionUrl,
+          roomId: this._roomId,
+          joinToken: this._perms_token,
+          serverParams: { host: this._hub.host, port: this._hub.port, turn: this._hub.turn },
+          scene,
+          clientId: this._clientId,
+          forceTcp: qs.get("force_tcp"),
+          forceTurn: qs.get("force_turn"),
+          iceTransportPolicy: qs.get("force_tcp") || qs.get("force_turn") ? "relay" : "all"
+        }),
+        NAF.connection.adapter
+          .connect()
+          .then(async () => {
+            test.stop(true);
+            this.setState(state => (state.tests.joinTest = test));
+            this.enterRoom();
+          })
+          .catch(error => {
+            console.error(error);
+            test.stop(false);
+            test.notes = error.reason;
+            this.setState(state => (state.tests.joinTest = test));
+          })
+      ]);
     } catch (error) {
       console.error(error);
       test.stop(false);
@@ -271,8 +321,10 @@ export class ConnectionTest extends React.Component {
     try {
       // Normally handled by the hubs media-devices-manager
       const newStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-      this._adapter.setLocalMediaStream(newStream);
-      this._adapter.enableMicrophone(true);
+      // this._adapter.setLocalMediaStream(newStream);
+      // this._adapter.enableMicrophone(true);
+      APP.dialog.setLocalMediaStream(newStream);
+      APP.dialog.enableMicrophone(true);
       newStream.getAudioTracks().forEach(track => {
         test.notes = `Microphone: ${track.label}`;
       });
@@ -295,8 +347,9 @@ export class ConnectionTest extends React.Component {
   };
 
   copyTable = () => {
+    // does not work with firefox, since it has ClipboardItem not implemented
     const html = document.getElementById("resultsTable").outerHTML;
-    var data = [new ClipboardItem({ "text/html": new Blob([html], { type: "text/html" }) })];
+    const data = [new ClipboardItem({ "text/html": new Blob([html], { type: "text/html" }) })];
     navigator.clipboard.write(data).then(
       () => {
         this.setState({ copyButtonLabel: "Copied!" });
@@ -305,6 +358,19 @@ export class ConnectionTest extends React.Component {
         alert("Clipboard error: " + reason);
       }
     );
+  };
+
+  downloadTable = () => {
+    const html = document.getElementById("resultsTable").outerHTML;
+    let dateTime = new Date().toISOString();
+    dateTime = dateTime.replaceAll(":", "-");
+    const blob = new Blob([html], { type: "text/html" });
+    const link = window.document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "connection-test_" + dateTime + "_UTC." + "html";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   render() {
@@ -331,14 +397,18 @@ export class ConnectionTest extends React.Component {
               ))}
             </tbody>
           </table>
-          <Button preset="blue" className={styles.actionButton} onClick={this.copyTable}>
+          {/* <Button preset="blue" className={styles.actionButton} onClick={this.copyTable}>
             {this.state.copyButtonLabel}
+          </Button> */}
+          <Button preset="accept" className={styles.actionButton} onClick={this.downloadTable}>
+            {this.state.downloadButtonLabel}
           </Button>
         </div>
       );
     } else {
       return (
-        <Button preset="blue" className={styles.actionButton} onClick={this.dowloadMetadata}>
+        // <Button preset="basic" className={styles.actionButton} onClick={this.dowloadMetadata}>
+        <Button preset="basic" className={styles.actionButton} onClick={this.fetchUserAgent}>
           Start Connection Test
         </Button>
       );
