@@ -57,7 +57,7 @@ export class LeaveMessageSystem {
       NAF.utils.getNetworkedEntity(entity).then(networkedEl => {
         if (!NAF.utils.isMine(networkedEl) && !NAF.utils.takeOwnership(networkedEl)) return;
         window.APP.pinningHelper.setPinned(entity, true);
-        console.log("LeaveMessageSystem: Pinned comment.");
+        console.log("LeaveMessageSystem: Pinned comment: " + rndrMsg);
       });
     });
   };
