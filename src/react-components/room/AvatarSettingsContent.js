@@ -58,10 +58,7 @@ export function AvatarSettingsContent({
               />
             </div>
             <Button type="button" preset="basic" onClick={onCreateRpmAvatar}>
-              <FormattedMessage
-                id="avatar-settings-content.readyplayerme.create-avatar-button"
-                defaultMessage="Create Avatar"
-              />
+              <FormattedMessage id="media-browser.create-avatar" defaultMessage="Create Avatar" />
             </Button>
           </div>
         )}
