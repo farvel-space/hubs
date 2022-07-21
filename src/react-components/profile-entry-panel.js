@@ -6,6 +6,7 @@ import { replaceHistoryState } from "../utils/history";
 import { AvatarSettingsSidebar } from "./room/AvatarSettingsSidebar";
 import { AvatarSetupModal } from "./room/AvatarSetupModal";
 import AvatarPreview from "./avatar-preview";
+import { AvatarReadyPlayerMe } from "./room/AvatarReadyPlayerMe";
 
 export default class ProfileEntryPanel extends Component {
   static propTypes = {
@@ -132,6 +133,10 @@ export default class ProfileEntryPanel extends Component {
       onChangeAvatar: e => {
         e.preventDefault();
         this.props.mediaSearchStore.sourceNavigateWithNoNav("avatars", "use");
+      },
+      onCreateRpmAvatar: e => {
+        e.preventDefault();
+        this.props.mediaSearchStore.sourceNavigateWithNoNav("avatars", "create-rpm");
       },
       onSubmit: this.saveStateAndFinish,
       onClose: this.props.onClose,

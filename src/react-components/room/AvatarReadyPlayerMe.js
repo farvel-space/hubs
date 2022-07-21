@@ -7,7 +7,7 @@ import { FullscreenLayout } from "../layout/FullscreenLayout";
 import { Column } from "../layout/Column";
 import { proxiedUrlFor } from "../../utils/media-url-utils";
 
-export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser }) {
+export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, goBackToMediaBrowser = true }) {
   const iframeURL = "https://farvel.readyplayer.me";
 
   const onSuccess = useCallback(
@@ -22,6 +22,17 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser }) {
       closeMediaBrowser();
     },
     [onClose, closeMediaBrowser]
+  );
+
+  const clickedBackBtn = useCallback(() => {
+      console.log("clickedBackBtn");
+      onClose();
+      if (!goBackToMediaBrowser) {
+        console.log("goBackToMediaBrowser is false");
+        closeMediaBrowser();
+      }
+    },
+    [onClose, closeMediaBrowser, goBackToMediaBrowser]
   );
 
   useEffect(
@@ -47,7 +58,7 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser }) {
 
   return (
     <FullscreenLayout
-      headerLeft={<BackButton onClick={onClose} />}
+      headerLeft={<BackButton onClick={clickedBackBtn} />}
       headerCenter={
         <>
           <h3>
@@ -66,7 +77,8 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser }) {
 
 AvatarReadyPlayerMe.propTypes = {
   onClose: PropTypes.func,
-  closeMediaBrowser: PropTypes.func
+  closeMediaBrowser: PropTypes.func,
+  goBackToMediaBrowser: PropTypes.bool
 };
 
 AvatarReadyPlayerMe.defaultProps = {
