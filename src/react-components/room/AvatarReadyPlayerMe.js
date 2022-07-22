@@ -3,20 +3,26 @@ import PropTypes from "prop-types";
 import styles from "./AvatarReadyPlayerMe.scss";
 import { FormattedMessage } from "react-intl";
 import { BackButton } from "../input/BackButton";
+import { CloseButton } from "../input/CloseButton";
 import { FullscreenLayout } from "../layout/FullscreenLayout";
 import { Column } from "../layout/Column";
 import { proxiedUrlFor } from "../../utils/media-url-utils";
 
-export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, goBackToMediaBrowser = true }) {
+export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, isIndependentDialog = true }) {
   const iframeURL = "https://farvel.readyplayer.me";
 
-  const close = useCallback(() => {
-      if (!goBackToMediaBrowser) {
+  const closeBack = useCallback(
+    (evt, isSuccess = false) => {
+      console.log("closeBack");
+      console.log("isIndependentDialog", isIndependentDialog);
+      console.log("isSuccess", isSuccess);
+      if (!isIndependentDialog && isSuccess) {
+        console.log("closeMediaBrowser");
         closeMediaBrowser();
       }
       onClose();
     },
-    [onClose, closeMediaBrowser, goBackToMediaBrowser]
+    [onClose, closeMediaBrowser, isIndependentDialog]
   );
 
   const onSuccess = useCallback(
@@ -27,9 +33,9 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, goBackToMediaB
 
       store.update({ profile: { ...store.state.profile, ...{ avatarId: url } } });
       scene.emit("avatar_updated");
-      close();
+      closeBack(null, true);
     },
-    [close]
+    [closeBack]
   );
 
   useEffect(
@@ -55,7 +61,7 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, goBackToMediaB
 
   return (
     <FullscreenLayout
-      headerLeft={<BackButton onClick={close} />}
+      headerLeft={isIndependentDialog ? <CloseButton onClick={closeBack} /> : <BackButton onClick={closeBack} />}
       headerCenter={
         <>
           <h3>
@@ -75,7 +81,7 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, goBackToMediaB
 AvatarReadyPlayerMe.propTypes = {
   onClose: PropTypes.func,
   closeMediaBrowser: PropTypes.func,
-  goBackToMediaBrowser: PropTypes.bool
+  isIndependentDialog: PropTypes.bool
 };
 
 AvatarReadyPlayerMe.defaultProps = {

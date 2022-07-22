@@ -20,7 +20,8 @@ export default class ProfileEntryPanel extends Component {
     avatarId: PropTypes.string,
     onClose: PropTypes.func,
     onBack: PropTypes.func,
-    showBackButton: PropTypes.bool
+    showBackButton: PropTypes.bool,
+    showNonHistoriedDialog: PropTypes.func
   };
 
   static defaultProps = {
@@ -136,7 +137,7 @@ export default class ProfileEntryPanel extends Component {
       },
       onCreateRpmAvatar: e => {
         e.preventDefault();
-        this.props.mediaSearchStore.sourceNavigateWithNoNav("avatars", "create-rpm");
+        this.props.showNonHistoriedDialog(AvatarReadyPlayerMe);
       },
       onSubmit: this.saveStateAndFinish,
       onClose: this.props.onClose,
