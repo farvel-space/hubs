@@ -10,6 +10,15 @@ import { proxiedUrlFor } from "../../utils/media-url-utils";
 export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, goBackToMediaBrowser = true }) {
   const iframeURL = "https://farvel.readyplayer.me";
 
+  const close = useCallback(() => {
+      if (!goBackToMediaBrowser) {
+        closeMediaBrowser();
+      }
+      onClose();
+    },
+    [onClose, closeMediaBrowser, goBackToMediaBrowser]
+  );
+
   const onSuccess = useCallback(
     ({ url }) => {
       // maybe using the scene like that does not work?
@@ -18,21 +27,9 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, goBackToMediaB
 
       store.update({ profile: { ...store.state.profile, ...{ avatarId: url } } });
       scene.emit("avatar_updated");
-      onClose();
-      closeMediaBrowser();
+      close();
     },
-    [onClose, closeMediaBrowser]
-  );
-
-  const clickedBackBtn = useCallback(() => {
-      console.log("clickedBackBtn");
-      onClose();
-      if (!goBackToMediaBrowser) {
-        console.log("goBackToMediaBrowser is false");
-        closeMediaBrowser();
-      }
-    },
-    [onClose, closeMediaBrowser, goBackToMediaBrowser]
+    [close]
   );
 
   useEffect(
@@ -58,7 +55,7 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, goBackToMediaB
 
   return (
     <FullscreenLayout
-      headerLeft={<BackButton onClick={clickedBackBtn} />}
+      headerLeft={<BackButton onClick={close} />}
       headerCenter={
         <>
           <h3>
