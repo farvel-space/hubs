@@ -69,7 +69,7 @@
   "avatar-page.select": "Auswählen",
   "avatar-page.selected": "Dies ist dein aktueller Avatar",
   "avatar-preview.loading-failed": "Laden fehlgeschlagen{linebreak}Bitte wähle einen anderen Avatar",
-  "avatar-settings-content.change-avatar-button": "Avatar auswählen",
+  "avatar-settings-content.change-avatar-button": "Avatar wechseln",
   "avatar-settings-content.display-name-description": "Alphanumerische Zeichen, Bindestriche, Unterstriche und Tilden. Mindestens 3 Zeichen, nicht mehr als 32",
   "avatar-settings-content.display-name-label": "Name",
   "avatar-settings-sidebar.title": "Avatar-Einstellungen",
