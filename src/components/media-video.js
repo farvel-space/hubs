@@ -197,14 +197,14 @@ AFRAME.registerComponent("media-video", {
 
   seekForward() {
     if (!this.videoIsLive && this.ensureOwned()) {
-      this.video.currentTime += 30;
+      this.video.currentTime += 15;
       this.el.setAttribute("media-video", "time", this.video.currentTime);
     }
   },
 
   seekBack() {
     if (!this.videoIsLive && this.ensureOwned()) {
-      this.video.currentTime -= 10;
+      this.video.currentTime -= 15;
       this.el.setAttribute("media-video", "time", this.video.currentTime);
     }
   },
