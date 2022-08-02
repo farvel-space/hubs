@@ -52,7 +52,11 @@ function isInAppBrowser() {
   // Mozilla/5.0 (Linux; Android 9; SM-G950U1 Build/PPR1.180610.011; wv) AppleWebKit/537.36 (KHTML, like Gecko)
   // Version/4.0 Chrome/80.0.3987.149 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/262.0.0.34.117;]
   const detectedOS = detectOS(navigator.userAgent);
-  return (detectedOS === "iOS" && !navigator.mediaDevices) || /\bfb_iab\b/i.test(navigator.userAgent);
+  return (
+    (detectedOS === "iOS" && !navigator.mediaDevices) ||
+    /\bfb_iab\b/i.test(navigator.userAgent) ||
+    /\bInstagram\b/i.test(navigator.userAgent)
+  );
 }
 
 export function platformUnsupported() {
@@ -93,8 +97,9 @@ class Support extends React.Component {
               <p>
                 <FormattedMessage
                   id="support.missing-features"
-                  defaultMessage="Your browser is missing required features."
+                  defaultMessage="Unfortunately, your browser is missing required features."
                 />
+                <br />
                 <br />
                 {inAppBrowser ? (
                   detectedOS === "iOS" ? (
