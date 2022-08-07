@@ -22,6 +22,10 @@ import { getAvatarSrc, getAvatarType } from "./utils/avatar-utils";
 import { SOUND_ENTER_SCENE } from "./systems/sound-effects-system";
 import { MediaDevices, MediaDevicesEvents } from "./utils/media-devices-utils";
 
+//mike-frame
+import { guessContentType } from "./utils/media-url-utils";
+//mike-frame-end
+
 export default class SceneEntryManager {
   constructor(hubChannel, authChannel, history) {
     this.hubChannel = hubChannel;
@@ -224,6 +228,25 @@ export default class SceneEntryManager {
           orientation: or
         });
       });
+
+      //mike-frame
+      entity.addEventListener("media-loaded", () => {
+        console.log(src);
+        if (contentOrigin === 1) {
+          let contentStr = guessContentType(src);
+          console.log(contentStr);
+          if (contentStr.includes("image")) {
+            entity.setAttribute("farvel-frame", { defaultEnabled: true });
+          }
+        }
+        if (contentOrigin === 2) {
+          console.log(src.type);
+          if (src.type.includes("image")) {
+            entity.setAttribute("farvel-frame", { defaultEnabled: true });
+          }
+        }
+      });
+      //mike-frame-end
 
       return entity;
     };
