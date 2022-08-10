@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useRef } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import { FormattedMessage, injectIntl } from "react-intl";
@@ -6,10 +6,17 @@ import configs from "../utils/configs";
 import IfFeature from "./if-feature";
 import styles from "../assets/stylesheets/scene-ui.scss";
 import { createAndRedirectToNewHub, getReticulumFetchUrl } from "../utils/phoenix-utils";
-import { ReactComponent as HmcLogo } from "./icons/HmcLogo.svg";
 import { ReactComponent as Twitter } from "./icons/Twitter.svg";
 import { ReactComponent as CodeBranch } from "./icons/CodeBranch.svg";
 import { ReactComponent as Pen } from "./icons/Pen.svg";
+import { AppLogo } from "./misc/AppLogo";
+
+import { useResizeViewport } from "./room/useResizeViewport";
+function ResizeHookWrapper({ store, scene }) {
+  const viewportRef = useRef(document.body);
+  useResizeViewport(viewportRef, store, scene);
+  return <></>;
+}
 
 const IfRenderUi = props => {
   const hide = props.hide === undefined ? "false" : props.hide;
@@ -20,6 +27,7 @@ class SceneUI extends Component {
   static propTypes = {
     intl: PropTypes.object,
     scene: PropTypes.object,
+    store: PropTypes.object,
     sceneLoaded: PropTypes.bool,
     sceneId: PropTypes.string,
     sceneName: PropTypes.string,
@@ -76,7 +84,6 @@ class SceneUI extends Component {
     }
 
     const { sceneAllowRemixing, isOwner, sceneProjectId, parentScene, sceneId, intl } = this.props;
-    const isHmc = configs.feature("show_cloud");
     const sceneUrl = [location.protocol, "//", location.host, location.pathname].join("");
     const tweetText = intl.formatMessage(
       {
@@ -222,14 +229,7 @@ class SceneUI extends Component {
           <div className={styles.grid}>
             <div className={styles.mainPanel}>
               <a href="/" className={styles.logo}>
-                {isHmc ? (
-                  <HmcLogo className="hmc-logo" />
-                ) : (
-                <img
-                  src={configs.image("logo")}
-                  alt={<FormattedMessage id="scene-page.logo-alt" defaultMessage="Logo" />}
-                />
-                )}
+                <AppLogo />
               </a>
               <div className={styles.logoTagline}>{configs.translation("app-tagline")}</div>
               <div className={styles.scenePreviewButtonWrapper}>
@@ -258,25 +258,45 @@ class SceneUI extends Component {
                       <a
                         target="_blank"
                         rel="noopener noreferrer"
-                        href={getReticulumFetchUrl(`/spoke/projects/new?sceneId=${sceneId}`)}
+                        href={getReticulumFetchUrl(`/spoke/projects/${sceneProjectId}`)}
                         className={styles.scenePreviewButton}
                       >
-                        <CodeBranch />
+                        <Pen />
                         <FormattedMessage
-                          id="scene-page.remix-button"
-                          defaultMessage="Remix in {editorName}"
+                          id="scene-page.edit-button"
+                          defaultMessage="Edit in {editorName}"
                           values={{ editorName: configs.translation("editor-name") }}
                         />
                       </a>
-                    )
-                  )}
-                </IfFeature>
-                <a href={tweetLink} rel="noopener noreferrer" target="_blank" className={styles.scenePreviewButton}>
-                  <Twitter />
-                  <div>
-                    <FormattedMessage id="scene-page.tweet-button" defaultMessage="Share on Twitter" />
-                  </div>
-                </a>
+                    ) : (
+                      sceneAllowRemixing && (
+                        <a
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={getReticulumFetchUrl(`/spoke/projects/new?sceneId=${sceneId}`)}
+                          className={styles.scenePreviewButton}
+                        >
+                          <CodeBranch />
+                          <FormattedMessage
+                            id="scene-page.remix-button"
+                            defaultMessage="Remix in {editorName}"
+                            values={{ editorName: configs.translation("editor-name") }}
+                          />
+                        </a>
+                      )
+                    )}
+                  </IfFeature>
+                  <a href={tweetLink} rel="noopener noreferrer" target="_blank" className={styles.scenePreviewButton}>
+                    <Twitter />
+                    <div>
+                      <FormattedMessage id="scene-page.tweet-button" defaultMessage="Share on Twitter" />
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div className={styles.info}>
+                <div className={styles.name}>{this.props.sceneName}</div>
+                <div className={styles.attribution}>{attributions}</div>
               </div>
             </div>
             <div className={styles.info}>
@@ -284,6 +304,7 @@ class SceneUI extends Component {
               <div className={styles.attribution}>{attributions}</div>
             </div>
           </div>
+          <ResizeHookWrapper store={this.props.store} scene={this.props.scene} />
         </IfRenderUi>
       </div>
     );
