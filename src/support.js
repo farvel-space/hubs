@@ -15,6 +15,7 @@ import copy from "copy-to-clipboard";
 import { detectOS } from "detect-browser";
 import "./react-components/styles/global.scss";
 import styles from "./assets/stylesheets/support.scss";
+import configs from "./utils/configs";
 
 const SHORTHAND_INITIALIZER = "var foo = 'bar'; var baz = { foo };";
 const SPREAD_SYNTAX = "var foo = {}; var baz = { ...foo };";
@@ -91,7 +92,7 @@ class Support extends React.Component {
     return (
       <div className={styles.supportMain}>
         <div className={styles.supportContent}>
-          <h1>Mozilla Hubs</h1>
+          <h1>{configs.translation("app-name")}</h1>
           <br />
           <p className={styles.unsupportedLangs}>
             · <span>Unsupported</span> · <span>No Soportado</span> · <span>Nicht Unterstützt</span>
