@@ -268,41 +268,25 @@ class SceneUI extends Component {
                           values={{ editorName: configs.translation("editor-name") }}
                         />
                       </a>
-                    ) : (
-                      sceneAllowRemixing && (
-                        <a
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          href={getReticulumFetchUrl(`/spoke/projects/new?sceneId=${sceneId}`)}
-                          className={styles.scenePreviewButton}
-                        >
-                          <CodeBranch />
-                          <FormattedMessage
-                            id="scene-page.remix-button"
-                            defaultMessage="Remix in {editorName}"
-                            values={{ editorName: configs.translation("editor-name") }}
-                          />
-                        </a>
-                      )
-                    )}
-                  </IfFeature>
-                  <a href={tweetLink} rel="noopener noreferrer" target="_blank" className={styles.scenePreviewButton}>
-                    <Twitter />
-                    <div>
-                      <FormattedMessage id="scene-page.tweet-button" defaultMessage="Share on Twitter" />
-                    </div>
-                  </a>
-                </div>
-              </div>
-              <div className={styles.info}>
-                <div className={styles.name}>{this.props.sceneName}</div>
-                <div className={styles.attribution}>{attributions}</div>
+                    )
+                  )}
+                </IfFeature>
+                <a href={tweetLink} rel="noopener noreferrer" target="_blank" className={styles.scenePreviewButton}>
+                  <Twitter />
+                  <div>
+                    <FormattedMessage id="scene-page.tweet-button" defaultMessage="Share on Twitter" />
+                  </div>
+                </a>
               </div>
             </div>
             <div className={styles.info}>
               <div className={styles.name}>{this.props.sceneName}</div>
               <div className={styles.attribution}>{attributions}</div>
             </div>
+          </div>
+          <div className={styles.info}>
+            <div className={styles.name}>{this.props.sceneName}</div>
+            <div className={styles.attribution}>{attributions}</div>
           </div>
           <ResizeHookWrapper store={this.props.store} scene={this.props.scene} />
         </IfRenderUi>

@@ -60,7 +60,7 @@ AFRAME.registerComponent("text", {
     direction: { type: "string", default: "auto", oneOf: ["auto", "ltr", "rtl"] },
     fillOpacity: { type: "number", default: 1 },
     // This is different from the Troika preoperty name, Using "fontUrl" to prevent conflict with previous "font" property and to allow us to make named fonts later
-    fontUrl: { type: "string" }, // farvel: fontUrl: { type: "string", default: defaultFont },
+    fontUrl: { type: "string", default: defaultFont }, // farvel: fontUrl: { type: "string", default: defaultFont },
     // This default value differs from the Troika default of 0.1, it most closely matches the size of our previous text component.
     fontSize: { type: "number", default: 0.075 },
     letterSpacing: { type: "number", default: 0 },
