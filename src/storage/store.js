@@ -123,6 +123,7 @@ export const SCHEMA = {
         globalSFXVolume: { type: "number", default: 100 },
         snapRotationDegrees: { type: "number", default: 20 }, // changed from 45 to 20 for farvel
         materialQualitySetting: { type: "string", default: defaultMaterialQuality },
+        enableThirdPersonView: { type: "bool", default: false },
         enableDynamicShadows: { type: "bool", default: false },
         disableSoundEffects: { type: "bool", default: false },
         disableMovement: { type: "bool", default: false },

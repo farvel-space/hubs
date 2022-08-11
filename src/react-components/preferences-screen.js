@@ -21,6 +21,7 @@ import {
   getScreenResolutionHeight,
   setMaxResolution
 } from "../utils/screen-orientation-utils";
+import { CAMERA_MODE_THIRD_PERSON_VIEW, CAMERA_MODE_FIRST_PERSON } from "../systems/camera-system";
 
 export const CLIPPING_THRESHOLD_MIN = 0.0;
 export const CLIPPING_THRESHOLD_MAX = 0.1;
@@ -447,6 +448,10 @@ const preferenceLabels = defineMessages({
   materialQualitySetting: {
     id: "preferences-screen.preference.material-quality-setting",
     defaultMessage: "Material quality"
+  },
+  enableThirdPersonView: {
+    id: "preferences-screen.preference.enable-third-person-view",
+    defaultMessage: "Enable Third-Person View"
   },
   enableDynamicShadows: {
     id: "preferences-screen.preference.enable-dynamic-shadows",
@@ -912,6 +917,10 @@ class PreferencesScreen extends Component {
     if (preferredMic !== this.mediaDevicesManager.selectedMicDeviceId) {
       this.mediaDevicesManager.startMicShare({ updatePrefs: false }).then(this.updateMediaDevices);
     }
+    const { enableThirdPersonView } = this.props.store.state.preferences;
+    this.props.scene.systems["hubs-systems"].cameraSystem.setMode(
+      enableThirdPersonView ? CAMERA_MODE_THIRD_PERSON_VIEW : CAMERA_MODE_FIRST_PERSON
+    );
   }
 
   createSections() {
@@ -1197,6 +1206,11 @@ class PreferencesScreen extends Component {
               }
             ],
             promptForRefresh: true
+          },
+          {
+            key: "enableThirdPersonView",
+            prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX,
+            defaultBool: false
           },
           {
             key: "enableDynamicShadows",
