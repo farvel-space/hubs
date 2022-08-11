@@ -449,13 +449,13 @@ const preferenceLabels = defineMessages({
     id: "preferences-screen.preference.material-quality-setting",
     defaultMessage: "Material quality"
   },
-  enableThirdPersonView: {
-    id: "preferences-screen.preference.enable-third-person-view",
-    defaultMessage: "Enable Third-Person View"
-  },
   enableDynamicShadows: {
     id: "preferences-screen.preference.enable-dynamic-shadows",
     defaultMessage: "Enable Real-time Shadows"
+  },
+  enableThirdPersonView: {
+    id: "preferences-screen.preference.enable-third-person-view",
+    defaultMessage: "Enable Third-Person View"
   },
   disableAutoPixelRatio: {
     id: "preferences-screen.preference.disable-auto-pixel-ratio",
@@ -1208,12 +1208,12 @@ class PreferencesScreen extends Component {
             promptForRefresh: true
           },
           {
-            key: "enableThirdPersonView",
+            key: "enableDynamicShadows",
             prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX,
             defaultBool: false
           },
           {
-            key: "enableDynamicShadows",
+            key: "enableThirdPersonView",
             prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX,
             defaultBool: false
           },
