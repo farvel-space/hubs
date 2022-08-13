@@ -4,10 +4,10 @@ import { TextureCache } from "../utils/texture-cache";
 AFRAME.registerComponent("farvel-frame", {
   schema: {
     assetURL: {
-      default: "https://jigsawhubs-1-assets.onboardxr.live/files/aa1df4e8-92b9-4358-ad90-4437663b6a2b.glb"
+      default: "https://jigsawhubs-1-assets.onboardxr.live/files/753c8479-b03f-4720-9d64-bf0352ab1fbb.glb"
     },
-    zOffset: { default: -0.026 },
-    scaleSetting: { default: { x: 0.6, y: 0.6, z: 0.5 } },
+    zOffset: { default: -0.008 },
+    scaleSetting: { default: { x: 3, y: 3, z: 1.5 } },
     defaultEnabled: { default: true },
     frameEl: { default: {} },
     isSmall: { default: false },
@@ -15,8 +15,9 @@ AFRAME.registerComponent("farvel-frame", {
   },
 
   async init() {
+    if (!window.APP["farvelFrame"].farvelFrame) return;
+    Object.assign(this.data, window.APP["farvelFrame"]);
     this.time = 0;
-
     const textureCache = new TextureCache();
     const { src, version } = this.el.components["media-image"].data;
 
@@ -82,6 +83,9 @@ AFRAME.registerComponent("farvel-frame", {
     this.time += dt;
     //console.log("ticking");
     //update visibility based on defaultEnabled
+    if (!this.data.frameEl.object3D) return;
+    this.data.frameEl.setAttribute("position", { x: 0, y: 0, z: this.data.zOffset });
+    this.data.frameEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
     if (this.data.isSmall && this.data.defaultEnabled) {
       //make big
       this.data.isSmall = false;
