@@ -819,8 +819,6 @@ class UIRoot extends Component {
     return (
       <>
         <RoomEntryModal
-          appName={configs.translation("app-name")}
-          logoSrc={configs.image("logo")}
           roomName={this.props.hub.name}
           showJoinRoom={!this.state.waitingOnAudio && !this.props.entryDisallowed}
           onJoinRoom={() => {
