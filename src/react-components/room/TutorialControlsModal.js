@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Modal } from "../modal/Modal";
 import { Button } from "../input/Button";
@@ -14,6 +14,41 @@ import { getLocale } from "../../utils/i18n";
 
 export function TutorialControlsModal({ onBack, onContinue, store, ...rest }) {
   const [skipTutorialIsSet, setSkipTutorial] = useState(store.state.preferences.skipEntryTutorial);
+
+  const audioSettings = useCallback(
+    (gMediaV, gVoiceV, gSfxV) => {
+      store.update({
+        preferences: {
+          globalMediaVolume: gMediaV,
+          globalVoiceVolume: gVoiceV,
+          globalSFXVolume: gSfxV
+        }
+      });
+    },
+    [store]
+  );
+
+  useEffect(() => {
+    const tmpMediaVolume = store.state.preferences.globalMediaVolume;
+    const tmpVoiceVolume = store.state.preferences.globalVoiceVolume;
+    const tmpSfxVolume = store.state.preferences.globalSFXVolume;
+
+    // save current volume settings in store, to restore if people reload while recording dialog is opened
+    store.update({
+      preferences: {
+        tmpMutedGlobalMediaVolume: tmpMediaVolume === undefined ? 100 : tmpMediaVolume,
+        tmpMutedGlobalVoiceVolume: tmpVoiceVolume === undefined ? 100 : tmpMediaVolume,
+        tmpMutedGlobalSFXVolume: tmpSfxVolume === undefined ? 100 : tmpSfxVolume
+      }
+    });
+
+    // mute the environment
+    audioSettings(0.0, 0.0, 0.0);
+
+    return () => {
+      audioSettings(tmpMediaVolume, tmpVoiceVolume, tmpSfxVolume);
+    };
+  }, []);
 
   const skipBtnPressed = useCallback(
     () => {

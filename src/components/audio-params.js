@@ -6,7 +6,7 @@ export const DISTANCE_MODEL_OPTIONS = ["linear", "inverse", "exponential"];
 export const SourceType = Object.freeze({
   MEDIA_VIDEO: 0,
   AVATAR_AUDIO_SOURCE: 1,
-  // TODO: Fill in missing value (2)
+  SFX: 2,
   AUDIO_TARGET: 3,
   AUDIO_ZONE: 4
 });
@@ -22,11 +22,17 @@ export const DistanceModelType = {
   Exponential: "exponential"
 };
 
+export const PanningModelType = Object.freeze({
+  HRTF: "HRTF",
+  EqualPower: "equalpower"
+});
+
 export const AvatarAudioDefaults = Object.freeze({
   audioType: AudioType.PannerNode,
   distanceModel: DistanceModelType.Inverse,
-  rolloffFactor: 5,
-  refDistance: 5,
+  panningModel: PanningModelType.HRTF,
+  rolloffFactor: 20, // FARM-325: adapt for better usage in small rooms
+  refDistance: 3, // FARM-325: adapt for better usage in small rooms
   maxDistance: 10000,
   coneInnerAngle: 180,
   coneOuterAngle: 360,
@@ -37,6 +43,7 @@ export const AvatarAudioDefaults = Object.freeze({
 export const MediaAudioDefaults = Object.freeze({
   audioType: AudioType.PannerNode,
   distanceModel: DistanceModelType.Inverse,
+  panningModel: PanningModelType.HRTF,
   rolloffFactor: 5,
   refDistance: 5,
   maxDistance: 10000,
@@ -49,6 +56,7 @@ export const MediaAudioDefaults = Object.freeze({
 export const TargetAudioDefaults = Object.freeze({
   audioType: AudioType.PannerNode,
   distanceModel: DistanceModelType.Inverse,
+  panningModel: PanningModelType.HRTF,
   rolloffFactor: 5,
   refDistance: 8,
   maxDistance: 10000,

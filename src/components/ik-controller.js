@@ -79,7 +79,7 @@ AFRAME.registerComponent("ik-controller", {
     rightHand: { type: "string", default: "RightHand" },
     chest: { type: "string", default: "Spine" },
     rotationSpeed: { default: 8 },
-    maxLerpAngle: { default: 90 * THREE.Math.DEG2RAD },
+    maxLerpAngle: { default: 90 * THREE.MathUtils.DEG2RAD },
     alwaysUpdate: { type: "boolean", default: false }
   },
 
@@ -279,6 +279,7 @@ AFRAME.registerComponent("ik-controller", {
       // Ensure the avatar is not shown until we've done our first IK step, to prevent seeing mis-oriented/t-pose pose or our own avatar at the wrong place.
       this.ikRoot.el.object3D.visible = true;
       this._hadFirstTick = true;
+      this.el.emit("ik-first-tick");
     }
   },
 
