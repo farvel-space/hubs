@@ -1098,6 +1098,7 @@ class UIRoot extends Component {
                 store={this.props.store}
                 mediaSearchStore={this.props.mediaSearchStore}
                 avatarId={props.location.state.detail && props.location.state.detail.avatarId}
+                showNonHistoriedDialog={this.showNonHistoriedDialog}
               />
             )}
           />
@@ -1524,6 +1525,7 @@ class UIRoot extends Component {
                           onClose={() => this.setSidebar(null)}
                           store={this.props.store}
                           mediaSearchStore={this.props.mediaSearchStore}
+                          showNonHistoriedDialog={this.showNonHistoriedDialog}
                         />
                       )}
                       {this.state.sidebarId === "user" && (
