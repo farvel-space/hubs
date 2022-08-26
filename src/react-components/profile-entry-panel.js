@@ -136,7 +136,7 @@ export default class ProfileEntryPanel extends Component {
       },
       onCreateRpmAvatar: e => {
         e.preventDefault();
-        this.props.showNonHistoriedDialog(AvatarReadyPlayerMe);
+        this.props.showNonHistoriedDialog(AvatarReadyPlayerMe, { store: this.props.store });
       },
       onSubmit: this.saveStateAndFinish,
       onClose: this.props.onClose,

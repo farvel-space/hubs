@@ -4,6 +4,10 @@
     flex: 1;
 }
 
+:local(.notice) {
+    flex-basis: min-content;
+}
+
 :local(.iframe) {
     width: 100%;
     min-height: 630px;

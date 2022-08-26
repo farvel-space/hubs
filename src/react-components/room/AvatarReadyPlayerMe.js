@@ -1,22 +1,23 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import classNames from "classnames";
 import styles from "./AvatarReadyPlayerMe.scss";
+import styleUtils from "../styles/style-utils.scss";
 import { FormattedMessage } from "react-intl";
 import { BackButton } from "../input/BackButton";
 import { CloseButton } from "../input/CloseButton";
 import { Button } from "../input/Button";
 import { FullscreenLayout } from "../layout/FullscreenLayout";
+import { Row } from "../layout/Row";
 import { Column } from "../layout/Column";
 import { proxiedUrlFor } from "../../utils/media-url-utils";
 
-export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, isIndependentDialog = true }) {
+export function AvatarReadyPlayerMe({ store, onClose, closeMediaBrowser, isIndependentDialog = true }) {
   const iframeURL = "https://farvel.readyplayer.me";
+  const [accepted, setAccepted] = useState(false);
 
   const closeBack = useCallback(
     (evt, isSuccess = false) => {
-      console.log("closeBack");
-      console.log("isIndependentDialog", isIndependentDialog);
-      console.log("isSuccess", isSuccess);
       if (!isIndependentDialog && isSuccess) {
         console.log("closeMediaBrowser");
         closeMediaBrowser();
@@ -28,19 +29,29 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, isIndependentD
 
   const onSuccess = useCallback(
     ({ url }) => {
-      // maybe using the scene like that does not work?
-      const store = window.APP.store;
       const scene = document.querySelector("a-scene");
 
       store.update({ profile: { ...store.state.profile, ...{ avatarId: url } } });
       scene.emit("avatar_updated");
       closeBack(null, true);
     },
-    [closeBack]
+    [closeBack, store]
+  );
+
+  const onBtnAccepted = useCallback(
+    () => {
+      setAccepted(true);
+      // set store
+      store.update({ activity: { hasAcceptedRpmAvatarNotice: true } });
+    },
+    [setAccepted, store]
   );
 
   useEffect(
     () => {
+      // get store value for accepted
+      setAccepted(store.state.activity.hasAcceptedRpmAvatarNotice);
+
       function receiveMessage(event) {
         // Check if the received message is a string and a glb url
         // if not ignore it, and print details to the console
@@ -57,7 +68,7 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, isIndependentD
         window.removeEventListener("message", receiveMessage, false);
       };
     },
-    [onSuccess]
+    [onSuccess, setAccepted, store]
   );
 
   return (
@@ -72,55 +83,63 @@ export function AvatarReadyPlayerMe({ onClose, closeMediaBrowser, isIndependentD
       }
       //   headerRight={}
     >
-      <Column grow padding center className={styles.content}>
-        <p>
-          <FormattedMessage
-            id="avatar.readyplayerme.dialog.notice.infoTerms"
-            defaultMessage="We will now redirect you to ReadyPlayerMe for the creation of your avatar. Here you can find RPM's <a1>privacy policy</a1> and <a2>terms of use</a2>. After creating the avatar, the avatar data will be delivered back to farvel."
-            values={{
-              // eslint-disable-next-line react/display-name
-              a1: chunks => (
-                <a
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  className={styles.link}
-                  href="https://readyplayer.me/privacy"
-                >
-                  {chunks}
-                </a>
-              ),
-              // eslint-disable-next-line react/display-name
-              a2: chunks => (
-                <a
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  className={styles.link}
-                  href="https://readyplayer.me/terms"
-                >
-                  {chunks}
-                </a>
-              )
-            }}
-          />
-        </p>
-        <p>
-          <FormattedMessage
-            id="avatar.readyplayerme.dialog.notice.infoAccept"
-            defaultMessage="If you click the &quot;Yes, agree&quot; button, then you agree to it."
-          />
-        </p>
-        <Button as="a" preset="primary" href="">
-          <FormattedMessage id="avatar.readyplayerme.dialog.notice.acceptBtn" defaultMessage="Yes, agree." />
-        </Button>
-      </Column>
-      {/* <Column grow padding center className={styles.content}>
-        <iframe src={iframeURL} className={styles.iframe} allow="camera *; microphone *" />
-      </Column> */}
+      {accepted ? (
+        <Column grow padding center className={styles.content}>
+          <iframe src={iframeURL} className={styles.iframe} allow="camera *; microphone *" />
+        </Column>
+      ) : (
+        <Row breakpointColumn="md">
+          <div className={classNames([styles.content, styleUtils.flexBasis20])} />
+          <Column padding="xl" center className={classNames([styles.content, styles.notice])}>
+            <p>
+              <FormattedMessage
+                id="avatar.readyplayerme.dialog.notice.infoTerms"
+                defaultMessage="We will now redirect you to ReadyPlayerMe for the creation of your avatar. Here you can find RPM's <a1>privacy policy</a1> and <a2>terms of use</a2>. After creating the avatar, the avatar data will be delivered back to farvel."
+                values={{
+                  // eslint-disable-next-line react/display-name
+                  a1: chunks => (
+                    <a
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      className={styles.link}
+                      href="https://readyplayer.me/privacy"
+                    >
+                      {chunks}
+                    </a>
+                  ),
+                  // eslint-disable-next-line react/display-name
+                  a2: chunks => (
+                    <a
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      className={styles.link}
+                      href="https://readyplayer.me/terms"
+                    >
+                      {chunks}
+                    </a>
+                  )
+                }}
+              />
+            </p>
+            <p>
+              <FormattedMessage
+                id="avatar.readyplayerme.dialog.notice.infoAccept"
+                defaultMessage="If you click the &quot;Yes, agree&quot; button, then you agree to it."
+              />
+            </p>
+            <Button preset="primary" onClick={onBtnAccepted}>
+              <FormattedMessage id="avatar.readyplayerme.dialog.notice.acceptBtn" defaultMessage="Yes, I agree." />
+            </Button>
+          </Column>
+          <div className={classNames([styles.content, styleUtils.flexBasis20])} />
+        </Row>
+      )}
     </FullscreenLayout>
   );
 }
 
 AvatarReadyPlayerMe.propTypes = {
+  store: PropTypes.object.isRequired,
   onClose: PropTypes.func,
   closeMediaBrowser: PropTypes.func,
   isIndependentDialog: PropTypes.bool

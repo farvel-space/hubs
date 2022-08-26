@@ -346,6 +346,7 @@ class MediaBrowserContainer extends Component {
 
   onCreateReadyPlayerMeAvatar = (goBackToMediaBrowser = true) => {
     this.props.showNonHistoriedDialog(AvatarReadyPlayerMe, {
+      store: this.props.store,
       closeMediaBrowser: this.close,
       isIndependentDialog: false
     });
