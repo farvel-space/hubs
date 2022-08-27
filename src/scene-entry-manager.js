@@ -231,18 +231,25 @@ export default class SceneEntryManager {
 
       //mike-frame
       entity.addEventListener("media-loaded", () => {
-        console.log(src);
+        //console.log(src);
         if (contentOrigin === 1) {
           let contentStr = guessContentType(src);
-          console.log(contentStr);
+          if (!contentStr) return;
+          //console.log(contentStr);
           if (contentStr.includes("image")) {
-            entity.setAttribute("farvel-frame", { defaultEnabled: true });
+            entity.setAttribute("farvel-frame", {});
+            let buttonEl = entity.querySelector("[toggle-frame-button]");
+            buttonEl.object3D.visible = true;
+            buttonEl.matrixAutoUpdate = true;
           }
         }
         if (contentOrigin === 2) {
-          console.log(src.type);
+          //console.log(src.type);
           if (src.type.includes("image")) {
-            entity.setAttribute("farvel-frame", { defaultEnabled: true });
+            entity.setAttribute("farvel-frame", {});
+            let buttonEl = entity.querySelector("[toggle-frame-button]");
+            buttonEl.object3D.visible = true;
+            buttonEl.matrixAutoUpdate = true;
           }
         }
       });

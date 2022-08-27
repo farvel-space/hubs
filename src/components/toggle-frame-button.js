@@ -6,8 +6,7 @@ AFRAME.registerComponent("toggle-frame-button", {
     this.updateSrc = () => {
       if (!this.targetEl.parentNode) return; // If removed
       const src = (this.src = this.targetEl.components["media-loader"].data.src);
-      const visible = src && guessContentType(src) !== "video/vnd.hubs-webrtc";
-      this.el.object3D.visible = !!visible;
+      this.el.object3D.visible = false;
     };
 
     NAF.utils.getNetworkedEntity(this.el).then(networkedEl => {
