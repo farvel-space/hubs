@@ -231,22 +231,25 @@ export default class SceneEntryManager {
 
       //mike-frame
       entity.addEventListener("media-loaded", () => {
-        //console.log(src);
         if (contentOrigin === 1) {
           let contentStr = guessContentType(src);
           if (!contentStr) return;
-          //console.log(contentStr);
           if (contentStr.includes("image")) {
+            //Set new farvel-frame
             entity.setAttribute("farvel-frame", {});
+
+            //Remove hoverability
             let buttonEl = entity.querySelector("[toggle-frame-button]");
             buttonEl.object3D.visible = true;
             buttonEl.matrixAutoUpdate = true;
           }
         }
         if (contentOrigin === 2) {
-          //console.log(src.type);
           if (src.type.includes("image")) {
+            //Set new farvel-frame
             entity.setAttribute("farvel-frame", {});
+
+            //Remove hoverability
             let buttonEl = entity.querySelector("[toggle-frame-button]");
             buttonEl.object3D.visible = true;
             buttonEl.matrixAutoUpdate = true;

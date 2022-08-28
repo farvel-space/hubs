@@ -9,7 +9,7 @@ This feature automatically generates a child 3D element whenever a .png or .jpg 
 
 For the implementation of this feature, the following changes have been made to the following directories and files. To query these changes, please search for comments between 'mike-frame' and 'mike-frame-end'.
 
-space-client Branch: 'mike/farvel-frame'
+space-client Branch: 'mike/farvel-frame-v2'
 
 space-client Files Added:
   src/components/farvel-frame.js
@@ -26,6 +26,10 @@ space-client Files Changed:
   src/scene-entry-manager.js
     Lines 25 -> 27
     Lines 232 -> 257
+  src/systems/hubs-systems.js
+    Lines 37 -> 39
+    Lines 83 -> 85
+    Lines 133 -> 135
 
 Spoke Branch: 'farvel-frame'
 
@@ -69,7 +73,8 @@ AFRAME.registerComponent("farvel-frame", {
     frameEl: { default: {} },
     isSmall: { default: false },
     ratio: { default: 1 },
-    reflector: { default: false }
+    loaded: { default: false },
+    smallScale: { default: 1 }
   },
 
   async init() {
@@ -78,7 +83,7 @@ AFRAME.registerComponent("farvel-frame", {
     Object.assign(this.data, window.APP["farvelFrame"]);
     this.time = 0;
 
-    //determine image pixel ratio
+    //Determine image pixel ratio
     const textureCache = new TextureCache();
     const { src, version } = this.el.components["media-image"].data;
     let promise = createImageTexture(src);
@@ -86,12 +91,13 @@ AFRAME.registerComponent("farvel-frame", {
     let cacheItem = textureCache.set(src, version, texture);
     this.data.ratio = cacheItem.ratio;
 
-    //initialize networked frame element
+    //Initialize networked frame element
     this.data.frameEl = document.createElement("a-entity");
     this.data.frameEl.setAttribute("media-loader", { src: this.data.assetURL, resolve: true });
-    this.el.appendChild(this.data.frameEl);
+    AFRAME.scenes[0].appendChild(this.data.frameEl);
+    this.data.frameEl.setAttribute("networked", { template: "#interactable-media" });
 
-    //calculate element scale with asset settings and media pixel ratio
+    //Calculate initial element scale with asset settings and media pixel ratio
     let elScale = this.el.object3D.scale;
     this.data.maxScale = new THREE.Vector3(
       elScale.x * this.data.scaleSetting.x,
@@ -99,7 +105,7 @@ AFRAME.registerComponent("farvel-frame", {
       elScale.z * this.data.scaleSetting.z
     );
 
-    //set initial size and zoffset
+    //Set initial element scale and zoffset
     this.data.frameEl.object3D.position.z = this.data.zOffset;
     if (this.data.defaultEnabled) {
       this.data.frameEl.setAttribute("scale", {
@@ -118,69 +124,192 @@ AFRAME.registerComponent("farvel-frame", {
     }
     this.data.frameEl.object3D.matrixAutoUpdate = true;
 
+    //Add listener to determine if imageEl has been removed
+    this.data.frameEl.setAttribute("framedEl-listener", { framedEl: this.el });
+
     //On frame element loaded =>
     this.data.frameEl.addEventListener("media-loaded", () => {
-      //remove manipulation on frame
+      this.data.loaded = true;
+      //Remove manipulation on frame
       this.data.frameEl.removeAttribute("is-remote-hover-target");
 
-      //set pinned event listener to pin frame el with main image
+      //Set pinned and unpinned event listeners to influence frameEl
       this.el.addEventListener("pinned", () => {
-        window.APP.pinningHelper.setPinned(this.data.frameEl, true);
-
-        //set networked
-        this.data.frameEl.setAttribute("networked", { template: "#interactable-media" });
-
-        //remove as child using flushToDOM and reparent entity to scene and set world position
-        // let framePos = new THREE.Vector3();
-        // this.data.frameEl.object3D.getWorldPosition(framePos);
-        // this.data.frameEl.flushToDOM();
-        // AFRAME.scenes[0].appendChild(this.data.frameEl);
-        // this.data.frameEl.setAttribute("position", framePos);
+        NAF.utils.takeOwnership(this.data.frameEl);
+        const wasPinned = this.el.components.pinnable && this.el.components.pinnable.data.pinned;
+        window.APP.pinningHelper.setPinned(this.data.frameEl, wasPinned);
+      });
+      this.el.addEventListener("unpinned", () => {
+        NAF.utils.takeOwnership(this.data.frameEl);
+        const wasPinned = this.el.components.pinnable && this.el.components.pinnable.data.pinned;
+        window.APP.pinningHelper.setPinned(this.data.frameEl, wasPinned);
       });
     });
   },
 
-  animateScale(dur, relScale) {
-    if (!this.data.maxScale) return;
-    let animScale = AFRAME.ANIME.default.timeline({
-      targets: this.data.frameEl.object3D.scale,
-      loop: false,
-      autoplay: true,
-      easing: "easeInOutSine",
-      duration: dur
-    });
-    animScale.add({
-      x: this.data.maxScale.x * relScale,
-      y: this.data.maxScale.y * relScale,
-      z: this.data.maxScale.z * relScale
-    });
-    animScale.began = true;
-  },
-
   tick(t, dt) {
+    //Init tick time and checks
     this.time += dt;
-    if (!this.data.frameEl.object3D || this.data.isSmall === "") return;
+    if (!this.data.frameEl.object3D || this.data.isSmall === "" || !this.data.maxScale) return;
 
-    //reset frame el transform in case of accidental movement
-    // this.data.frameEl.setAttribute("position", { x: 0, y: 0, z: this.data.zOffset });
-    // this.data.frameEl.setAttribute("rotation", { x: 0, y: 0, z: 0 });
+    //Track frameEl with image element
+    this.data.frameEl.setAttribute("offset-relative-to", {
+      target: "#" + this.el.id,
+      offset: { x: 0, y: 0, z: this.data.zOffset },
+      selfDestruct: true
+    });
+    let elScale = this.el.object3D.scale;
+    this.data.maxScale = new THREE.Vector3(
+      elScale.x * this.data.scaleSetting.x * this.data.smallScale,
+      elScale.y * this.data.scaleSetting.y * this.data.ratio * this.data.smallScale,
+      elScale.z * this.data.scaleSetting.z * this.data.smallScale
+    );
+    this.data.frameEl.setAttribute("scale", {
+      x: this.data.maxScale.x,
+      y: this.data.maxScale.y,
+      z: this.data.maxScale.z
+    });
 
-    //update visibility based on defaultEnabled
+    //Update visibility based on defaultEnabled
     if (this.data.isSmall && this.data.defaultEnabled) {
       //make big
       this.data.isSmall = false;
-      this.animateScale(3000, 1);
+      this.data.smallScale = 1;
     } else if (!this.data.isSmall && !this.data.defaultEnabled) {
       //make small
       this.data.isSmall = true;
-      this.animateScale(3000, 0.001);
+      this.data.smallScale = 0.001;
     }
 
-    //remove frame button if frameEl detached
+    //Remove frame button if frameEl detached
     if (!this.data.frameEl.attached) {
       let buttonEl = this.el.querySelector("[toggle-frame-button]");
       buttonEl.object3D.visible = false;
       buttonEl.matrixAutoUpdate = true;
+    }
+  }
+});
+
+AFRAME.registerComponent("farvel-frame-networker", {
+  schema: {
+    assetURL: {
+      default: "https://jigsawhubs-1-assets.onboardxr.live/files/753c8479-b03f-4720-9d64-bf0352ab1fbb.glb"
+    },
+    zOffset: { default: -0.002 },
+    scaleSetting: { default: { x: 3, y: 3, z: 1.5 } },
+    defaultEnabled: { default: true },
+    frameEl: { default: {} },
+    isSmall: { default: false },
+    ratio: { default: 1 },
+    smallScale: { default: 1 }
+  },
+
+  async init() {
+    //Assign Spoke Data
+    if (!window.APP["farvelFrame"].farvelFrame) return;
+    console.log("setting ff networker");
+    Object.assign(this.data, window.APP["farvelFrame"]);
+    this.time = 0;
+
+    //Determine image pixel ratio
+    const textureCache = new TextureCache();
+    const { src, version } = this.el.components["media-image"].data;
+    let promise = createImageTexture(src);
+    let texture = await promise;
+    let cacheItem = textureCache.set(src, version, texture);
+    this.data.ratio = cacheItem.ratio;
+
+    //Calculate initial element scale with asset settings and media pixel ratio
+    let elScale = this.el.object3D.scale;
+    this.data.maxScale = new THREE.Vector3(
+      elScale.x * this.data.scaleSetting.x,
+      elScale.y * this.data.scaleSetting.y * this.data.ratio,
+      elScale.z * this.data.scaleSetting.z
+    );
+
+    //Set initial scale and zoffset
+    this.data.frameEl.object3D.matrixAutoUpdate = true;
+    this.data.frameEl.removeAttribute("is-remote-hover-target");
+
+    //Add listener to determine if imageEl has been removed and to transfer ownership to frameEl
+    this.data.frameEl.setAttribute("framedEl-listener", { framedEl: this.el });
+    // this.el.addEventListener("interact", () => {
+    //   NAF.utils.takeOwnership(this.data.frameEl);
+    // });
+
+    //Set pinned and unpinned event listeners to influence frameEl
+    this.el.addEventListener("pinned", () => {
+      NAF.utils.takeOwnership(this.data.frameEl);
+      const wasPinned = this.el.components.pinnable && this.el.components.pinnable.data.pinned;
+      window.APP.pinningHelper.setPinned(this.data.frameEl, wasPinned);
+    });
+    this.el.addEventListener("unpinned", () => {
+      NAF.utils.takeOwnership(this.data.frameEl);
+      const wasPinned = this.el.components.pinnable && this.el.components.pinnable.data.pinned;
+      window.APP.pinningHelper.setPinned(this.data.frameEl, wasPinned);
+    });
+  },
+
+  tick(t, dt) {
+    //Init tick time and checks
+    this.time += dt;
+    if (!this.data.frameEl.object3D || this.data.isSmall === "" || !this.data.maxScale) return;
+
+    //Track frameEl with image element, but only when owned
+    this.data.frameEl.setAttribute("offset-relative-to", {
+      target: "#" + this.el.id,
+      offset: { x: 0, y: 0, z: this.data.zOffset },
+      selfDestruct: true
+    });
+
+    //Check if sizing has changed and then set scale
+    let elScale = this.el.object3D.scale;
+    this.data.maxScale = new THREE.Vector3(
+      elScale.x * this.data.scaleSetting.x * this.data.smallScale,
+      elScale.y * this.data.scaleSetting.y * this.data.ratio * this.data.smallScale,
+      elScale.z * this.data.scaleSetting.z * this.data.smallScale
+    );
+    this.data.frameEl.setAttribute("scale", {
+      x: this.data.maxScale.x,
+      y: this.data.maxScale.y,
+      z: this.data.maxScale.z
+    });
+
+    //Update visibility based on defaultEnabled
+    if (this.data.isSmall && this.data.defaultEnabled) {
+      //make big
+      this.data.isSmall = false;
+      this.data.smallScale = 1;
+    } else if (!this.data.isSmall && !this.data.defaultEnabled) {
+      //make small
+      this.data.isSmall = true;
+      this.data.smallScale = 0.001;
+    }
+
+    //Remove frame button if frameEl detached
+    if (!this.data.frameEl.attached) {
+      let buttonEl = this.el.querySelector("[toggle-frame-button]");
+      buttonEl.object3D.visible = false;
+      buttonEl.matrixAutoUpdate = true;
+    }
+  }
+});
+
+AFRAME.registerComponent("framedEl-listener", {
+  schema: {
+    framedEl: { default: {} }
+  },
+
+  init() {
+    this.time = 0;
+  },
+
+  tick(t, dt) {
+    this.time += dt;
+    if (!this.data.framedEl.attached) {
+      AFRAME.scenes[0].systems["hubs-systems"].cameraSystem.uninspect();
+      NAF.utils.takeOwnership(this.el);
+      this.el.parentNode.removeChild(this.el);
     }
   }
 });

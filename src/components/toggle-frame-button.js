@@ -1,4 +1,3 @@
-import { guessContentType } from "../utils/media-url-utils";
 import { findAncestorWithComponent } from "../utils/scene-graph";
 
 AFRAME.registerComponent("toggle-frame-button", {
@@ -18,9 +17,15 @@ AFRAME.registerComponent("toggle-frame-button", {
     this.onClick = () => {
       //console.log('clicked button')
       let framedEl = findAncestorWithComponent(this.el, "farvel-frame");
-      if (!framedEl) return;
-      let currentVal = framedEl.components["farvel-frame"].data.defaultEnabled;
-      framedEl.setAttribute("farvel-frame", { defaultEnabled: !currentVal });
+      if (!framedEl) {
+        let netFramedEl = findAncestorWithComponent(this.el, "farvel-frame-networker");
+        if (!netFramedEl) return;
+        let currentVal = netFramedEl.components["farvel-frame-networker"].data.defaultEnabled;
+        netFramedEl.setAttribute("farvel-frame-networker", { defaultEnabled: !currentVal });
+      } else {
+        let currentVal = framedEl.components["farvel-frame"].data.defaultEnabled;
+        framedEl.setAttribute("farvel-frame", { defaultEnabled: !currentVal });
+      }
     };
   },
 

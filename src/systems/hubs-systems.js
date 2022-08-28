@@ -131,7 +131,7 @@ AFRAME.registerSystem("hubs-systems", {
     this.gainSystem.tick();
     this.nameTagSystem.tick();
     //mike-frame
-    this.farvelFrameSys.tick(t);
+    this.farvelFrameSys.tick(t, dt);
     //mike-frame-end
 
     // We run this late in the frame so that its the last thing to have an opinion about the scale of an object
