@@ -1,0 +1,28 @@
+@use "../../react-components/styles/theme.scss";
+
+// customized design to fit farvel.space page design, as this will be embedded as iframe
+
+body {
+  background-color: #f2f2f2;
+
+  p {
+    font-size: 18px;
+  }
+
+  a.plausible-toggle-btn {
+    // display: inline;
+    font-weight: 700; // bold
+    font-size: 18px;
+    padding: 5px 20px;
+    border-radius: 25px;
+    margin-bottom: 1.2em;
+    border-style: solid;
+    border-width: 2px;
+    background-color: transparent;
+    color: #d5ad50;
+    border-color: #d5ad50;
+    text-decoration: none;
+    transition: .2s background-color ease-in-out, .2s color ease-in-out, .2s border-color ease-in-out, .2s opacity ease-in-out, .2s box-shadow ease-in-out;
+  }
+
+}

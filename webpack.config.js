@@ -302,6 +302,7 @@ module.exports = async (env, argv) => {
       verify: path.join(__dirname, "src", "verify.js"),
       tokens: path.join(__dirname, "src", "tokens.js"),
       "whats-new": path.join(__dirname, "src", "whats-new.js"),
+      "plausible-tracking": path.join(__dirname, "src", "plausible-tracking.js"),
       "webxr-polyfill": path.join(__dirname, "src", "webxr-polyfill.js")
     },
     output: {
@@ -325,7 +326,8 @@ module.exports = async (env, argv) => {
           { from: /^\/cloud/, to: "/cloud.html" },
           { from: /^\/verify/, to: "/verify.html" },
           { from: /^\/tokens/, to: "/tokens.html" },
-          { from: /^\/whats-new/, to: "/whats-new.html" }
+          { from: /^\/whats-new/, to: "/whats-new.html" },
+          { from: /^\/plausible-tracking/, to: "/plausible-tracking.html" }
         ]
       },
       before: function(app) {
@@ -603,6 +605,10 @@ module.exports = async (env, argv) => {
       }),
       htmlPagePlugin({
         filename: "whats-new.html",
+        inject: "head"
+      }),
+      htmlPagePlugin({
+        filename: "plausible-tracking.html",
         inject: "head"
       }),
       htmlPagePlugin({

@@ -22,6 +22,7 @@ import { SignInButton } from "./SignInButton";
 import { AppLogo } from "../misc/AppLogo";
 import { isHmc } from "../../utils/isHmc";
 import maskEmail from "../../utils/mask-email";
+import { PlausibleTrackingPreferences } from "../misc/PlausibleTrackingPreferences";
 
 export function HomePage() {
   const auth = useContext(AuthContext);
@@ -188,7 +189,12 @@ export function HomePage() {
           </Button>
         </Column>
       </Container>
-      <Container><ConnectionTest></ConnectionTest></Container>
+      <Container>
+        <ConnectionTest />
+      </Container>
+      <Container>
+        <PlausibleTrackingPreferences />
+      </Container>
       {isHmc() ? (
         <Column center>
           <SocialBar />
