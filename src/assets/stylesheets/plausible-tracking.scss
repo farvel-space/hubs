@@ -7,10 +7,13 @@ body {
 
   p {
     font-size: 18px;
+    color: #666666;
+    font-weight: 400;
   }
 
   a.plausible-toggle-btn {
     // display: inline;
+    line-height: 1.8;
     font-weight: 700; // bold
     font-size: 18px;
     padding: 5px 20px;
@@ -23,6 +26,15 @@ body {
     border-color: #d5ad50;
     text-decoration: none;
     transition: .2s background-color ease-in-out, .2s color ease-in-out, .2s border-color ease-in-out, .2s opacity ease-in-out, .2s box-shadow ease-in-out;
+    cursor: pointer;
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: #a0823c;
+      border-color: #a0823c;
+      background-color: transparent;
+    }
   }
 
 }
