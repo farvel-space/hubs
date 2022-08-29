@@ -124,14 +124,14 @@ AFRAME.registerComponent("farvel-frame", {
     }
     this.data.frameEl.object3D.matrixAutoUpdate = true;
 
-    //Add listener to determine if imageEl has been removed
-    this.data.frameEl.setAttribute("framedEl-listener", { framedEl: this.el });
-
     //On frame element loaded =>
     this.data.frameEl.addEventListener("media-loaded", () => {
       this.data.loaded = true;
       //Remove manipulation on frame
       this.data.frameEl.removeAttribute("is-remote-hover-target");
+
+      //Add listener to determine if imageEl has been removed
+      this.data.frameEl.setAttribute("framedEl-listener", { framedEl: this.el });
 
       //Set pinned and unpinned event listeners to influence frameEl
       this.el.addEventListener("pinned", () => {
@@ -207,7 +207,6 @@ AFRAME.registerComponent("farvel-frame-networker", {
   async init() {
     //Assign Spoke Data
     if (!window.APP["farvelFrame"].farvelFrame) return;
-    console.log("setting ff networker");
     Object.assign(this.data, window.APP["farvelFrame"]);
     this.time = 0;
 
@@ -256,34 +255,49 @@ AFRAME.registerComponent("farvel-frame-networker", {
     if (!this.data.frameEl.object3D || this.data.isSmall === "" || !this.data.maxScale) return;
 
     //Track frameEl with image element, but only when owned
-    this.data.frameEl.setAttribute("offset-relative-to", {
-      target: "#" + this.el.id,
-      offset: { x: 0, y: 0, z: this.data.zOffset },
-      selfDestruct: true
-    });
+    if (NAF.utils.isMine(this.el)) {
+      this.data.frameEl.setAttribute("offset-relative-to", {
+        target: "#" + this.el.id,
+        offset: { x: 0, y: 0, z: this.data.zOffset },
+        selfDestruct: true
+      });
 
-    //Check if sizing has changed and then set scale
-    let elScale = this.el.object3D.scale;
-    this.data.maxScale = new THREE.Vector3(
-      elScale.x * this.data.scaleSetting.x * this.data.smallScale,
-      elScale.y * this.data.scaleSetting.y * this.data.ratio * this.data.smallScale,
-      elScale.z * this.data.scaleSetting.z * this.data.smallScale
-    );
-    this.data.frameEl.setAttribute("scale", {
-      x: this.data.maxScale.x,
-      y: this.data.maxScale.y,
-      z: this.data.maxScale.z
-    });
+      //Check if sizing has changed and then set scale
+      let elScale = this.el.object3D.scale;
+      this.data.maxScale = new THREE.Vector3(
+        elScale.x * this.data.scaleSetting.x * this.data.smallScale,
+        elScale.y * this.data.scaleSetting.y * this.data.ratio * this.data.smallScale,
+        elScale.z * this.data.scaleSetting.z * this.data.smallScale
+      );
+      this.data.frameEl.setAttribute("scale", {
+        x: this.data.maxScale.x,
+        y: this.data.maxScale.y,
+        z: this.data.maxScale.z
+      });
 
-    //Update visibility based on defaultEnabled
-    if (this.data.isSmall && this.data.defaultEnabled) {
-      //make big
-      this.data.isSmall = false;
-      this.data.smallScale = 1;
-    } else if (!this.data.isSmall && !this.data.defaultEnabled) {
-      //make small
-      this.data.isSmall = true;
-      this.data.smallScale = 0.001;
+      //Update visibility based on defaultEnabled
+      if (this.data.isSmall && this.data.defaultEnabled) {
+        //make big
+        this.data.isSmall = false;
+        this.data.smallScale = 1;
+      } else if (!this.data.isSmall && !this.data.defaultEnabled) {
+        //make small
+        this.data.isSmall = true;
+        this.data.smallScale = 0.001;
+      }
+    } else {
+      let elScale = this.el.object3D.scale;
+      if (
+        this.data.frameEl.object3D.scale.x === elScale.x * this.data.scaleSetting.x * 0.001 &&
+        this.data.smallScale !== 0.001
+      ) {
+        this.data.smallScale = 0.001;
+      } else if (
+        this.data.frameEl.object3D.scale.x === elScale.x * this.data.scaleSetting.x &&
+        this.data.smallScale !== 1
+      ) {
+        this.data.smallScale = 1;
+      }
     }
 
     //Remove frame button if frameEl detached
@@ -306,7 +320,7 @@ AFRAME.registerComponent("framedEl-listener", {
 
   tick(t, dt) {
     this.time += dt;
-    if (!this.data.framedEl.attached) {
+    if (!this.attrValue.framedEl.attached) {
       AFRAME.scenes[0].systems["hubs-systems"].cameraSystem.uninspect();
       NAF.utils.takeOwnership(this.el);
       this.el.parentNode.removeChild(this.el);

@@ -20,9 +20,11 @@ AFRAME.registerComponent("toggle-frame-button", {
       if (!framedEl) {
         let netFramedEl = findAncestorWithComponent(this.el, "farvel-frame-networker");
         if (!netFramedEl) return;
+        NAF.utils.takeOwnership(netFramedEl);
         let currentVal = netFramedEl.components["farvel-frame-networker"].data.defaultEnabled;
         netFramedEl.setAttribute("farvel-frame-networker", { defaultEnabled: !currentVal });
       } else {
+        NAF.utils.takeOwnership(framedEl);
         let currentVal = framedEl.components["farvel-frame"].data.defaultEnabled;
         framedEl.setAttribute("farvel-frame", { defaultEnabled: !currentVal });
       }
