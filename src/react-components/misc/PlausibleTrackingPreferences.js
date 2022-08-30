@@ -1,18 +1,18 @@
 import React, { useCallback, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { FormattedMessage } from "react-intl";
 import { Button } from "../input/Button";
 import { Column } from "../layout/Column";
+import plausibleStyles from "./PlausibleTrackingPreferences.scss";
 
-export function PlausibleTrackingPreferences() {
+export function PlausibleTrackingPreferences({ farvelWebsiteStyle }) {
   const [isIgnored, setIsIgnored] = useState(false);
 
   const onToggleBtnClicked = useCallback(
     () => {
       const newVal = !isIgnored;
       setIsIgnored(newVal);
-      console.log("isIgnored", newVal);
       newVal ? (window.localStorage.plausible_ignore = "true") : delete window.localStorage.plausible_ignore;
-      console.log("window.localStorage.plausible_ignore", window.localStorage.plausible_ignore);
     },
     [setIsIgnored, isIgnored]
   );
@@ -26,7 +26,7 @@ export function PlausibleTrackingPreferences() {
   );
 
   return (
-    <div>
+    <div className={farvelWebsiteStyle ? plausibleStyles.farvelWebsiteStyle : "null"}>
       <Column gap="xl">
         <p>
           <FormattedMessage
@@ -71,4 +71,6 @@ export function PlausibleTrackingPreferences() {
   );
 }
 
-PlausibleTrackingPreferences.propTypes = {};
+PlausibleTrackingPreferences.propTypes = {
+  farvelWebsiteStyle: PropTypes.bool
+};
