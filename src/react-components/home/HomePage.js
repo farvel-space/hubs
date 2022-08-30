@@ -188,7 +188,9 @@ export function HomePage() {
           </Button>
         </Column>
       </Container>
-      <Container><ConnectionTest></ConnectionTest></Container>
+      <Container>
+        <ConnectionTest />
+      </Container>
       {isHmc() ? (
         <Column center>
           <SocialBar />
