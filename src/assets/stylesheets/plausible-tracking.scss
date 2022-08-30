@@ -5,36 +5,49 @@
 body {
   background-color: #f2f2f2;
 
-  p {
+  #ui-root {
     font-size: 18px;
-    color: #666666;
-    font-weight: 400;
-  }
 
-  a.plausible-toggle-btn {
-    // display: inline;
-    line-height: 1.8;
-    font-weight: 700; // bold
-    font-size: 18px;
-    padding: 5px 20px;
-    border-radius: 25px;
-    margin-bottom: 1.2em;
-    border-style: solid;
-    border-width: 2px;
-    background-color: transparent;
-    color: #d5ad50;
-    border-color: #d5ad50;
-    text-decoration: none;
-    transition: .2s background-color ease-in-out, .2s color ease-in-out, .2s border-color ease-in-out, .2s opacity ease-in-out, .2s box-shadow ease-in-out;
-    cursor: pointer;
+    p {
+      font-size: 18px;
+      color: #666666;
+      font-weight: 400;
+      text-transform: none;
+      line-height: 1.8;
+      margin-bottom: 1.2em;
+    }
 
-    &:hover,
-    &:active,
-    &:focus {
-      color: #a0823c;
-      border-color: #a0823c;
+    a.plausible-toggle-btn {
+      // display: inline;
+      line-height: 1.8;
+      font-weight: 500; // bold?! the website styling says bold, but it seems to be 500
+      font-size: 18px;
+      padding: 5px 20px;
+      border-radius: 25px;
+      margin-bottom: 1.2em;
+      border-style: solid;
+      border-width: 2px;
       background-color: transparent;
+      color: #d5ad50;
+      border-color: #d5ad50;
+      text-decoration: none;
+      transition: .2s background-color ease-in-out, .2s color ease-in-out, .2s border-color ease-in-out, .2s opacity ease-in-out, .2s box-shadow ease-in-out;
+      cursor: pointer;
+
+      height: auto;
+      min-height: auto;
+      // width: auto;
+      // min-width: auto;
+
+      letter-spacing: .0116em;
+
+      &:hover,
+      &:active,
+      &:focus {
+        color: #a0823c;
+        border-color: #a0823c;
+        background-color: transparent;
+      }
     }
   }
-
 }
