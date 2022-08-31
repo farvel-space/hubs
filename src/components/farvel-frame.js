@@ -61,11 +61,12 @@ For Spoke deployment, please follow this tutorial on a new file, please use this
 
 import { createImageTexture } from "../utils/media-utils";
 import { TextureCache } from "../utils/texture-cache";
+import defaultFrame from "../assets/models/DefaultFarvelPictureFrame.glb";
 
 AFRAME.registerComponent("farvel-frame", {
   schema: {
     assetURL: {
-      default: "https://jigsawhubs-1-assets.onboardxr.live/files/753c8479-b03f-4720-9d64-bf0352ab1fbb.glb"
+      default: defaultFrame
     },
     zOffset: { default: -0.002 },
     scaleSetting: { default: { x: 3, y: 3, z: 1.5 } },
@@ -82,6 +83,8 @@ AFRAME.registerComponent("farvel-frame", {
     if (!window.APP["farvelFrame"].farvelFrame) return;
     Object.assign(this.data, window.APP["farvelFrame"]);
     this.time = 0;
+
+    if (this.data.assetURL == "") this.data.assetURL = defaultFrame; // MT: Workaround until fixed in spoke
 
     //Determine image pixel ratio
     const textureCache = new TextureCache();
@@ -193,7 +196,7 @@ AFRAME.registerComponent("farvel-frame", {
 AFRAME.registerComponent("farvel-frame-networker", {
   schema: {
     assetURL: {
-      default: "https://jigsawhubs-1-assets.onboardxr.live/files/753c8479-b03f-4720-9d64-bf0352ab1fbb.glb"
+      default: defaultFrame
     },
     zOffset: { default: -0.002 },
     scaleSetting: { default: { x: 3, y: 3, z: 1.5 } },
@@ -209,6 +212,8 @@ AFRAME.registerComponent("farvel-frame-networker", {
     if (!window.APP["farvelFrame"].farvelFrame) return;
     Object.assign(this.data, window.APP["farvelFrame"]);
     this.time = 0;
+
+    if (this.data.assetURL == "") this.data.assetURL = defaultFrame; // MT: Workaround until fixed in spoke
 
     //Determine image pixel ratio
     const textureCache = new TextureCache();
