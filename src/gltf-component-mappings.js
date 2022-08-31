@@ -614,3 +614,9 @@ AFRAME.GLTFModelPlus.registerComponent("reflection-probe", "reflection-probe", (
 
   el.setAttribute(componentName, componentData);
 });
+
+//mike-frame
+AFRAME.GLTFModelPlus.registerComponent("farvel-frame", "farvel-frame", (el, _componentName, componentData) => {
+  window.APP["farvelFrame"] = componentData;
+});
+//mike-frame-end

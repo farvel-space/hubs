@@ -22,6 +22,10 @@ import { getAvatarSrc, getAvatarType } from "./utils/avatar-utils";
 import { SOUND_ENTER_SCENE } from "./systems/sound-effects-system";
 import { MediaDevices, MediaDevicesEvents } from "./utils/media-devices-utils";
 
+//mike-frame
+import { guessContentType } from "./utils/media-url-utils";
+//mike-frame-end
+
 export default class SceneEntryManager {
   constructor(hubChannel, authChannel, history) {
     this.hubChannel = hubChannel;
@@ -224,6 +228,35 @@ export default class SceneEntryManager {
           orientation: or
         });
       });
+
+      //mike-frame
+      entity.addEventListener("media-loaded", () => {
+        if (contentOrigin === 1) {
+          let contentStr = guessContentType(src);
+          if (!contentStr) return;
+          if (contentStr.includes("image")) {
+            //Set new farvel-frame
+            entity.setAttribute("farvel-frame", {});
+
+            //Remove hoverability
+            let buttonEl = entity.querySelector("[toggle-frame-button]");
+            buttonEl.object3D.visible = true;
+            buttonEl.matrixAutoUpdate = true;
+          }
+        }
+        if (contentOrigin === 2) {
+          if (src.type.includes("image")) {
+            //Set new farvel-frame
+            entity.setAttribute("farvel-frame", {});
+
+            //Remove hoverability
+            let buttonEl = entity.querySelector("[toggle-frame-button]");
+            buttonEl.object3D.visible = true;
+            buttonEl.matrixAutoUpdate = true;
+          }
+        }
+      });
+      //mike-frame-end
 
       return entity;
     };
