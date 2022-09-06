@@ -187,6 +187,7 @@ AFRAME.registerComponent("farvel-frame", {
     //Remove frame button if frameEl detached
     if (!this.data.frameEl.attached) {
       let buttonEl = this.el.querySelector("[toggle-frame-button]");
+      if (!buttonEl) return;
       buttonEl.object3D.visible = false;
       buttonEl.matrixAutoUpdate = true;
     }
@@ -308,6 +309,7 @@ AFRAME.registerComponent("farvel-frame-networker", {
     //Remove frame button if frameEl detached
     if (!this.data.frameEl.attached) {
       let buttonEl = this.el.querySelector("[toggle-frame-button]");
+      if (!buttonEl) return;
       buttonEl.object3D.visible = false;
       buttonEl.matrixAutoUpdate = true;
     }
