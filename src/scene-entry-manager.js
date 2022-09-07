@@ -244,7 +244,8 @@ export default class SceneEntryManager {
             buttonEl.matrixAutoUpdate = true;
           }
         }
-        if (contentOrigin === 2) {
+        // file or clipboard
+        if (contentOrigin === 2 || contentOrigin === 3) {
           if (src.type.includes("image")) {
             //Set new farvel-frame
             entity.setAttribute("farvel-frame", {});
