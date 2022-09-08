@@ -27,7 +27,7 @@ const ritualMessageMessages = defineMessages({
   },
   entryButtonMessage: {
     id: "ritual-message-modal.entry.buttonMessage",
-    defaultMessage: "I want to share my last words."
+    defaultMessage: "I want to share last words."
   },
   entryButtonThoughts: {
     id: "ritual-message-modal.entry.buttonThoughts",
@@ -36,10 +36,6 @@ const ritualMessageMessages = defineMessages({
   submitMessage: {
     id: "ritual-message-modal.message.submit",
     defaultMessage: "Share Message"
-  },
-  submitThoughts: {
-    id: "ritual-message-modal.thoughts.submit",
-    defaultMessage: "My thoughts are with you."
   },
   description: {
     id: "ritual-message-modal.message.description",
@@ -68,11 +64,11 @@ const ritualMessageMessages = defineMessages({
   },
   messageThought: {
     id: "ritual-message-modal.messageThought",
-    defaultMessage: "{name} thought of you."
+    defaultMessage: "{name} thinks of you."
   },
   nameThoughtAnonymous: {
     id: "ritual-message-modal.nameThoughtAnonymous",
-    defaultMessage: "Someone"
+    defaultMessage: "I think of you."
   }
 });
 
@@ -102,8 +98,10 @@ export function RitualMessageModal({ scene, store, onClose }) {
 
   const getThoughtValue = useCallback(
     () => {
-      const name = submitDisplayName ? submittedName : intl.formatMessage(ritualMessageMessages.nameThoughtAnonymous);
-      return intl.formatMessage(ritualMessageMessages.messageThought, { name: name });
+      if (submitDisplayName) {
+        return intl.formatMessage(ritualMessageMessages.messageThought, { name: submittedName });
+      }
+      return intl.formatMessage(ritualMessageMessages.nameThoughtAnonymous);
     },
     [submitDisplayName, submittedName, intl]
   );
@@ -270,9 +268,7 @@ export function RitualMessageModal({ scene, store, onClose }) {
           <label>{intl.formatMessage(ritualMessageMessages.checkboxDiscloseToRoom)}</label>
         </div>
         <Button type="submit" preset="accept">
-          {intl.formatMessage(
-            dialogState == MESSAGE_STATE ? ritualMessageMessages.submitMessage : ritualMessageMessages.submitThoughts
-          )}
+          {intl.formatMessage(ritualMessageMessages.submitMessage)}
         </Button>
       </Column>
     </Modal>
