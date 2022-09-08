@@ -1,8 +1,7 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import classNames from "classnames";
 import configs from "../../utils/configs";
-import { getAppLogo } from "../../utils/get-app-logo";
 import { CreateRoomButton } from "./CreateRoomButton";
 import { PWAButton } from "./PWAButton";
 import { useFavoriteRooms } from "./useFavoriteRooms";
@@ -17,10 +16,13 @@ import { scaledThumbnailUrlFor } from "../../utils/media-url-utils";
 import { Column } from "../layout/Column";
 import { Button } from "../input/Button";
 import { Container } from "../layout/Container";
+import { ConnectionTest } from "../../react-components/debug-panel/ConnectionTest";
 import { SocialBar } from "../home/SocialBar";
 import { SignInButton } from "./SignInButton";
+import { AppLogo } from "../misc/AppLogo";
+import { isHmc } from "../../utils/isHmc";
 import maskEmail from "../../utils/mask-email";
-import { ReactComponent as HmcLogo } from "../icons/HmcLogo.svg";
+import { PlausibleTrackingPreferences } from "../misc/PlausibleTrackingPreferences";
 
 export function HomePage() {
   const auth = useContext(AuthContext);
@@ -29,10 +31,11 @@ export function HomePage() {
   const { results: favoriteRooms } = useFavoriteRooms();
   const { results: publicRooms } = usePublicRooms();
 
+  const [showPlausiblePreferences, setShowPlausiblePreferences] = useState(false);
+
   const sortedFavoriteRooms = Array.from(favoriteRooms).sort((a, b) => b.member_count - a.member_count);
   const sortedPublicRooms = Array.from(publicRooms).sort((a, b) => b.member_count - a.member_count);
   const wrapInBold = chunk => <b>{chunk}</b>;
-  const isHmc = configs.feature("show_cloud");
   useEffect(() => {
     const qs = new URLSearchParams(location.search);
 
@@ -49,8 +52,13 @@ export function HomePage() {
 
     if (qs.has("new")) {
       createAndRedirectToNewHub(null, null, true);
+    } else if (qs.has("plausible")) {
+      // set flag to only show preferences. this is a workaround, since modifying reticulum would be much more effort.
+      setShowPlausiblePreferences(true);
     }
   }, []);
+
+  if (showPlausiblePreferences) return <PlausibleTrackingPreferences farvelWebsiteStyle={true} />;
 
   const canCreateRooms = !configs.feature("disable_room_creation") || auth.isAdmin;
   const email = auth.email;
@@ -75,11 +83,7 @@ export function HomePage() {
             <SignInButton mobile />
           )}
           <div className={styles.logoContainer}>
-            {isHmc ? (
-              <HmcLogo className="hmc-logo" />
-            ) : (
-              <img alt={configs.translation("app-name")} src={getAppLogo()} />
-            )}
+            <AppLogo />
           </div>
           <div className={styles.appInfo}>
             <div className={styles.appDescription}>{configs.translation("app-description")}</div>
@@ -192,7 +196,10 @@ export function HomePage() {
           </Button>
         </Column>
       </Container>
-      {isHmc ? (
+      <Container>
+        <ConnectionTest />
+      </Container>
+      {isHmc() ? (
         <Column center>
           <SocialBar />
         </Column>

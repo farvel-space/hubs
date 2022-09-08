@@ -3,11 +3,13 @@ import PropTypes from "prop-types";
 import { LoadingScreenLayout } from "../layout/LoadingScreenLayout";
 import { Spinner } from "../misc/Spinner";
 import { useRandomMessageTransition } from "./useRandomMessageTransition";
-export function LoadingScreen({ logoSrc, message, infoMessages }) {
+import SaveConsoleLog from "../../utils/record-log.js";
+import qsTruthy from "../../utils/qs_truthy";
+import { Button } from "../input/Button";
+export function LoadingScreen({ message, infoMessages }) {
   const infoMessage = useRandomMessageTransition(infoMessages);
   return (
     <LoadingScreenLayout
-      logoSrc={logoSrc}
       center={
         <>
           <Spinner />
@@ -18,6 +20,7 @@ export function LoadingScreen({ logoSrc, message, infoMessages }) {
         <>
           <h3>{infoMessage.heading}</h3>
           <p>{infoMessage.message}</p>
+          { qsTruthy("record_log") && <Button preset="basic" onClick={() => SaveConsoleLog()}>Save Logs</Button> }
         </>
       }
     />
@@ -25,7 +28,6 @@ export function LoadingScreen({ logoSrc, message, infoMessages }) {
 }
 
 LoadingScreen.propTypes = {
-  logoSrc: PropTypes.string,
   message: PropTypes.node,
   infoMessages: PropTypes.arrayOf(
     PropTypes.shape({

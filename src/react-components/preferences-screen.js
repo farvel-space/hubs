@@ -12,6 +12,16 @@ import { themes } from "./styles/theme";
 import MediaDevicesManager from "../utils/media-devices-manager";
 import { MediaDevicesEvents } from "../utils/media-devices-utils";
 import { Slider } from "./input/Slider";
+import {
+  addOrientationChangeListener,
+  removeOrientationChangeListener,
+  getMaxResolutionWidth,
+  getMaxResolutionHeight,
+  getScreenResolutionWidth,
+  getScreenResolutionHeight,
+  setMaxResolution
+} from "../utils/screen-orientation-utils";
+import { CAMERA_MODE_THIRD_PERSON_VIEW, CAMERA_MODE_FIRST_PERSON } from "../systems/camera-system";
 
 export const CLIPPING_THRESHOLD_MIN = 0.0;
 export const CLIPPING_THRESHOLD_MAX = 0.1;
@@ -119,17 +129,33 @@ export class NumberRangeSelector extends Component {
               e.target.focus();
               e.target.select();
             }}
-            onBlur={() => {
-              this.setState({ isFocused: false });
+            onBlur={e => {
+              const sanitizedInput = sanitize(e.target.value);
+              const numberOrReset = isNaN(parseFloat(sanitizedInput)) ? undefined : parseFloat(sanitizedInput);
+              this.setState({
+                displayValue:
+                  numberOrReset === undefined
+                    ? this.props.store.state.preferences[this.props.storeKey].toFixed(this.props.digits)
+                    : Math.min(Math.max(this.props.min, numberOrReset), this.props.max).toFixed(this.props.digits),
+                isFocused: false
+              });
             }}
             onFocus={() => {
               this.setState({ isFocused: true });
             }}
             onChange={e => {
               const sanitizedInput = sanitize(e.target.value);
-              this.setState({ displayValue: sanitizedInput, digitsFromUser: countDigits(sanitizedInput) });
               const numberOrReset = isNaN(parseFloat(sanitizedInput)) ? undefined : parseFloat(sanitizedInput);
-              this.props.setValue(numberOrReset);
+              const finalValue = Math.min(Math.max(this.props.min, numberOrReset), this.props.max);
+              this.setState({
+                displayValue: numberOrReset === undefined ? "" : finalValue,
+                digitsFromUser: countDigits(sanitizedInput)
+              });
+              this.props.setValue(
+                numberOrReset === undefined
+                  ? parseFloat(this.props.store.state.preferences[this.props.storeKey])
+                  : finalValue
+              );
             }}
           />
         </div>
@@ -255,54 +281,54 @@ export class MaxResolutionPreferenceItem extends Component {
   static propTypes = {
     store: PropTypes.object
   };
+
+  onOrientationChange = () => {
+    // Width and height should be swapped on screen orientation change
+    // then need to update.
+    this.forceUpdate();
+  };
+
+  componentDidMount() {
+    addOrientationChangeListener(this.onOrientationChange);
+  }
+
+  componentWillUnmount() {
+    removeOrientationChangeListener(this.onOrientationChange);
+  }
+
   render() {
-    const onChange = () => {
-      const numWidth = parseInt(document.getElementById("maxResolutionWidth").value);
-      const numHeight = parseInt(document.getElementById("maxResolutionHeight").value);
-      this.props.store.update({
-        preferences: {
-          maxResolutionWidth: numWidth ? numWidth : 0,
-          maxResolutionHeight: numHeight ? numHeight : 0
-        }
-      });
+    const onChange = multiplier => {
+      setMaxResolution(
+        this.props.store,
+        Math.floor(getScreenResolutionWidth() * multiplier),
+        Math.floor(getScreenResolutionHeight() * multiplier)
+      );
     };
     return (
       <div className={classNames(styles.maxResolutionPreferenceItem)}>
         <input
-          id="maxResolutionWidth"
           tabIndex="0"
           type="number"
           step="1"
           min="0"
-          value={
-            this.props.store.state.preferences.maxResolutionWidth === undefined
-              ? window.screen.width
-              : this.props.store.state.preferences.maxResolutionWidth
-          }
-          onClick={e => {
-            e.preventDefault();
-            e.target.focus();
-            e.target.select();
-          }}
-          onChange={onChange}
+          value={getMaxResolutionWidth(this.props.store)}
+          readOnly={true}
         />
         &nbsp;{"x"}&nbsp;
         <input
-          id="maxResolutionHeight"
           tabIndex="0"
           type="number"
           step="1"
           min="0"
-          value={
-            this.props.store.state.preferences.maxResolutionHeight === undefined
-              ? window.screen.height
-              : this.props.store.state.preferences.maxResolutionHeight
-          }
-          onClick={e => {
-            e.preventDefault();
-            e.target.focus();
-            e.target.select();
-          }}
+          value={getMaxResolutionHeight(this.props.store)}
+          readOnly={true}
+        />
+        &nbsp;
+        <Slider
+          step={0.1}
+          min={0.1}
+          max={1.0}
+          value={getMaxResolutionWidth(this.props.store) / getScreenResolutionWidth()}
           onChange={onChange}
         />
       </div>
@@ -425,7 +451,11 @@ const preferenceLabels = defineMessages({
   },
   enableDynamicShadows: {
     id: "preferences-screen.preference.enable-dynamic-shadows",
-    defaultMessage: "Enable Dynamic Shadows"
+    defaultMessage: "Enable Real-time Shadows"
+  },
+  enableThirdPersonView: {
+    id: "preferences-screen.preference.enable-third-person-view",
+    defaultMessage: "Enable Third-Person View"
   },
   disableAutoPixelRatio: {
     id: "preferences-screen.preference.disable-auto-pixel-ratio",
@@ -450,6 +480,10 @@ const preferenceLabels = defineMessages({
   showAudioDebugPanel: {
     id: "preferences-screen.preference.show-audio-debug-panel",
     defaultMessage: "Show Audio Debug Panel"
+  },
+  audioPanningQuality: {
+    id: "preferences-screen.preference.audio-panning-quality",
+    defaultMessage: "Panning quality"
   },
   enableAudioClipping: {
     id: "preferences-screen.preference.enable-audio-clipping",
@@ -883,6 +917,10 @@ class PreferencesScreen extends Component {
     if (preferredMic !== this.mediaDevicesManager.selectedMicDeviceId) {
       this.mediaDevicesManager.startMicShare({ updatePrefs: false }).then(this.updateMediaDevices);
     }
+    const { enableThirdPersonView } = this.props.store.state.preferences;
+    this.props.scene.systems["hubs-systems"].cameraSystem.setMode(
+      enableThirdPersonView ? CAMERA_MODE_THIRD_PERSON_VIEW : CAMERA_MODE_FIRST_PERSON
+    );
   }
 
   createSections() {
@@ -1049,6 +1087,26 @@ class PreferencesScreen extends Component {
           {
             key: "showAudioDebugPanel",
             prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX
+          },
+          {
+            key: "audioPanningQuality",
+            prefType: PREFERENCE_LIST_ITEM_TYPE.SELECT,
+            options: [
+              {
+                value: "High",
+                text: intl.formatMessage({
+                  id: "preferences-screen.audio-panning-quality.high",
+                  defaultMessage: "High"
+                })
+              },
+              {
+                value: "Low",
+                text: intl.formatMessage({
+                  id: "preferences-screen.audio-panning-quality.low",
+                  defaultMessage: "Low"
+                })
+              }
+            ]
           }
         ]
       ],
@@ -1152,7 +1210,12 @@ class PreferencesScreen extends Component {
           {
             key: "enableDynamicShadows",
             prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX,
-            promptForRefresh: true
+            defaultBool: false
+          },
+          {
+            key: "enableThirdPersonView",
+            prefType: PREFERENCE_LIST_ITEM_TYPE.CHECK_BOX,
+            defaultBool: false
           },
           {
             key: "disableAutoPixelRatio",

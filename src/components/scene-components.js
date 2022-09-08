@@ -3,6 +3,7 @@ import "./ambient-light";
 import "./animation-mixer";
 import "./audio-feedback";
 import "./billboard";
+import "./slice9";
 import "./css-class";
 import "./directional-light";
 import "./duck";
@@ -32,3 +33,4 @@ import "./audio-zone-source";
 import "./ritual-spark"
 import "./troika-text";
 import "./frustrum";
+import "./inject-main-camera-here";

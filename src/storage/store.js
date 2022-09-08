@@ -3,6 +3,7 @@ import merge from "deepmerge";
 import Cookies from "js-cookie";
 import jwtDecode from "jwt-decode";
 import { qsGet } from "../utils/qs_truthy.js";
+import detectMobile from "../utils/is-mobile";
 
 const LOCAL_STORE_KEY = "___hubs_store";
 const STORE_STATE_CACHE_KEY = Symbol();
@@ -78,7 +79,8 @@ export const SCHEMA = {
         hasScaled: { type: "boolean" },
         hasHoveredInWorldHud: { type: "boolean" },
         hasOpenedShare: { type: "boolean" },
-        entryCount: { type: "number" }
+        entryCount: { type: "number" },
+        hasAcceptedRpmAvatarNotice: { type: "boolean" }
       }
     },
 
@@ -104,8 +106,8 @@ export const SCHEMA = {
         disableLeftRightPanning: { type: "bool", default: false },
         audioNormalization: { type: "bool", default: 0.0 },
         invertTouchscreenCameraMove: { type: "bool", default: true },
-        enableOnScreenJoystickLeft: { type: "bool", default: false },
-        enableOnScreenJoystickRight: { type: "bool", default: false },
+        enableOnScreenJoystickLeft: { type: "bool", default: detectMobile() },
+        enableOnScreenJoystickRight: { type: "bool", default: detectMobile() },
         enableGyro: { type: "bool", default: true },
         animateWaypointTransitions: { type: "bool", default: true },
         showFPSCounter: { type: "bool", default: false },
@@ -122,6 +124,7 @@ export const SCHEMA = {
         globalSFXVolume: { type: "number", default: 100 },
         snapRotationDegrees: { type: "number", default: 20 }, // changed from 45 to 20 for farvel
         materialQualitySetting: { type: "string", default: defaultMaterialQuality },
+        enableThirdPersonView: { type: "bool", default: false },
         enableDynamicShadows: { type: "bool", default: false },
         disableSoundEffects: { type: "bool", default: false },
         disableMovement: { type: "bool", default: false },
@@ -138,9 +141,11 @@ export const SCHEMA = {
         showAudioDebugPanel: { type: "bool", default: false },
         enableAudioClipping: { type: "bool", default: false },
         audioClippingThreshold: { type: "number", default: 0.015 },
-        theme: { type: "string", default: "Browser Default" },
+        audioPanningQuality: { type: "string", default: "High" },
+        theme: { type: "string", default: undefined },
         tmpMutedGlobalMediaVolume: { type: "number" },
         tmpMutedGlobalVoiceVolume: { type: "number" },
+        tmpMutedGlobalSFXVolume: { type: "number" },
         skipEntryTutorial: { type: "bool" },
         cursorSize: { type: "number", default: 1 },
         nametagVisibility: { type: "string", default: "showAll" },
@@ -341,7 +346,11 @@ export default class Store extends EventTarget {
   };
 
   restoreAudioSettingsFromBeingMuted = async () => {
-    if (this.state.preferences.tmpMutedGlobalMediaVolume || this.state.preferences.tmpMutedGlobalVoiceVolume) {
+    if (
+      this.state.preferences.tmpMutedGlobalMediaVolume ||
+      this.state.preferences.tmpMutedGlobalVoiceVolume ||
+      this.state.preferences.tmpMutedGlobalSFXVolume
+    ) {
       const media =
         this.state.preferences.tmpMutedGlobalMediaVolume == 100
           ? undefined
@@ -350,13 +359,19 @@ export default class Store extends EventTarget {
         this.state.preferences.tmpMutedGlobalVoiceVolume == 100
           ? undefined
           : this.state.preferences.tmpMutedGlobalVoiceVolume;
+      const sfx =
+        this.state.preferences.tmpMutedGlobalSFXVolume == 100
+          ? undefined
+          : this.state.preferences.tmpMutedGlobalSFXVolume;
 
       this.update({
         preferences: {
           globalMediaVolume: media,
           globalVoiceVolume: voice,
+          globalSFXVolume: sfx,
           tmpMutedGlobalMediaVolume: undefined,
-          tmpMutedGlobalVoiceVolume: undefined
+          tmpMutedGlobalVoiceVolume: undefined,
+          tmpMutedGlobalSFXVolume: undefined
         }
       });
     }
