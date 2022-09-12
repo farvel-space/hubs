@@ -102,11 +102,19 @@ AFRAME.registerComponent("farvel-frame", {
 
     //Calculate initial element scale with asset settings and media pixel ratio
     let elScale = this.el.object3D.scale;
-    this.data.maxScale = new THREE.Vector3(
-      elScale.x * this.data.scaleSetting.x,
-      elScale.y * this.data.scaleSetting.y * this.data.ratio,
-      elScale.z * this.data.scaleSetting.z
-    );
+    if (this.data.ratio <= 1) {
+      this.data.maxScale = new THREE.Vector3(
+        elScale.x * this.data.scaleSetting.x,
+        elScale.y * this.data.scaleSetting.y * this.data.ratio,
+        elScale.z * this.data.scaleSetting.z
+      );
+    } else {
+      this.data.maxScale = new THREE.Vector3(
+        (elScale.x * this.data.scaleSetting.x) / this.data.ratio,
+        elScale.y * this.data.scaleSetting.y,
+        elScale.z * this.data.scaleSetting.z
+      );
+    }
 
     //Set initial element scale and zoffset
     this.data.frameEl.object3D.position.z = this.data.zOffset;
@@ -164,14 +172,22 @@ AFRAME.registerComponent("farvel-frame", {
     let elScale = this.el.object3D.scale;
     this.data.maxScale = new THREE.Vector3(
       elScale.x * this.data.scaleSetting.x * this.data.smallScale,
-      elScale.y * this.data.scaleSetting.y * this.data.ratio * this.data.smallScale,
+      elScale.y * this.data.scaleSetting.y * this.data.smallScale,
       elScale.z * this.data.scaleSetting.z * this.data.smallScale
     );
-    this.data.frameEl.setAttribute("scale", {
-      x: this.data.maxScale.x,
-      y: this.data.maxScale.y,
-      z: this.data.maxScale.z
-    });
+    if (this.data.ratio <= 1) {
+      this.data.frameEl.setAttribute("scale", {
+        x: this.data.maxScale.x,
+        y: this.data.maxScale.y * this.data.ratio,
+        z: this.data.maxScale.z
+      });
+    } else {
+      this.data.frameEl.setAttribute("scale", {
+        x: this.data.maxScale.x / this.data.ratio,
+        y: this.data.maxScale.y,
+        z: this.data.maxScale.z
+      });
+    }
 
     //Update visibility based on defaultEnabled
     if (this.data.isSmall && this.data.defaultEnabled) {
@@ -226,11 +242,19 @@ AFRAME.registerComponent("farvel-frame-networker", {
 
     //Calculate initial element scale with asset settings and media pixel ratio
     let elScale = this.el.object3D.scale;
-    this.data.maxScale = new THREE.Vector3(
-      elScale.x * this.data.scaleSetting.x,
-      elScale.y * this.data.scaleSetting.y * this.data.ratio,
-      elScale.z * this.data.scaleSetting.z
-    );
+    if (this.data.ratio <= 1) {
+      this.data.maxScale = new THREE.Vector3(
+        elScale.x * this.data.scaleSetting.x,
+        elScale.y * this.data.scaleSetting.y * this.data.ratio,
+        elScale.z * this.data.scaleSetting.z
+      );
+    } else {
+      this.data.maxScale = new THREE.Vector3(
+        (elScale.x * this.data.scaleSetting.x) / this.data.ratio,
+        elScale.y * this.data.scaleSetting.y,
+        elScale.z * this.data.scaleSetting.z
+      );
+    }
 
     //Set initial scale and zoffset
     this.data.frameEl.object3D.matrixAutoUpdate = true;
@@ -272,14 +296,22 @@ AFRAME.registerComponent("farvel-frame-networker", {
       let elScale = this.el.object3D.scale;
       this.data.maxScale = new THREE.Vector3(
         elScale.x * this.data.scaleSetting.x * this.data.smallScale,
-        elScale.y * this.data.scaleSetting.y * this.data.ratio * this.data.smallScale,
+        elScale.y * this.data.scaleSetting.y * this.data.smallScale,
         elScale.z * this.data.scaleSetting.z * this.data.smallScale
       );
-      this.data.frameEl.setAttribute("scale", {
-        x: this.data.maxScale.x,
-        y: this.data.maxScale.y,
-        z: this.data.maxScale.z
-      });
+      if (this.data.ratio <= 1) {
+        this.data.frameEl.setAttribute("scale", {
+          x: this.data.maxScale.x,
+          y: this.data.maxScale.y * this.data.ratio,
+          z: this.data.maxScale.z
+        });
+      } else {
+        this.data.frameEl.setAttribute("scale", {
+          x: this.data.maxScale.x / this.data.ratio,
+          y: this.data.maxScale.y,
+          z: this.data.maxScale.z
+        });
+      }
 
       //Update visibility based on defaultEnabled
       if (this.data.isSmall && this.data.defaultEnabled) {
