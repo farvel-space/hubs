@@ -6,6 +6,7 @@ import tar from "tar";
 import ora from "ora";
 import FormData from "form-data";
 import path from "path";
+import fetch from "node-fetch";
 
 if (!existsSync(".ret.credentials")) {
   console.log("Not logged in, so cannot deploy. To log in, run npm run login.");
@@ -105,7 +106,7 @@ const getTs = (() => {
   // HACK END
 
   step.text = "Packaging Build.";
-  tar.c({ sync: true, gzip: true, C: path.join(__dirname, "..", "dist"), file: "_build.tar.gz" }, ["."]);
+  tar.c({ sync: true, gzip: true, C: path.resolve("dist"), file: "_build.tar.gz" }, ["."]);
   step.text = `Uploading Build ${buildEnv.BUILD_VERSION}.`;
 
   let uploadedUrl;
