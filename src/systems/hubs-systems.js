@@ -31,6 +31,9 @@ import { GainSystem } from "./audio-gain-system";
 import { EnvironmentSystem } from "./environment-system";
 import { RitualSystem } from "./ritual-system";
 import { NameTagVisibilitySystem } from "./name-tag-visibility-system";
+//mike-frame
+import { FarvelFrameSys } from "./farvel-frame-system";
+//mike-frame-end
 
 // new world
 import { networkSendSystem, networkReceiveSystem } from "./netcode";
@@ -86,6 +89,9 @@ AFRAME.registerSystem("hubs-systems", {
     this.environmentSystem = new EnvironmentSystem(this.el);
     this.ritualSystem = new RitualSystem(this.el);
     this.nameTagSystem = new NameTagVisibilitySystem(this.el);
+    //mike-frame
+    this.farvelFrameSys = new FarvelFrameSys(this.el);
+    //mike-frame-end
 
     window.$S = this;
   },
@@ -152,6 +158,9 @@ AFRAME.registerSystem("hubs-systems", {
     this.gainSystem.tick();
     // this.ritualSystem.tick();
     this.nameTagSystem.tick();
+    //mike-frame
+    this.farvelFrameSys.tick(t, dt);
+    //mike-frame-end
 
     destroyAtExtremeDistanceSystem(world);
     removeNetworkedObjectButtonSystem(world);
