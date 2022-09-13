@@ -33,7 +33,6 @@ export class RitualSystem {
     this.scene.appendChild(entity);
     entity.setAttribute("ritual-spark-avatar", { anchorId: this.anchorId ? this.anchorId : 1 });
     entity.setAttribute("offset-relative-to", { target: "#avatar-pov-node", offset: { x: 0, y: -0.25, z: 0 } });
-    entity.setAttribute("destroy-at-extreme-distances", { yMax: 300 }); // for release animation, 400 is enough
     entity.setAttribute("networked", { template: "#ritual-spark-avatar" });
 
     this.entity = entity;
@@ -84,7 +83,12 @@ export class RitualSystem {
 
   onRitualSparkRelease = () => {
     this.entity.components["ritual-spark-avatar"].releaseAnimation();
-    this.entity = null;
+
+    // remove spark after 30s
+    setTimeout(() => {
+      this.scene.removeChild(this.entity);
+      this.entity = null;
+    }, 30000);
   };
 
   getIntIdFromSessionId = sessionId => {
@@ -133,7 +137,7 @@ export class RitualSystem {
     entity.setAttribute("scale", { x: msgScale, y: msgScale });
 
     entity.addEventListener("media_resolved", ({ detail }) => {
-      if (!NAF.utils.isMine(entity) && !NAF.utils.takeOwnership(entity)) {0
+      if (!NAF.utils.isMine(entity) && !NAF.utils.takeOwnership(entity)) {
         console.error("Could not take ownership of media entity", detail);
         return;
       }
