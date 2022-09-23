@@ -481,7 +481,8 @@ AFRAME.registerComponent("media-video", {
     }
 
     if (!texture.isVideoTexture) {
-      this.mesh.material.transparent = true; // have transparency for farvel audio icon texture (rounded)
+      // this.mesh.material.transparent = true; // have transparency for farvel audio icon texture (rounded)
+      this.mesh.material.alphaTest = 0.5; // using mask mode instead of blend mode
       this.mesh.material.map = audioIconTexture;
     } else {
       this.mesh.material.map = texture;
