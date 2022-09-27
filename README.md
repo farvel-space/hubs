@@ -69,6 +69,7 @@ Contributors are expected to abide by the project's [Code of Conduct](./CODE_OF_
 
 At farvel (that’s us), we believe that privacy is fundamental to a healthy internet. Read our [privacy policy](https://farvel.space/en/app-privacy/) for more info.
 
+
 ## License
 
 space-client is licensed with the [Mozilla Public License 2.0](./LICENSE)
