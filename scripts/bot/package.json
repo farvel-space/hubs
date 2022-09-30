@@ -4,7 +4,16 @@
   "license": "MPL-2.0",
   "devDependencies": {
     "docopt": "^0.6.2",
-    "puppeteer": "^13.5.1",
+    "puppeteer": "^14.4.1",
     "query-string": "^5.0.1"
+  },
+  "scripts": {
+    "start": "./run-bot.js -u https://link/to/room"
+  },
+  "scripts-info": {
+    "start": "Start the bot"
+  },
+  "dependencies": {
+    "nodemailer": "^6.7.5"
   }
 }
