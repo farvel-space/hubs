@@ -19,12 +19,15 @@ const options = docopt(doc);
 const puppeteer = require("puppeteer");
 const querystring = require("query-string");
 
+const readFileSync = require("fs").readFileSync;
+
 function log(...objs) {
   console.log.call(null, [new Date().toISOString()].concat(objs).join(" "));
 }
 
 (async () => {
   const browser = await puppeteer.launch({
+    //devtools: true,
     ignoreHTTPSErrors: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox", "--ignore-gpu-blacklist", "--ignore-certificate-errors"]
   });
@@ -32,7 +35,21 @@ function log(...objs) {
   await page.setBypassCSP(true);
   page.on("console", msg => log("PAGE: ", msg.text()));
   page.on("error", err => log("ERROR: ", err.toString().split("\n")[0]));
-  page.on("pageerror", err => log("PAGE ERROR: ", err.toString().split("\n")[0]));
+  // page.on("pageerror", err => log("PAGE ERROR: ", err.toString().split("\n")[0]));
+
+  page.on("pageerror", err => {
+    const e = err.toString().split("\n")[0];
+    log("PAGE ERROR: ", e);
+    if (e.includes("Cannot read property 'off' of") || e.includes("Cannot read property 'systems' of")) {
+      log("## Reload page after error");
+      navigate();
+    }
+  });
+
+  
+
+  // 2021-05-21T13:30:45.436Z PAGE ERROR:  Error: TypeError: Cannot read property 'off' of null
+  // 2021-05-21T13:30:45.453Z PAGE ERROR:  Error: TypeError: Cannot read property 'systems' of undefined
 
   const baseUrl = options["--url"] || `https://${options["--host"]}/hub.html`;
 
@@ -53,6 +70,100 @@ function log(...objs) {
   const url = `${baseUrl}?${querystring.stringify(params)}${spawnPoint}`;
   log(url);
 
+  //
+  // farvel 
+  // 
+
+  // create localStorage
+  const { email, token } = JSON.parse(readFileSync(".ret.credentials"));
+  const lStorage = {
+    credentials: {
+      email: email,
+      token: token
+    },
+    profile: {
+      avatarId: "Kj2cAKk",
+      displayName: "farvel Bot"
+    }
+  };
+  const lStorageStr = JSON.stringify(lStorage);
+
+  await page.evaluateOnNewDocument ( hubsStore => {
+      //localStorage.clear();
+      localStorage.setItem('___hubs_store', hubsStore);
+  }, lStorageStr);
+
+  // browser.on('targetchanged', async (target) => {
+  //   const targetPage = await target.page();
+  //   const client = await targetPage.target().createCDPSession();
+  //   await client.send('Runtime.evaluate', {
+  //     expression: `localStorage.setItem('___hubs_store', ${lStorageStr})`,
+  //   }, lStorageStr);
+  // });
+
+  // await page.setRequestInterception(true);
+  // page.on('request', (request) => {
+  //     console.log("reqUrl: ", request.url());
+  //     request.continue();
+  // });
+  f12 = await page.target().createCDPSession();
+  await f12.send('Network.enable');
+  await f12.send('Page.enable');
+
+  const handledObjects = [];
+  const handleWebSocketFrameReceived = (params) => {
+    var payload = params.response.payloadData;
+
+    //if (payload.includes("#interactable-media") && payload.includes(".mp3") && payload.includes('\\"persistent\\":false')) {
+    if (payload.includes("#interactable-media") && payload.includes(".mp3") && !payload.includes('\\"pinned\\":true') && payload.includes('\\"persistent\\":false')) {
+      
+      
+      const networkid =  payload.match(/(?:"networkId\\":\\")(\w*)(?:\\")/);// e.g. "networkId\":\"asju3hg\"
+      //if (handledObjects.indexOf(networkid) > -1) return;
+
+      console.log("");
+      console.log("##################");
+      console.log("mp3 spawned: ", networkid[1]);
+      //handledObjects.push(networkid[1]);
+      //console.log("added to handledObjects", handledObjects);
+
+
+
+      // execute js
+      page.evaluate(networkid => {
+        // this will be executed within the page, that was loaded before
+
+        const el = document.getElementById("naf-" + networkid[1]);
+
+
+        setTimeout(() => {
+          // console.log("tmpPos 2: ", el.object3D.position.x, el.object3D.position.y, el.object3D.position.z);
+
+          // pin it
+          NAF.utils.getNetworkedEntity(el).then(networkedEl => {
+            const mine = NAF.utils.isMine(networkedEl);
+            // console.log("tmpPos: ", networkedEl.object3D.position.x, networkedEl.object3D.position.y, networkedEl.object3D.position.z);
+            if (!mine) var owned = NAF.utils.takeOwnership(networkedEl);
+            // console.log("tmpPos: ", networkedEl.object3D.position.x, networkedEl.object3D.position.y, networkedEl.object3D.position.z);
+            // networkedEl.object3D.position.x += 1;
+            //console.log("tmpPos: ", el.object3D.position.x, el.object3D.position.y, el.object3D.position.z);
+
+            networkedEl.setAttribute("pinnable", {pinned:true});
+            console.log("pinned");
+            networkedEl.emit("pinned", { el });
+            console.log("emit pinned");
+          });
+        }, 1000);
+      }, networkid);
+    }
+  };
+  
+  f12.on('Network.webSocketFrameReceived', handleWebSocketFrameReceived);
+  
+  //
+  // farvel End
+  // 
+  
   const navigate = async () => {
     try {
       log("Spawning bot...");
@@ -64,6 +175,16 @@ function log(...objs) {
         try {
           // Interact with the page so that audio can play.
           await page.mouse.click(100, 100);
+
+          await page.evaluate(payload => {
+            setTimeout(() => {
+            document.querySelector("#avatar-rig").object3D.position.y -= 10;
+            window.APP.store.update({
+                profile: { displayName : "farvel Bot"}
+            });
+            }, 10000);
+          });
+          
           if (options["--audio"]) {
             const audioInput = await page.waitForSelector("#bot-audio-input");
             audioInput.uploadFile(options["--audio"]);
