@@ -181,6 +181,9 @@ import "./gltf-component-mappings";
 import "./components/farvel-frame.js";
 import "./components/toggle-frame-button";
 //mike-frame-end
+//mike-comment
+import socketSystem from "./comment-system/socketSystem.js";
+//mike-comment-end
 
 import { App } from "./App";
 import MediaDevicesManager from "./utils/media-devices-manager";
@@ -1384,4 +1387,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   authChannel.setSocket(socket);
   linkChannel.setSocket(socket);
+
+  //mike-comment
+  window.sockSys = new socketSystem();
+  sockSys.init();
+  //mike-comment-end
 });
