@@ -101,9 +101,9 @@ export default class HubChannel extends EventTarget {
         onSync: this.presence.caller.onSync
       };
 
-      this.presence.onJoin(function() {});
-      this.presence.onLeave(function() {});
-      this.presence.onSync(function() {});
+      this.presence.onJoin(function () {});
+      this.presence.onLeave(function () {});
+      this.presence.onSync(function () {});
     }
 
     this.channel = await migrateChannelToSocket(this.channel, socket, params);
@@ -129,9 +129,9 @@ export default class HubChannel extends EventTarget {
         onSync: this.presence.caller.onSync
       };
 
-      this.presence.onJoin(function() {});
-      this.presence.onLeave(function() {});
-      this.presence.onSync(function() {});
+      this.presence.onJoin(function () {});
+      this.presence.onLeave(function () {});
+      this.presence.onSync(function () {});
     }
 
     this.channel = newChannel;
@@ -337,6 +337,10 @@ export default class HubChannel extends EventTarget {
         .receive("ok", ({ perms_token }) => {
           this.setPermissionsFromToken(perms_token);
           this._signedIn = true;
+          //mike-farvel
+          console.log("michael login changed");
+          sockSys.loginChanged();
+          //mike-farvelend
           resolve();
         })
         .receive("error", err => {
@@ -362,6 +366,9 @@ export default class HubChannel extends EventTarget {
           delete params.auth_token;
           delete params.perms_token;
           await this.fetchPermissions();
+          //michael-farvel
+          sockSys.loginChanged();
+          //michael-farvel-end
           resolve();
         })
         .receive("error", reject);
@@ -403,10 +410,7 @@ export default class HubChannel extends EventTarget {
       payload.promotion_token = promotionToken;
     }
     return new Promise((resolve, reject) => {
-      this.channel
-        .push("pin", payload)
-        .receive("ok", resolve)
-        .receive("error", reject);
+      this.channel.push("pin", payload).receive("ok", resolve).receive("error", reject);
     });
   };
 

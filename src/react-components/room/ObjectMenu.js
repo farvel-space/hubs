@@ -48,6 +48,7 @@ export function ObjectMenu({
           <LightbulbIcon title="Turn Lights On" width={24} height={24} />
         )}
       </IconButton>
+      <div className={styles.objectMenuUnapprovedContainer}></div>
       <div className={styles.objectMenuContainer}>
         <div className={styles.objectMenu}>
           <div className={styles.header}>
@@ -63,7 +64,11 @@ export function ObjectMenu({
               )}
             </IconButton>
           </div>
-          <div className={styles.menu}>{joinChildren(children, () => <div className={styles.separator} />)}</div>
+          <div className={styles.menu}>
+            {joinChildren(children, () => (
+              <div className={styles.separator} />
+            ))}
+          </div>
         </div>
         <div className={styles.pagination}>
           <IconButton onClick={onPrevObject}>
@@ -77,6 +82,7 @@ export function ObjectMenu({
           </IconButton>
         </div>
       </div>
+      <div className={styles.objectMenuApprovedContainer}></div>
     </>
   );
 }

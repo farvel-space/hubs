@@ -470,6 +470,12 @@ export async function updateEnvironmentForHub(hub, entryManager) {
 
             // Add a slight delay before de-in to reduce hitching.
             setTimeout(() => fader.fadeIn(), 2000);
+
+            //mike
+            if (sockSys.initialized) {
+              sockSys.sceneChanged();
+            }
+            //mikend
           },
           { once: true }
         );
@@ -1015,6 +1021,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     for (const modelEl of environmentScene.children) {
       addAnimationComponents(modelEl);
     }
+
+    //mike
+    if (!sockSys.initialized) {
+      sockSys.init();
+      sockSys.checkInt = setInterval(() => {
+        sockSys.regCheck();
+      }, 120000);
+    }
+    //mike-end
   });
 
   // Socket disconnects on refresh but we don't want to show exit scene in that scenario.
@@ -1390,6 +1405,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   //mike-comment
   window.sockSys = new socketSystem();
-  sockSys.init();
   //mike-comment-end
 });
