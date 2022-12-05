@@ -4,12 +4,15 @@ import classNames from "classnames";
 import { joinChildren } from "../misc/joinChildren";
 import styles from "./ObjectMenu.scss";
 import { IconButton } from "../input/IconButton";
+import FarvelCommentFeed from "./FarvelCommentFeed.js";
 import { ReactComponent as CloseIcon } from "../icons/Close.svg";
 import { ReactComponent as ChevronBackIcon } from "../icons/ChevronBack.svg";
 import { ReactComponent as ArrowBackIcon } from "../icons/ArrowBack.svg";
 import { ReactComponent as ArrowForwardIcon } from "../icons/ArrowForward.svg";
 import { ReactComponent as LightbulbIcon } from "../icons/Lightbulb.svg";
 import { ReactComponent as LightbulbOutlineIcon } from "../icons/LightbulbOutline.svg";
+import { ReactComponent as SendIcon } from "../icons/Send.svg";
+
 
 export function ObjectMenuButton({ children, className, ...rest }) {
   return (
@@ -36,6 +39,20 @@ export function ObjectMenu({
   onToggleLights,
   lightsEnabled
 }) {
+  console.log(children.props.activeObject.el.id);
+
+  const newCommentSubmit = e => {
+    e.preventDefault();
+    //console.log("new comment submitted", e.target.elements[0].value);
+    let comment = {
+      objectID: children.props.activeObject.el.id,
+      body: e.target.elements[0].value
+    };
+    //console.log(comment);
+    e.target.reset();
+    sockSys.newComment(comment);
+  };
+
   return (
     <>
       <IconButton className={styles.backButton} onClick={onBack}>
@@ -48,7 +65,6 @@ export function ObjectMenu({
           <LightbulbIcon title="Turn Lights On" width={24} height={24} />
         )}
       </IconButton>
-      <div className={styles.objectMenuUnapprovedContainer}></div>
       <div className={styles.objectMenuContainer}>
         <div className={styles.objectMenu}>
           <div className={styles.header}>
@@ -82,7 +98,44 @@ export function ObjectMenu({
           </IconButton>
         </div>
       </div>
-      <div className={styles.objectMenuApprovedContainer}></div>
+      <div className={styles.objectMenuCommentContainer}>
+        <div className={styles.objectMenuUnapprovedContainer}>
+          {sockSys.myUser.role === "admin" && (
+            <>
+              <div className={styles.commentsHeader}>
+                <h3>Unapproved Comments</h3>
+                <hr className={styles.headingSpacer}></hr>
+              </div>
+              <div className={styles.commentsFeedCont}>
+                <FarvelCommentFeed approved={false} object={children.props.activeObject.el} />
+              </div>
+            </>
+          )}
+        </div>
+        <div className={styles.objectMenuApprovedContainer}>
+          <div className={styles.commentsHeader}>
+            {sockSys.myUser.role === "admin" && <h3>Approved Comments</h3>}
+            {sockSys.myUser.role === "guest" && <h3>Comments</h3>}
+            <hr className={styles.headingSpacer}></hr>
+          </div>
+          <div className={styles.commentsFeedCont}>
+            <FarvelCommentFeed approved={true} object={children.props.activeObject.el} />
+          </div>
+          <div className={styles.newCommentContainer}>
+            <form className={styles.newCommentForm} onSubmit={newCommentSubmit}>
+              <input
+                className={styles.commentFormText}
+                placeholder="Write a new comment..."
+                type="text"
+                required
+              ></input>
+              <button className={styles.sendMessageBut} type="submit">
+                <SendIcon className={styles.sendMessageIcon}/>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

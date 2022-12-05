@@ -944,7 +944,7 @@ class UIRoot extends Component {
 
   render() {
     const isGhost =
-      configs.feature("enable_lobby_ghosts") && (this.state.watching || (this.state.hide || this.props.hide));
+      configs.feature("enable_lobby_ghosts") && (this.state.watching || this.state.hide || this.props.hide);
     const hide = this.state.hide || this.props.hide;
 
     const rootStyles = {
@@ -1338,15 +1338,14 @@ class UIRoot extends Component {
       <MoreMenuContextProvider>
         <ReactAudioContext.Provider value={this.state.audioContext}>
           <div className={classNames(rootStyles)}>
-            {preload &&
-              this.props.hub && (
-                <PreloadOverlay
-                  hubName={this.props.hub.name}
-                  hubScene={this.props.hub.scene}
-                  baseUrl={hubUrl(this.props.hub.hub_id).href}
-                  onLoadClicked={this.props.onPreloadLoadClicked}
-                />
-              )}
+            {preload && this.props.hub && (
+              <PreloadOverlay
+                hubName={this.props.hub.name}
+                hubScene={this.props.hub.scene}
+                baseUrl={hubUrl(this.props.hub.hub_id).href}
+                onLoadClicked={this.props.onPreloadLoadClicked}
+              />
+            )}
             {!this.state.dialog && (
               <StateRoute
                 stateKey="overlay"
@@ -1377,28 +1376,27 @@ class UIRoot extends Component {
                 )}
               />
             )}
-            {!this.state.dialog &&
-              showMediaBrowser && (
-                <MediaBrowserContainer
-                  history={this.props.history}
-                  mediaSearchStore={this.props.mediaSearchStore}
-                  hubChannel={this.props.hubChannel}
-                  onMediaSearchResultEntrySelected={(entry, selectAction) => {
-                    if (entry.type === "room") {
-                      this.showNonHistoriedDialog(LeaveRoomModal, {
-                        destinationUrl: entry.url,
-                        reason: LeaveReason.joinRoom
-                      });
-                    } else {
-                      this.props.onMediaSearchResultEntrySelected(entry, selectAction);
-                    }
-                  }}
-                  performConditionalSignIn={this.props.performConditionalSignIn}
-                  showNonHistoriedDialog={this.showNonHistoriedDialog}
-                  store={this.props.store}
-                  scene={this.props.scene}
-                />
-              )}
+            {!this.state.dialog && showMediaBrowser && (
+              <MediaBrowserContainer
+                history={this.props.history}
+                mediaSearchStore={this.props.mediaSearchStore}
+                hubChannel={this.props.hubChannel}
+                onMediaSearchResultEntrySelected={(entry, selectAction) => {
+                  if (entry.type === "room") {
+                    this.showNonHistoriedDialog(LeaveRoomModal, {
+                      destinationUrl: entry.url,
+                      reason: LeaveReason.joinRoom
+                    });
+                  } else {
+                    this.props.onMediaSearchResultEntrySelected(entry, selectAction);
+                  }
+                }}
+                performConditionalSignIn={this.props.performConditionalSignIn}
+                showNonHistoriedDialog={this.showNonHistoriedDialog}
+                store={this.props.store}
+                scene={this.props.scene}
+              />
+            )}
             {this.props.hub && (
               <RoomLayoutContainer
                 scene={this.props.scene}
@@ -1438,17 +1436,16 @@ class UIRoot extends Component {
                         }}
                       />
                     )}
-                    {this.state.sidebarId !== "chat" &&
-                      this.props.hub && (
-                        <PresenceLog
-                          inRoom={true}
-                          presences={this.props.presences}
-                          entries={presenceLogEntries}
-                          hubId={this.props.hub.hub_id}
-                          history={this.props.history}
-                          onViewProfile={sessionId => this.setSidebar("user", { selectedUserId: sessionId })}
-                        />
-                      )}
+                    {this.state.sidebarId !== "chat" && this.props.hub && (
+                      <PresenceLog
+                        inRoom={true}
+                        presences={this.props.presences}
+                        entries={presenceLogEntries}
+                        hubId={this.props.hub.hub_id}
+                        history={this.props.history}
+                        onViewProfile={sessionId => this.setSidebar("user", { selectedUserId: sessionId })}
+                      />
+                    )}
                     <TipContainer
                       hide={this.props.activeObject}
                       inLobby={watching}
@@ -1564,9 +1561,7 @@ class UIRoot extends Component {
                         />
                       )}
                     </>
-                  ) : (
-                    undefined
-                  )
+                  ) : undefined
                 }
                 modal={this.state.dialog}
                 toolbarLeft={
@@ -1628,7 +1623,7 @@ class UIRoot extends Component {
                     )}
                     <ChatToolbarButtonContainer onClick={() => this.toggleSidebar("chat")} />
                     <ToolbarButton
-                      icon={< ControlsIcon />}
+                      icon={<ControlsIcon />}
                       label={<FormattedMessage id="toolbar.controls-overview" defaultMessage="Controls" />}
                       preset="accent3"
                       onClick={() => {
@@ -1638,29 +1633,27 @@ class UIRoot extends Component {
                         });
                       }}
                     />
-                    {entered &&
-                      isMobileVR && (
-                        <ToolbarButton
-                          className={styleUtils.hideLg}
-                          icon={<VRIcon />}
-                          preset="accept"
-                          label={<FormattedMessage id="toolbar.enter-vr-button" defaultMessage="Enter VR" />}
-                          onClick={() => exit2DInterstitialAndEnterVR(true)}
-                        />
-                      )}
+                    {entered && isMobileVR && (
+                      <ToolbarButton
+                        className={styleUtils.hideLg}
+                        icon={<VRIcon />}
+                        preset="accept"
+                        label={<FormattedMessage id="toolbar.enter-vr-button" defaultMessage="Enter VR" />}
+                        onClick={() => exit2DInterstitialAndEnterVR(true)}
+                      />
+                    )}
                   </>
                 }
                 toolbarRight={
                   <>
-                    {entered &&
-                      isMobileVR && (
-                        <ToolbarButton
-                          icon={<VRIcon />}
-                          preset="accept"
-                          label={<FormattedMessage id="toolbar.enter-vr-button" defaultMessage="Enter VR" />}
-                          onClick={() => exit2DInterstitialAndEnterVR(true)}
-                        />
-                      )}
+                    {entered && isMobileVR && (
+                      <ToolbarButton
+                        icon={<VRIcon />}
+                        preset="accept"
+                        label={<FormattedMessage id="toolbar.enter-vr-button" defaultMessage="Enter VR" />}
+                        onClick={() => exit2DInterstitialAndEnterVR(true)}
+                      />
+                    )}
                     {entered && (
                       <ToolbarButton
                         icon={<LeaveIcon />}
@@ -1690,27 +1683,24 @@ function UIRootHooksWrapper(props) {
   useAccessibleOutlineStyle();
   const breakpoint = useCssBreakpoints();
 
-  useEffect(
-    () => {
-      const el = document.getElementById("preload-overlay");
-      el.classList.add("loaded");
+  useEffect(() => {
+    const el = document.getElementById("preload-overlay");
+    el.classList.add("loaded");
 
-      const sceneEl = props.scene;
+    const sceneEl = props.scene;
 
-      sceneEl.classList.add(roomLayoutStyles.scene);
+    sceneEl.classList.add(roomLayoutStyles.scene);
 
-      // Remove the preload overlay after the animation has finished.
-      const timeout = setTimeout(() => {
-        el.remove();
-      }, 500);
+    // Remove the preload overlay after the animation has finished.
+    const timeout = setTimeout(() => {
+      el.remove();
+    }, 500);
 
-      return () => {
-        clearTimeout(timeout);
-        sceneEl.classList.remove(roomLayoutStyles.scene);
-      };
-    },
-    [props.scene]
-  );
+    return () => {
+      clearTimeout(timeout);
+      sceneEl.classList.remove(roomLayoutStyles.scene);
+    };
+  }, [props.scene]);
 
   return (
     <ChatContextProvider messageDispatch={props.messageDispatch}>

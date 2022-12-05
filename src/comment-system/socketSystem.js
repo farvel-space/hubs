@@ -61,13 +61,19 @@ class socketSystem {
       if (index > -1) {
         this.dataMap.splice(index, 1);
       }
-      if (data.deleted) return;
+      if (data.deleted) {
+        const event = new Event("received-reflector");
+        document.dispatchEvent(event);
+        return;
+      }
       //write the new data
       if (data.state === "approved") {
         this.dataMap.push(data);
       } else if (data.state === "unapproved" && this.myUser.role === "admin") {
         this.dataMap.push(data);
       }
+      const event = new Event("received-reflector");
+      document.dispatchEvent(event);
     });
   }
 
@@ -102,6 +108,7 @@ class socketSystem {
   }
 
   regCheck() {
+    console.log("regCheck");
     this.dataMap = [];
     let sceneURL = window.APP.hub.scene.url.substring(0, window.APP.hub.scene.url.lastIndexOf("/"));
     this.myUser.socketMap.emit("getData", sceneURL);
