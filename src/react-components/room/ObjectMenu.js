@@ -13,7 +13,6 @@ import { ReactComponent as LightbulbIcon } from "../icons/Lightbulb.svg";
 import { ReactComponent as LightbulbOutlineIcon } from "../icons/LightbulbOutline.svg";
 import { ReactComponent as SendIcon } from "../icons/Send.svg";
 
-
 export function ObjectMenuButton({ children, className, ...rest }) {
   return (
     <IconButton compactSm className={classNames(styles.objectMenuButton, className)} {...rest}>
@@ -39,19 +38,28 @@ export function ObjectMenu({
   onToggleLights,
   lightsEnabled
 }) {
-  console.log(children.props.activeObject.el.id);
-
+  //farvel
   const newCommentSubmit = e => {
     e.preventDefault();
     //console.log("new comment submitted", e.target.elements[0].value);
-    let comment = {
-      objectID: children.props.activeObject.el.id,
-      body: e.target.elements[0].value
-    };
-    //console.log(comment);
+    let comment;
+    if (children.props.activeObject.el.id.length > 15) {
+      //for items set at the spoke or blender level
+      comment = {
+        objectID: children.props.activeObject.el.object3D.name,
+        body: e.target.elements[0].value
+      };
+    } else {
+      //for items dragged and dropped
+      comment = {
+        objectID: children.props.activeObject.el.id,
+        body: e.target.elements[0].value
+      };
+    }
     e.target.reset();
     sockSys.newComment(comment);
   };
+  //farvel-end
 
   return (
     <>
@@ -98,20 +106,19 @@ export function ObjectMenu({
           </IconButton>
         </div>
       </div>
+      {/* farvel */}
       <div className={styles.objectMenuCommentContainer}>
-        <div className={styles.objectMenuUnapprovedContainer}>
-          {sockSys.myUser.role === "admin" && (
-            <>
-              <div className={styles.commentsHeader}>
-                <h3>Unapproved Comments</h3>
-                <hr className={styles.headingSpacer}></hr>
-              </div>
-              <div className={styles.commentsFeedCont}>
-                <FarvelCommentFeed approved={false} object={children.props.activeObject.el} />
-              </div>
-            </>
-          )}
-        </div>
+        {sockSys.myUser.role === "admin" && (
+          <div className={styles.objectMenuUnapprovedContainer}>
+            <div className={styles.commentsHeader}>
+              <h3>Unapproved Comments</h3>
+              <hr className={styles.headingSpacer}></hr>
+            </div>
+            <div className={styles.commentsFeedCont}>
+              <FarvelCommentFeed approved={false} object={children.props.activeObject.el} />
+            </div>
+          </div>
+        )}
         <div className={styles.objectMenuApprovedContainer}>
           <div className={styles.commentsHeader}>
             {sockSys.myUser.role === "admin" && <h3>Approved Comments</h3>}
@@ -130,12 +137,13 @@ export function ObjectMenu({
                 required
               ></input>
               <button className={styles.sendMessageBut} type="submit">
-                <SendIcon className={styles.sendMessageIcon}/>
+                <SendIcon className={styles.sendMessageIcon} />
               </button>
             </form>
           </div>
         </div>
       </div>
+      {/* farvel-end */}
     </>
   );
 }

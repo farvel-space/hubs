@@ -34,7 +34,11 @@ class FarvelCommentFeed extends React.Component {
         {this.props.approved && (
           <div>
             {this.state.dataMap
-              .filter(e => e.state === "approved" && e.objectID === this.props.object.id)
+              .filter(
+                e =>
+                  e.state === "approved" &&
+                  (e.objectID === this.props.object.id || e.objectID === this.props.object.object3D.name)
+              )
               .map(key => (
                 <CommentDisplay key={key._id} comment={key} isAdmin={this.state.role} />
               ))}
@@ -43,7 +47,11 @@ class FarvelCommentFeed extends React.Component {
         {!this.props.approved && this.state.role === "admin" && (
           <div>
             {this.state.dataMap
-              .filter(e => e.state === "unapproved" && e.objectID === this.props.object.id)
+              .filter(
+                e =>
+                  e.state === "unapproved" &&
+                  (e.objectID === this.props.object.id || e.objectID === this.props.object.object3D.name)
+              )
               .map(key => (
                 <CommentDisplay key={key._id} comment={key} isAdmin={"unapprovedAdmin"} />
               ))}

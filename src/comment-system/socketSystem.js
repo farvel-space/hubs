@@ -1,3 +1,25 @@
+/* Farvel Comment System developed by Michael Morran August -> November for Farvel
+
+For the implementation of this feature, the following changes have been made to the following directories and files. To query these changes, please search for comments between 'mike-frame' and 'mike-frame-end'.
+
+space-client Branch: 'mike/farvel-frame-v2'
+
+space-client Files Added:
+  src/comment-system/socketSystem.js
+  src/react-components/room/CommentDisplay.js
+  src/react-components/room/CommentDisplay.scss
+  src/react-components/room/FarvelCommentFeed.js
+
+space-client Files Changed:
+  src/react-components/room/ObjectMenu.js
+    Lines 41-62
+    Lines 109-146
+  src/react-components/room/ObjectMenu.scss
+    Lines 114-226
+  src/utils/removeNetworkedObject.js
+    Lines 4-14
+*/
+
 import io from "socket.io-client";
 
 class socketSystem {
@@ -14,7 +36,6 @@ class socketSystem {
 
   init() {
     window.APP.hubChannel.addEventListener("permissions_updated", () => {
-      console.log("permissions updated farvel");
       this.loginChanged();
     });
 
@@ -34,14 +55,12 @@ class socketSystem {
 
     //setup sockets
     generalClient.on("connect", () => {
-      console.log("connected to socket server");
+      console.log("connected to farvel comment server");
       let sceneURL = window.APP.hub.scene.url.substring(0, window.APP.hub.scene.url.lastIndexOf("/"));
-      console.log("getting data for scene", sceneURL);
       generalClient.emit("getData", sceneURL);
     });
 
     generalClient.on("getDataResp", data => {
-      console.log(data);
       data.forEach(e => {
         if (e.sceneURL !== window.APP.hub.scene.url.substring(0, window.APP.hub.scene.url.lastIndexOf("/"))) return;
         if (e.state === "approved") {
@@ -53,7 +72,6 @@ class socketSystem {
     });
 
     generalClient.on("reflector", data => {
-      console.log(data);
       if (data.sceneURL !== window.APP.hub.scene.url.substring(0, window.APP.hub.scene.url.lastIndexOf("/"))) return;
       //remove the copy
       let copy = this.dataMap.filter(x => x._id === data._id);
@@ -93,7 +111,7 @@ class socketSystem {
     if (window.APP.entryManager.authChannel._signedIn) {
       displayName = JSON.parse(window.localStorage.___hubs_store).profile.displayName;
     } else {
-      displayName = "anon";
+      displayName = "Anonymous";
     }
     commentData.attr = displayName;
     this.myUser.socketMap.emit("newComment", commentData);
@@ -108,7 +126,6 @@ class socketSystem {
   }
 
   regCheck() {
-    console.log("regCheck");
     this.dataMap = [];
     let sceneURL = window.APP.hub.scene.url.substring(0, window.APP.hub.scene.url.lastIndexOf("/"));
     this.myUser.socketMap.emit("getData", sceneURL);
