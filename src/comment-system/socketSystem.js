@@ -1,4 +1,4 @@
-/* Farvel Comment System developed by Michael Morran August -> November for Farvel
+/* Farvel Comment System developed by Michael Morran August -> November 2022 for Farvel
 
 For the implementation of this feature, the following changes have been made to the following directories and files. To query these changes, please search for comments between 'mike-frame' and 'mike-frame-end'.
 
